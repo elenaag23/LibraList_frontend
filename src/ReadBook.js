@@ -1,19 +1,36 @@
-import { React, useEffect } from "react";
+import { React, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import PDFViewer from "./PDFViewer";
 import Sidebar from "./Sidebar";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 const ReadBook = () => {
-  // Access the location object
   const location = useLocation();
-
   console.log("Location state:", location.state);
-
-  // Retrieve the state from the location object
   const { state } = location;
-
-  // Assuming the book object is passed as state from the previous page
   const book = state && state.book;
+  const user = localStorage.getItem("user");
+  const [added, setAdded] = useState(false);
+
+  const addToLibrary = async () => {
+    console.log("in add to library: ", user, book.identifier);
+    setAdded(true);
+    fetch("http://127.0.0.1:8000/addToLibrary", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ user: user, book: book.identifier }),
+    })
+      .then((response) => {
+        console.log("response: ", response.json());
+      })
+      .catch((error) => {
+        // Handle any errors
+      });
+  };
 
   useEffect(() => {
     console.log("prev page: ", localStorage.getItem("prevPage"));
@@ -37,8 +54,32 @@ const ReadBook = () => {
 
             <div className="bookSide">
               <div className="boxZones" style={{ display: "flow" }}>
-                <div style={{ paddingTop: "8px" }}>
-                  <h3>{book.title}</h3>
+                <div
+                  style={{
+                    paddingLeft: "28px",
+                    display: "flex",
+                    paddingTop: "8px",
+                  }}
+                >
+                  <div style={{ width: "80%" }}>
+                    <h3>{book.title}</h3>
+                  </div>
+                  {!added ? (
+                    <div style={{ paddingTop: "10px", width: "20%" }}>
+                      {" "}
+                      <button
+                        onClick={addToLibrary}
+                        className="addToLibraryButton"
+                      >
+                        <AddCircleIcon></AddCircleIcon>
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{ paddingTop: "10px", width: "20%" }}>
+                      {" "}
+                      <CheckCircleIcon></CheckCircleIcon>
+                    </div>
+                  )}
                 </div>
                 <div className="horizontalLine">
                   <hr></hr>

@@ -12,8 +12,31 @@ function App() {
   let local = "http://127.0.0.1:8000";
   window.API_URL = local;
 
+  const getCurrentUser = async () => {
+    const token = localStorage.getItem("authToken");
+
+    console.log("current token: ", token);
+
+    fetch("http://127.0.0.1:8000/authUser", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log("current user: ", data);
+        localStorage.setItem("user", data.id);
+      })
+      .catch((error) => {});
+  };
+
   useEffect(() => {
     localStorage.setItem("prevPage", "/");
+    getCurrentUser();
   });
 
   return (
