@@ -44,7 +44,7 @@ function ToRead() {
   }, []);
 
   useEffect(() => {
-    insertIntoDB();
+    if (bookData) insertIntoDB();
   }, [bookData]);
 
   const insertIntoDB = async () => {
@@ -54,14 +54,15 @@ function ToRead() {
     const token = localStorage.getItem("authToken");
 
     fetch("http://127.0.0.1:8000/insertBook", {
-      method: "GET",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
+      body: JSON.stringify(bookData),
     })
       .then((response) => {
-        console.log("response: ", response);
+        console.log("response: ", response.json());
       })
       .catch((error) => {
         // Handle any errors
