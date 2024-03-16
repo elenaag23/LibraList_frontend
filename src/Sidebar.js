@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { Link, NavLink } from "react-router-dom";
 
 function Sidebar() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -55,6 +56,10 @@ function Sidebar() {
   return (
     <div className="readBookTitle">
       <div className="displayLogoutButton">
+        <NavLink to="/library" activeClassName="selected">
+          <div>My library</div>
+        </NavLink>
+
         <div className="displayIn">
           <div className="displayName">
             <span>Hello</span>

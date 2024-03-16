@@ -7,6 +7,7 @@ import ReadBook from "./ReadBook";
 import Register from "./Register";
 import Login from "./Login";
 import { useEffect } from "react";
+import Library from "./Library";
 
 function App() {
   let local = "http://127.0.0.1:8000";
@@ -47,6 +48,7 @@ function App() {
           <Route path="/read-book" element={<ReadBook />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/library" element={<Library />} />
         </Routes>
       </BrowserRouter>
     </div>
