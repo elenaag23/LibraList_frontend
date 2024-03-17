@@ -10,11 +10,12 @@ const ReadBook = () => {
   console.log("Location state:", location.state);
   const { state } = location;
   const book = state && state.book;
-  const user = localStorage.getItem("user");
-  const [added, setAdded] = useState(false);
+  const userMail = localStorage.getItem("userMail");
+  const [added, setAdded] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const addToLibrary = async () => {
-    console.log("in add to library: ", user, book.identifier);
+    //console.log("in add to library: ", user, book.identifier);
     setAdded(true);
     fetch("http://127.0.0.1:8000/addToLibrary", {
       method: "POST",
@@ -22,7 +23,7 @@ const ReadBook = () => {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify({ user: user, book: book.identifier }),
+      body: JSON.stringify({ user: userMail, book: book.identifier }),
     })
       .then((response) => {
         console.log("response: ", response.json());
@@ -32,10 +33,37 @@ const ReadBook = () => {
       });
   };
 
+  const userHasBook = () => {
+    fetch(
+      `http://127.0.0.1:8000/userBook?userMail=${userMail}&bookIdentifier=${book.identifier}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    )
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Failed to fetch data");
+        }
+      })
+      .then((data) => {
+        console.log("response in ujser has book data: ", data);
+        if (data.has == true) setAdded(true);
+        else setAdded(false);
+        setLoading(false);
+      })
+      .catch((error) => {});
+  };
+
   useEffect(() => {
     console.log("prev page: ", localStorage.getItem("prevPage"));
     localStorage.setItem("prevPage", location.pathname);
-  });
+    userHasBook();
+  }, []);
 
   // Render the book details
   return (
@@ -64,7 +92,7 @@ const ReadBook = () => {
                   <div style={{ width: "80%" }}>
                     <h3>{book.title}</h3>
                   </div>
-                  {!added ? (
+                  {!loading && !added ? (
                     <div style={{ paddingTop: "10px", width: "20%" }}>
                       {" "}
                       <button
@@ -74,12 +102,12 @@ const ReadBook = () => {
                         <AddCircleIcon></AddCircleIcon>
                       </button>
                     </div>
-                  ) : (
+                  ) : !loading ? (
                     <div style={{ paddingTop: "10px", width: "20%" }}>
                       {" "}
                       <CheckCircleIcon></CheckCircleIcon>
                     </div>
-                  )}
+                  ) : null}
                 </div>
                 <div className="horizontalLine">
                   <hr></hr>

@@ -22,6 +22,7 @@ function ToRead() {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
+    $("#bookshelfButton").addClass("selected");
     getCurrentUser();
     console.log("previous page: ", localStorage.getItem("prevPage"));
 
@@ -215,21 +216,17 @@ function ToRead() {
       method: "GET",
       headers: {
         Accept: "application/json",
-        Authorization: `Bearer ${token}`, // Include the Authorization header
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((response) => {
-        return response.json(); // Return the parsed JSON data
+        return response.json();
       })
       .then((data) => {
-        // Handle the parsed JSON data
         console.log("current user: ", data);
         setCurrentUser(data);
-        // Perform any further actions with the user data here
       })
-      .catch((error) => {
-        // Handle any errors
-      });
+      .catch((error) => {});
   };
 
   return (
