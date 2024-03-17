@@ -39,6 +39,7 @@ const BookRow = ({ books }) => (
 
 const BookGrid = ({ books }) => {
   const rows = [];
+  console.log("books: ", books);
   for (let i = 0; i < books.length; i += 3) {
     rows.push(books.slice(i, i + 3));
   }

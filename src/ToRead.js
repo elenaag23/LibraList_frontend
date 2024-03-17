@@ -22,6 +22,7 @@ function ToRead() {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
+    $("#bookshelfButton").addClass("selected");
     getCurrentUser();
     console.log("previous page: ", localStorage.getItem("prevPage"));
 

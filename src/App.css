@@ -245,7 +245,6 @@
   background-color: #6d7fcc;
   height: 60px;
   margin-bottom: 30px;
-  padding-top: 12px;
   color: white;
 }
 
@@ -402,23 +401,23 @@
 }
 
 .myLibraryButton{
-  position: absolute;
-  margin-right: 1200px;
-  padding-top: 8px;
-  color: white;
-  text-decoration: none;
+    padding-top: 16px;
+    color: white;
+    text-decoration: none;
 }
 
-.myLibraryButton:hover{
-  background-color: red;
+.pageActive:hover{
+  background-color: #5569c3;
 }
 
-.myLibraryButton:active{
-  background-color: red;
-  border: 2px solid black;
+.selected {
+  background-color: #5569c3;
+  border: 1px solid white;
 }
 
-.selected{
-  background-color: red;
-    border: 2px solid black;
+.pTop{
+  padding-top: 10px;
 }
+
+.littleDiv{padding-top: 15px;
+  padding-bottom: 15px;}

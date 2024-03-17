@@ -30,7 +30,8 @@ function App() {
       })
       .then((data) => {
         console.log("current user: ", data);
-        localStorage.setItem("user", data.id);
+        localStorage.setItem("userName", data.name);
+        localStorage.setItem("userMail", data.email);
       })
       .catch((error) => {});
   };

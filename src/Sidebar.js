@@ -5,6 +5,7 @@ import { Link, NavLink } from "react-router-dom";
 
 function Sidebar() {
   const [currentUser, setCurrentUser] = useState(null);
+  const username = localStorage.getItem("userName");
 
   useEffect(() => {
     getCurrentUser();
@@ -55,31 +56,71 @@ function Sidebar() {
 
   return (
     <div className="readBookTitle">
-      <div className="displayLogoutButton">
-        <NavLink to="/library" activeClassName="selected">
-          <div>My library</div>
-        </NavLink>
-
-        <div className="displayIn">
-          <div className="displayName">
-            <span>Hello</span>
-            {currentUser != null ? <span>, {currentUser.name}</span> : null}
-            <span>!</span>
-          </div>
-          <div id="logoutButton">
-            <button
-              onClick={handleLogout}
-              style={{
-                border: "none",
-                backgroundColor: "inherit",
-                color: "inherit",
-                fontSize: "18px",
-              }}
+      <div className="row" style={{ width: "100%" }}>
+        <div className="col-4">
+          <div className="row">
+            <div className="col-4"></div>
+            <div
+              className="col-4 pageActive"
+              style={{ height: "60px" }}
+              id="myLibraryButton"
             >
-              <LogoutIcon></LogoutIcon>
-            </button>
+              <Link to="/library" className="myLibraryButton">
+                <div className="littleDiv">My library</div>
+              </Link>
+            </div>
+            <div
+              className="col-4 pageActive"
+              style={{ height: "60px" }}
+              id="bookshelfButton"
+            >
+              <Link to="/toread" className="myLibraryButton">
+                <div className="littleDiv">Bookshelf</div>
+              </Link>
+            </div>
+          </div>
+          {/* <Link to="/library" className="myLibraryButton">
+            <div>My library</div>
+          </Link> */}
+        </div>
+        <div className="col-4">
+          <div className="row">
+            <div className="col-6"></div>
+            <div className="col-6"></div>
           </div>
         </div>
+        <div className="col-4">
+          <div className="row">
+            <div className="col-3"></div>
+            <div className="col-3"></div>
+            <div
+              className="displayIn col-6"
+              style={{ paddingLeft: "80px", paddingTop: "10px" }}
+            >
+              <div className="displayName">
+                <span>Hello</span>
+                {username != null ? <span>, {username}</span> : null}
+                <span>!</span>
+              </div>
+              <div id="logoutButton">
+                <button
+                  onClick={handleLogout}
+                  style={{
+                    border: "none",
+                    backgroundColor: "inherit",
+                    color: "inherit",
+                    fontSize: "18px",
+                  }}
+                >
+                  <LogoutIcon></LogoutIcon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* 
+
+         */}
       </div>
     </div>
   );
