@@ -13,6 +13,7 @@ const ReadBook = () => {
   const userMail = localStorage.getItem("userMail");
   const [added, setAdded] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [pdf, setPdf] = useState(null);
 
   const addToLibrary = async () => {
     //console.log("in add to library: ", user, book.identifier);
@@ -59,9 +60,27 @@ const ReadBook = () => {
       .catch((error) => {});
   };
 
+  const getPDF = () => {
+    const url = `https://archive.org/download/${encodeURIComponent(
+      book.identifier
+    )}/${book.url}`;
+    fetch(`http://127.0.0.1:8000/getpdf?url=${url}`, {
+      method: "GET",
+    })
+      .then((response) => response.blob())
+      .then((blob) => {
+        // Use the blob data (PDF file) as needed
+        setPdf(blob);
+      })
+      .catch((error) => {
+        console.error("Error fetching PDF:", error);
+      });
+  };
+
   useEffect(() => {
     console.log("prev page: ", localStorage.getItem("prevPage"));
     localStorage.setItem("prevPage", location.pathname);
+    getPDF();
     userHasBook();
   }, []);
 
@@ -73,11 +92,7 @@ const ReadBook = () => {
         <div>
           <div className="readBookContent">
             <div className="iframeDisplay bookBox">
-              <PDFViewer
-                pdfUrl={`https://archive.org/download/${encodeURIComponent(
-                  book.identifier
-                )}/${book.url}`}
-              />
+              {pdf && <PDFViewer pdfUrl={pdf} />}
             </div>
 
             <div className="bookSide">

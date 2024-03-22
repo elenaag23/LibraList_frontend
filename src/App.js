@@ -8,6 +8,7 @@ import Register from "./Register";
 import Login from "./Login";
 import { useEffect } from "react";
 import Library from "./Library";
+import "@react-pdf-viewer/core/lib/styles/index.css";
 
 function App() {
   let local = "http://127.0.0.1:8000";
