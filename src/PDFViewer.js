@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
+import $ from "jquery";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -16,6 +17,20 @@ const MyPDFViewer = ({ pdfUrl }) => {
 
   const handleTextSelection = () => {
     const selection = window.getSelection();
+    const selRange = selection.getRangeAt(0);
+
+    if (selection.toString().length > 0) {
+      const range = selection.getRangeAt(0);
+      const selectedText = range.toString();
+      const span = document.createElement("span");
+      span.className = "highlighted-text";
+      span.appendChild(document.createTextNode(selectedText));
+      range.deleteContents();
+      range.insertNode(span);
+    }
+
+    console.log("i ve selected: ", selection);
+    console.log("range: ", selRange);
     setSelectedText(selection.toString());
   };
 

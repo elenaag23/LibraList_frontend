@@ -429,6 +429,11 @@
   margin-bottom: 18px;
 }
 
+.pdf-page span::selection{
+  background-color: red;
+  color:black;
+}
+
 .pagesDiv{
   margin-top: 55px;
   margin-left: 90px;
@@ -455,4 +460,8 @@ background-color: #a1acde;
 
 .pagesDiv p{
   padding-top: 15px;
+}
+
+.highlighted-text{
+  background-color: red;
 }
