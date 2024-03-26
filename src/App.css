@@ -430,7 +430,7 @@
 }
 
 .pdf-page span::selection{
-  background-color: red;
+   background-color: #6d7fcc; 
   color:black;
 }
 
@@ -464,11 +464,65 @@ background-color: #a1acde;
   font-weight: bold;
 }
 
-.highlighted-text{
+.highlighted-text-def {
+  background-color: #6d7fcc;
+  opacity: 0.5;
+}
+
+.highlighted-text-red{
   background-color: red;
   opacity: 0.5;
 }
 
-.colorButtons button:hover{
-  border: 2px solid #a1acde;
+.highlighted-text-blue {
+  background-color: blue;
+  opacity: 0.5;
+}
+.highlighted-text-green {
+  background-color: green;
+  opacity: 0.5;
+}
+.highlighted-text-orange {
+  background-color: orange;
+  opacity: 0.5;
+}
+
+.colorButtons{
+    padding-top: 8px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.btn-check+.btn:hover{
+  border: 2px solid black !important;
+}
+
+.btn-check:checked+.btn{
+  border: 2px solid black !important;
+}
+
+.btn{
+  height: 30px;
+  width:30px;
+}
+
+.btn-secondary{
+  border: 2px solid black;
+}
+
+.removeColor{
+  height: 10px;
+  width: 10px;
+  display: inline-flex;
+}
+
+.removeColor button{
+  height: 23px;
+  width: 23px;
+  color:white;
+  background-color: inherit;
+  border:none;
+  margin-left: 4px;
+  display: flex;
+  justify-content: center;
 }

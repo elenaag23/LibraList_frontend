@@ -3,13 +3,15 @@ import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import $ from "jquery";
+import ClearIcon from "@mui/icons-material/Clear";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const MyPDFViewer = ({ pdfUrl }) => {
+const PDFViewer = ({ pdfUrl }) => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [selectedText, setSelectedText] = useState("");
+  const [selectedColor, setSelectedColor] = useState(null);
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
@@ -34,7 +36,10 @@ const MyPDFViewer = ({ pdfUrl }) => {
       ) {
         const rect = range.getBoundingClientRect();
         const span = document.createElement("span");
-        span.className = "highlighted-text";
+        span.className =
+          selectedColor != null
+            ? "highlighted-text-" + selectedColor
+            : "highlighted-text-def";
         span.style.position = "absolute";
         span.style.top = rect.top + window.scrollY + "px";
         span.style.left = rect.left + "px";
@@ -44,7 +49,7 @@ const MyPDFViewer = ({ pdfUrl }) => {
         document.body.appendChild(span);
       } else {
         const span = document.createElement("span");
-        span.className = "highlighted-text";
+        span.className = "highlighted-text-red";
         range.deleteContents();
         range.insertNode(span);
       }
@@ -65,6 +70,17 @@ const MyPDFViewer = ({ pdfUrl }) => {
     if (pageNumber < numPages) {
       setPageNumber(pageNumber + 1);
     }
+  };
+
+  const handleRadioChange = (event) => {
+    setSelectedColor(event.target.value);
+    //$(".pdf-page span::selection").css("background-color", event.target.value);
+    console.log("changed color: ", event.target.value);
+  };
+
+  const removeColor = () => {
+    $("input[name=colorOptions]").prop("checked", false);
+    setSelectedColor(null);
   };
 
   return (
@@ -96,33 +112,79 @@ const MyPDFViewer = ({ pdfUrl }) => {
         </div>
 
         <div className="pagesDiv" style={{ height: "85px" }}>
-          <div style={{ marginTop: "8px" }}>
+          <div style={{ marginTop: "8px", color: "white", fontWeight: "BOLD" }}>
             <span>Choose higlight color</span>
+            <div className="removeColor">
+              <button onClick={removeColor}>
+                <ClearIcon />
+              </button>
+            </div>
           </div>
-          <div
-            style={{ marginLeft: "15px", paddingTop: "8px" }}
-            className="colorButtons"
-          >
-            <button
-              style={{ backgroundColor: "red", width: "30px", height: "30px" }}
-            ></button>
-            <button
-              style={{ backgroundColor: "blue", width: "30px", height: "30px" }}
-            ></button>
-            <button
+          <div style={{ paddingTop: "8px" }} className="colorButtons">
+            <input
+              type="radio"
+              class="btn-check"
+              name="colorOptions"
+              id="option1"
+              autocomplete="off"
+              value="red"
+              onChange={handleRadioChange}
+            ></input>
+            <label
+              class="btn "
+              for="option1"
               style={{
-                backgroundColor: "green",
-                width: "30px",
-                height: "30px",
+                backgroundColor: "red",
               }}
-            ></button>
-            <button
+            ></label>
+            <input
+              type="radio"
+              class="btn-check"
+              name="colorOptions"
+              id="option2"
+              autocomplete="off"
+              value="blue"
+              onChange={handleRadioChange}
+            ></input>
+            <label
+              class="btn btn-secondary"
+              for="option2"
+              style={{
+                backgroundColor: "blue",
+              }}
+            ></label>
+            <input
+              type="radio"
+              class="btn-check"
+              name="colorOptions"
+              id="option3"
+              autocomplete="off"
+              value="orange"
+              onChange={handleRadioChange}
+            ></input>
+            <label
+              class="btn btn-secondary"
+              for="option3"
               style={{
                 backgroundColor: "orange",
-                width: "30px",
-                height: "30px",
               }}
-            ></button>
+            ></label>
+            <input
+              type="radio"
+              class="btn-check"
+              name="colorOptions"
+              id="option4"
+              autocomplete="off"
+              value="green"
+              onChange={handleRadioChange}
+            ></input>
+            <label
+              class="btn btn-secondary"
+              for="option4"
+              style={{
+                backgroundColor: "green",
+              }}
+            ></label>
           </div>
         </div>
       </div>
@@ -130,4 +192,4 @@ const MyPDFViewer = ({ pdfUrl }) => {
   );
 };
 
-export default MyPDFViewer;
+export default PDFViewer;
