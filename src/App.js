@@ -14,33 +14,36 @@ function App() {
   let local = "http://127.0.0.1:8000";
   window.API_URL = local;
 
-  const getCurrentUser = async () => {
-    const token = localStorage.getItem("authToken");
+  useEffect(() => {
+    localStorage.setItem("prevPage", "/");
+    const getCurrentUser = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
 
-    console.log("current token: ", token);
+        console.log("current token: ", token);
 
-    fetch("http://127.0.0.1:8000/authUser", {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
+        const response = await fetch("http://127.0.0.1:8000/authUser", {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch user data");
+        }
+        const data = await response.json();
+
         console.log("current user: ", data);
         localStorage.setItem("userName", data.name);
         localStorage.setItem("userMail", data.email);
-      })
-      .catch((error) => {});
-  };
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
 
-  useEffect(() => {
-    localStorage.setItem("prevPage", "/");
     getCurrentUser();
-  });
+  }, []);
 
   return (
     <div className="App">

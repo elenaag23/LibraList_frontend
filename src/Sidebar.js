@@ -7,10 +7,6 @@ function Sidebar() {
   const [currentUser, setCurrentUser] = useState(null);
   const username = localStorage.getItem("userName");
 
-  useEffect(() => {
-    getCurrentUser();
-  }, []);
-
   const handleLogout = async () => {
     fetch("127.0.0.1:8000/logout", {
       method: "POST",
@@ -30,28 +26,6 @@ function Sidebar() {
       .catch((error) => {
         // Handle any errors
       });
-  };
-
-  const getCurrentUser = async () => {
-    const token = localStorage.getItem("authToken");
-
-    console.log("current token: ", token);
-
-    fetch("http://127.0.0.1:8000/authUser", {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        console.log("current user: ", data);
-        setCurrentUser(data);
-      })
-      .catch((error) => {});
   };
 
   return (
