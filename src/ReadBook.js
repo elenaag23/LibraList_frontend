@@ -14,9 +14,9 @@ const ReadBook = () => {
   const [added, setAdded] = useState(null);
   const [loading, setLoading] = useState(true);
   const [pdf, setPdf] = useState(null);
+  const [initialLoad, setInitialLoad] = useState(true);
 
-  const addToLibrary = async () => {
-    //console.log("in add to library: ", user, book.identifier);
+  const addToLibrary = () => {
     setAdded(true);
     fetch("http://127.0.0.1:8000/addToLibrary", {
       method: "POST",
@@ -69,7 +69,6 @@ const ReadBook = () => {
     })
       .then((response) => response.blob())
       .then((blob) => {
-        // Use the blob data (PDF file) as needed
         setPdf(blob);
       })
       .catch((error) => {
@@ -80,6 +79,8 @@ const ReadBook = () => {
   useEffect(() => {
     console.log("prev page: ", localStorage.getItem("prevPage"));
     localStorage.setItem("prevPage", location.pathname);
+    console.log("pdf?? ", pdf);
+
     getPDF();
     userHasBook();
   }, []);
@@ -92,7 +93,7 @@ const ReadBook = () => {
         <div>
           <div className="readBookContent">
             <div className="iframeDisplay bookBox">
-              {pdf && <PDFViewer pdfUrl={pdf} />}
+              {pdf && <PDFViewer pdfUrl={pdf}></PDFViewer>}
             </div>
 
             <div className="bookSide">

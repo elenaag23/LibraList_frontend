@@ -437,7 +437,7 @@
 .pagesDiv{
   margin-top: 55px;
   margin-left: 90px;
-  border: 2px solid black;
+  border: 2px solid #a1acde;
   height: 120px;
   background-color: #6d7fcc;
   border-radius: 5px;
@@ -460,8 +460,15 @@ background-color: #a1acde;
 
 .pagesDiv p{
   padding-top: 15px;
+  color:white;
+  font-weight: bold;
 }
 
 .highlighted-text{
   background-color: red;
+  opacity: 0.5;
+}
+
+.colorButtons button:hover{
+  border: 2px solid #a1acde;
 }
