@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -14,6 +14,37 @@ const PDFViewer = ({ pdfUrl, book }) => {
   const [selectedColor, setSelectedColor] = useState(null);
   const [idCounter, setIdCounter] = useState(0);
   const userMail = localStorage.getItem("userMail");
+
+  useEffect(() => {
+    userHasHighlights();
+  }, []);
+
+  const userHasHighlights = () => {
+    fetch(
+      `http://127.0.0.1:8000/userHighlightsBook?userMail=${userMail}&bookIdentifier=${book.identifier}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    )
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Failed to fetch data");
+        }
+      })
+      .then((data) => {
+        console.log("response in user book highlights data: ", data);
+        console.log(
+          "response in user book highlights data: ",
+          data["highlights"]
+        );
+      })
+      .catch((error) => {});
+  };
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
@@ -61,12 +92,13 @@ const PDFViewer = ({ pdfUrl, book }) => {
         left: rect.left,
         height: rect.width,
         width: rect.height,
+        classname: span.className,
         text: selection.toString(),
       };
 
       document.body.appendChild(span);
       //console.log("book: ", book);
-      //insertIntoDb(highlight);
+      insertIntoDb(highlight);
     }
 
     console.log("selected range: ", selectedText);
