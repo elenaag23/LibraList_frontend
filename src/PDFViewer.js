@@ -12,9 +12,16 @@ const PDFViewer = ({ pdfUrl }) => {
   const [pageNumber, setPageNumber] = useState(1);
   const [selectedText, setSelectedText] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
+  const [idCounter, setIdCounter] = useState(0);
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
+  };
+
+  const generateId = (top, left) => {
+    let cnt = idCounter + 1;
+    setIdCounter(idCounter + 1);
+    return `P${pageNumber}-C${cnt}-T${top}-L${left}`;
   };
 
   const handleTextSelection = () => {
@@ -29,34 +36,26 @@ const PDFViewer = ({ pdfUrl }) => {
       const endContainer = range.endContainer;
       const isMultiRowSelection = startContainer !== endContainer;
 
-      if (
-        isMultiRowSelection ||
-        range.startOffset !== 0 ||
-        range.endOffset !== range.startContainer.textContent.length
-      ) {
-        const rect = range.getBoundingClientRect();
-        const span = document.createElement("span");
-        span.className =
-          selectedColor != null
-            ? "highlighted-text-" + selectedColor
-            : "highlighted-text-def";
-        span.style.position = "absolute";
-        span.style.top = rect.top + window.scrollY + "px";
-        span.style.left = rect.left + "px";
-        span.style.width = rect.width + "px";
-        span.style.height = rect.height + "px";
+      const rect = range.getBoundingClientRect();
+      const span = document.createElement("span");
+      span.className =
+        selectedColor != null
+          ? "highlighted-text-" + selectedColor
+          : "highlighted-text-def";
+      span.style.position = "absolute";
+      span.style.top = rect.top + window.scrollY + "px";
+      span.style.left = rect.left + "px";
+      span.style.width = rect.width + "px";
+      span.style.height = rect.height + "px";
 
-        document.body.appendChild(span);
-      } else {
-        const span = document.createElement("span");
-        span.className = "highlighted-text-red";
-        range.deleteContents();
-        range.insertNode(span);
-      }
+      span.id = generateId(
+        rect.top.toString().split(".")[0],
+        rect.left.toString().split(".")[0]
+      );
+
+      document.body.appendChild(span);
     }
 
-    console.log("I've selected: ", selection);
-    console.log("Range: ", selRange);
     setSelectedText(selection.toString());
   };
 
@@ -74,7 +73,6 @@ const PDFViewer = ({ pdfUrl }) => {
 
   const handleRadioChange = (event) => {
     setSelectedColor(event.target.value);
-    //$(".pdf-page span::selection").css("background-color", event.target.value);
     console.log("changed color: ", event.target.value);
   };
 
