@@ -7,12 +7,13 @@ import ClearIcon from "@mui/icons-material/Clear";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const PDFViewer = ({ pdfUrl }) => {
+const PDFViewer = ({ pdfUrl, book }) => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [selectedText, setSelectedText] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
   const [idCounter, setIdCounter] = useState(0);
+  const userMail = localStorage.getItem("userMail");
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
@@ -53,10 +54,44 @@ const PDFViewer = ({ pdfUrl }) => {
         rect.left.toString().split(".")[0]
       );
 
+      const highlight = {
+        id: span.id,
+        page: pageNumber,
+        top: rect.top + window.scrollY,
+        left: rect.left,
+        height: rect.width,
+        width: rect.height,
+        text: selection.toString(),
+      };
+
       document.body.appendChild(span);
+      //console.log("book: ", book);
+      //insertIntoDb(highlight);
     }
 
+    console.log("selected range: ", selectedText);
     setSelectedText(selection.toString());
+  };
+
+  const insertIntoDb = (highlight) => {
+    fetch("http://127.0.0.1:8000/addHighlight", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        user: userMail,
+        book: book.identifier,
+        highlight: highlight,
+      }),
+    })
+      .then((response) => {
+        console.log("response: ", response.json());
+      })
+      .catch((error) => {
+        // Handle any errors
+      });
   };
 
   const goToPreviousPage = () => {

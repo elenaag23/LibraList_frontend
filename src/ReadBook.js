@@ -93,7 +93,7 @@ const ReadBook = () => {
         <div>
           <div className="readBookContent">
             <div className="iframeDisplay bookBox">
-              {pdf && <PDFViewer pdfUrl={pdf}></PDFViewer>}
+              {pdf && book && <PDFViewer pdfUrl={pdf} book={book}></PDFViewer>}
             </div>
 
             <div className="bookSide">
