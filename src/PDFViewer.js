@@ -13,6 +13,7 @@ const PDFViewer = ({ pdfUrl, book }) => {
   const [selectedText, setSelectedText] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
   const [idCounter, setIdCounter] = useState(0);
+  const [highlights, setHighlights] = useState(null);
   const userMail = localStorage.getItem("userMail");
 
   useEffect(() => {
@@ -40,10 +41,81 @@ const PDFViewer = ({ pdfUrl, book }) => {
         console.log("response in user book highlights data: ", data);
         console.log(
           "response in user book highlights data: ",
-          data["highlights"]
+          data["highlights"],
+          typeof data["highlights"]
         );
+
+        setHighlights(data["highlights"]);
       })
       .catch((error) => {});
+  };
+
+  const displayHighlights = (pageNumber) => {
+    if (Object.keys(highlights).indexOf(pageNumber.toString()) != -1) {
+      for (var highlight of highlights[pageNumber]) {
+        console.log("current highlight: ", highlight);
+        const span = document.createElement("span");
+        span.className = highlight.classname;
+        span.style.position = "absolute";
+        span.style.top = highlight.top + "px";
+        span.style.left = highlight.left + "px";
+        span.style.width = highlight.width + "px";
+        span.style.height = highlight.height + "px";
+        span.id = highlight.id;
+
+        console.log("span creat: ", span);
+        document.body.appendChild(span);
+      }
+    }
+  };
+
+  const deleteHighlights = () => {
+    var highsDef = document.getElementsByClassName("highlighted-text-def");
+    //console.log("highsss: ", highs);
+
+    if (highsDef.length > 0) {
+      Array.from(highsDef).forEach((element) => {
+        element.remove();
+      });
+    }
+
+    var highsRed = document.getElementsByClassName("highlighted-text-red");
+    //console.log("highsss: ", highs);
+
+    if (highsRed.length > 0) {
+      Array.from(highsRed).forEach((element) => {
+        element.remove();
+      });
+    }
+
+    var highsBlue = document.getElementsByClassName("highlighted-text-blue");
+    // console.log("highsss: ", highs);
+
+    if (highsBlue.length > 0) {
+      Array.from(highsBlue).forEach((element) => {
+        element.remove();
+      });
+    }
+
+    var highsGreen = document.getElementsByClassName("highlighted-text-green");
+    //console.log("highsss: ", highs);
+
+    if (highsGreen.length > 0) {
+      Array.from(highsGreen).forEach((element) => {
+        element.remove();
+      });
+    }
+
+    var highsOrange = document.getElementsByClassName(
+      "highlighted-text-orange"
+    );
+    //console.log("highsss: ", highs);
+
+    if (highsOrange.length > 0) {
+      Array.from(highsOrange).forEach((element) => {
+        element.remove();
+      });
+    }
   };
 
   const onDocumentLoadSuccess = ({ numPages }) => {
@@ -90,14 +162,14 @@ const PDFViewer = ({ pdfUrl, book }) => {
         page: pageNumber,
         top: rect.top + window.scrollY,
         left: rect.left,
-        height: rect.width,
-        width: rect.height,
+        height: rect.height,
+        width: rect.width,
         classname: span.className,
         text: selection.toString(),
       };
 
       document.body.appendChild(span);
-      //console.log("book: ", book);
+      console.log("book: ", span);
       insertIntoDb(highlight);
     }
 
@@ -127,14 +199,20 @@ const PDFViewer = ({ pdfUrl, book }) => {
   };
 
   const goToPreviousPage = () => {
+    deleteHighlights();
+
     if (pageNumber > 1) {
       setPageNumber(pageNumber - 1);
+      displayHighlights(pageNumber - 1);
     }
   };
 
   const goToNextPage = () => {
+    deleteHighlights();
+
     if (pageNumber < numPages) {
       setPageNumber(pageNumber + 1);
+      displayHighlights(pageNumber + 1);
     }
   };
 
