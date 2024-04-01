@@ -526,3 +526,52 @@ background-color: #a1acde;
   display: flex;
   justify-content: center;
 }
+
+.backgroundColorred{
+  background-color: red;
+}
+
+.backgroundColorblue {
+  background-color: blue;
+}
+
+.backgroundColorgreen {
+  background-color: green;
+}
+
+.backgroundColororange {
+  background-color: orange;
+}
+
+.backgroundColordef {
+  background-color:#5569c3;
+}
+
+.colorHeader{
+  height:40px;
+  opacity: 0.5;
+  border: 2px solid #a1acde;
+}
+
+.contentHighlight{
+  height:350px;
+  overflow-y: auto;
+}
+
+.highlights{
+  border: 2px solid #6d7fcc;
+  margin-left: 24px;
+  border-radius: 5px;
+  margin-bottom: 16px;
+  background-color: #eceef8;
+}
+
+li{
+  text-align: justify;
+  padding: 8px;
+  font-size: 18px;
+}
+
+li::marker{
+  color: #5569c3;
+}

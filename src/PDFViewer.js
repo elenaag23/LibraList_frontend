@@ -7,7 +7,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const PDFViewer = ({ pdfUrl, book }) => {
+const PDFViewer = ({ pdfUrl, book, highs }) => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [selectedText, setSelectedText] = useState("");
@@ -17,38 +17,8 @@ const PDFViewer = ({ pdfUrl, book }) => {
   const userMail = localStorage.getItem("userMail");
 
   useEffect(() => {
-    userHasHighlights();
+    setHighlights(highs);
   }, []);
-
-  const userHasHighlights = () => {
-    fetch(
-      `http://127.0.0.1:8000/userHighlightsBook?userMail=${userMail}&bookIdentifier=${book.identifier}`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-        },
-      }
-    )
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Failed to fetch data");
-        }
-      })
-      .then((data) => {
-        console.log("response in user book highlights data: ", data);
-        console.log(
-          "response in user book highlights data: ",
-          data["highlights"],
-          typeof data["highlights"]
-        );
-
-        setHighlights(data["highlights"]);
-      })
-      .catch((error) => {});
-  };
 
   const displayHighlights = (pageNumber) => {
     if (Object.keys(highlights).indexOf(pageNumber.toString()) != -1) {
