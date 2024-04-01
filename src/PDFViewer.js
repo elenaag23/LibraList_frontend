@@ -71,7 +71,6 @@ const PDFViewer = ({ pdfUrl, book }) => {
 
   const deleteHighlights = () => {
     var highsDef = document.getElementsByClassName("highlighted-text-def");
-    //console.log("highsss: ", highs);
 
     if (highsDef.length > 0) {
       Array.from(highsDef).forEach((element) => {
@@ -80,7 +79,6 @@ const PDFViewer = ({ pdfUrl, book }) => {
     }
 
     var highsRed = document.getElementsByClassName("highlighted-text-red");
-    //console.log("highsss: ", highs);
 
     if (highsRed.length > 0) {
       Array.from(highsRed).forEach((element) => {
@@ -89,7 +87,6 @@ const PDFViewer = ({ pdfUrl, book }) => {
     }
 
     var highsBlue = document.getElementsByClassName("highlighted-text-blue");
-    // console.log("highsss: ", highs);
 
     if (highsBlue.length > 0) {
       Array.from(highsBlue).forEach((element) => {
@@ -98,7 +95,6 @@ const PDFViewer = ({ pdfUrl, book }) => {
     }
 
     var highsGreen = document.getElementsByClassName("highlighted-text-green");
-    //console.log("highsss: ", highs);
 
     if (highsGreen.length > 0) {
       Array.from(highsGreen).forEach((element) => {
@@ -109,7 +105,6 @@ const PDFViewer = ({ pdfUrl, book }) => {
     var highsOrange = document.getElementsByClassName(
       "highlighted-text-orange"
     );
-    //console.log("highsss: ", highs);
 
     if (highsOrange.length > 0) {
       Array.from(highsOrange).forEach((element) => {

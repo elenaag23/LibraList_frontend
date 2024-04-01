@@ -135,6 +135,16 @@ const ReadBook = () => {
               </div> */}
             </div>
           </div>
+
+          <div className="row">
+            <div className="col">div 1</div>
+
+            <div className="col">div 2</div>
+
+            <div className="col">div 3</div>
+            <div className="col">div 4</div>
+            <div className="col">div 5</div>
+          </div>
         </div>
       ) : (
         <p>No book details available.</p>
