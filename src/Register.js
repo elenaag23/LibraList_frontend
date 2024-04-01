@@ -37,7 +37,10 @@ function Register() {
   };
 
   return (
-    <div className="mycontainer" style={{ backgroundColor: "#b4bce4" }}>
+    <div
+      className="mycontainer"
+      style={{ backgroundImage: "url('background3.jpg')" }}
+    >
       <div className="registerComponent">
         <div className="pageTitle" style={{ marginTop: "50px" }}>
           <span>Register</span>
@@ -62,7 +65,7 @@ function Register() {
               className="inputStyle"
             />
           </div>
-          <div>
+          <div className="formItem">
             <input
               type="password"
               placeholder="Password"
@@ -72,7 +75,7 @@ function Register() {
             />
           </div>
 
-          <div>
+          <div className="formItem">
             <input
               type="password_confirm"
               placeholder="Confirm Password"
