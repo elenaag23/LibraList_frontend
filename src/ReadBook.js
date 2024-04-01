@@ -4,6 +4,7 @@ import PDFViewer from "./PDFViewer";
 import Sidebar from "./Sidebar";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import HighlightComponent from "./HighlightComponent";
 
 const ReadBook = () => {
   const location = useLocation();
@@ -15,6 +16,10 @@ const ReadBook = () => {
   const [loading, setLoading] = useState(true);
   const [pdf, setPdf] = useState(null);
   const [initialLoad, setInitialLoad] = useState(true);
+  const [highlights, setHighlights] = useState(null);
+  const [highlightedColors, setHiglightedColors] = useState(null);
+  const [col, setCol] = useState(null);
+  const [highlighted, setHighlighted] = useState(null);
 
   const addToLibrary = () => {
     setAdded(true);
@@ -76,6 +81,64 @@ const ReadBook = () => {
       });
   };
 
+  const displayHighlights = () => {
+    fetch(
+      `http://127.0.0.1:8000/displayHighlights?userMail=${userMail}&bookIdentifier=${book.identifier}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    )
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Failed to fetch data");
+        }
+      })
+      .then((data) => {
+        console.log("response in ujser has book data: ", data);
+        // if (data.has == true) setAdded(true);
+        // else setAdded(false);
+        // setLoading(false);
+      })
+      .catch((error) => {});
+  };
+
+  const userHasHighlights = () => {
+    fetch(
+      `http://127.0.0.1:8000/userHighlightsBook?userMail=${userMail}&bookIdentifier=${book.identifier}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    )
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Failed to fetch data");
+        }
+      })
+      .then((data) => {
+        console.log("response in user book highlights data: ", data);
+        console.log("hello ", Object.keys(data["colors"]));
+        console.log("hello1 ", data["colors"]);
+        console.log("hello2 ", data["colors"]["highlighted-text-def"]);
+        setHighlights(data["highlights"]);
+        setHiglightedColors(Object.keys(data["colors"]));
+        setHighlighted(data["colors"]);
+
+        if (Object.keys(data["colors"]).length < 2) setCol("col-4");
+        else setCol("col");
+      })
+      .catch((error) => {});
+  };
+
   useEffect(() => {
     console.log("prev page: ", localStorage.getItem("prevPage"));
     localStorage.setItem("prevPage", location.pathname);
@@ -83,6 +146,7 @@ const ReadBook = () => {
 
     getPDF();
     userHasBook();
+    userHasHighlights();
   }, []);
 
   // Render the book details
@@ -93,7 +157,13 @@ const ReadBook = () => {
         <div>
           <div className="readBookContent">
             <div className="iframeDisplay bookBox">
-              {pdf && book && <PDFViewer pdfUrl={pdf} book={book}></PDFViewer>}
+              {pdf && book && highlights && (
+                <PDFViewer
+                  pdfUrl={pdf}
+                  book={book}
+                  highs={highlights}
+                ></PDFViewer>
+              )}
             </div>
 
             <div className="bookSide">
@@ -136,14 +206,35 @@ const ReadBook = () => {
             </div>
           </div>
 
-          <div className="row">
-            <div className="col">div 1</div>
+          <div className="row" style={{ width: "100%", marginTop: "36px" }}>
+            {highlights && (
+              <div className="pageTitle">
+                <span>Your Highlights</span>
+              </div>
+            )}
 
-            <div className="col">div 2</div>
+            <div className="row" style={{ marginTop: "16px" }}>
+              {highlightedColors &&
+                highlightedColors.map((element, index) => (
+                  <HighlightComponent
+                    colorHeader={`backgroundColor${element.split("-").pop()}`}
+                    col={col}
+                    highlighted={highlighted[element]}
+                  />
+                ))}
 
-            <div className="col">div 3</div>
-            <div className="col">div 4</div>
-            <div className="col">div 5</div>
+              {/* <HighlightComponent colorHeader={"backgroundColorRed"} />
+              <HighlightComponent colorHeader={"backgroundColorBlue"} />
+              <HighlightComponent colorHeader={"backgroundColorGreen"} />
+              <HighlightComponent colorHeader={"backgroundColorOrange"} />
+              <HighlightComponent colorHeader={"backgroundColorDef"} /> */}
+
+              {/* <div className="col">div 2</div>
+
+              <div className="col">div 3</div>
+              <div className="col">div 4</div>
+              <div className="col">div 5</div> */}
+            </div>
           </div>
         </div>
       ) : (
