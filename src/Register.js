@@ -8,15 +8,16 @@ function Register() {
   const [password_confirm, setPasswordConfirm] = useState("");
   const [error, setError] = useState(null);
 
-  const userData = {
-    name: name,
-    email: email,
-    password: password,
-    password_confirm: password_confirm,
-  };
+  const handleRegister = () => {
+    console.log("entered register");
+    const userData = {
+      name: name,
+      email: email,
+      password: password,
+      password_confirm: password_confirm,
+    };
 
-  const handleRegister = async () => {
-    fetch("127.0.0.1:8000/register", {
+    fetch("http://127.0.0.1:8000/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -24,15 +25,18 @@ function Register() {
       body: JSON.stringify(userData),
     })
       .then((response) => {
-        response.json();
-        console.log("response: ", response);
-        window.location.href = "/login";
+        if (response.ok) {
+          window.location.href = "/login";
+        }
+        return response.json();
       })
       .then((data) => {
-        // Handle the response data here
+        console.log("data received: ", data.message);
+        alert(data.message);
+        //window.location.href = "/login";
       })
       .catch((error) => {
-        // Handle any errors
+        console.log("error in error: ", error);
       });
   };
 
@@ -77,7 +81,7 @@ function Register() {
 
           <div className="formItem">
             <input
-              type="password_confirm"
+              type="password"
               placeholder="Confirm Password"
               value={password_confirm}
               onChange={(e) => setPasswordConfirm(e.target.value)}

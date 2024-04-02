@@ -20,17 +20,25 @@ function Login() {
       body: JSON.stringify(userData),
     })
       .then((response) => {
-        // Parse the JSON response
+        // if (response.ok) {
+        //   var data = response.json();
+        //   console.log("tokennnn: ", data);
+        //   localStorage.setItem("authToken", data.token);
+        //   //window.location.href = "/toread";
+        // }
         return response.json(); // Return the parsed JSON data
       })
       .then((data) => {
-        console.log("data received: ", data);
-        localStorage.setItem("authToken", data.token);
-        window.location.href = "/toread";
+        if (data.token) {
+          localStorage.setItem("authToken", data.token);
+          window.location.href = "/toread";
+        } else if (data.message) {
+          alert(data.message);
+        }
+        console.log("data received: ", data.message);
+        //window.location.href = "/toread";
       })
-      .catch((error) => {
-        // Handle any errors
-      });
+      .catch((error) => {});
   };
 
   return (

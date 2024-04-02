@@ -5,7 +5,37 @@ import { Link, NavLink } from "react-router-dom";
 
 function Sidebar() {
   const [currentUser, setCurrentUser] = useState(null);
-  const username = localStorage.getItem("userName");
+
+  useEffect(() => {
+    localStorage.setItem("prevPage", "/");
+    const getCurrentUser = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        console.log("current token: ", token);
+
+        const response = await fetch("http://127.0.0.1:8000/authUser", {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch user data");
+        }
+        const data = await response.json();
+
+        console.log("current user: ", data);
+        localStorage.setItem("userName", data.name);
+        setCurrentUser(data.name);
+        localStorage.setItem("userMail", data.email);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    getCurrentUser();
+  }, []);
 
   const handleLogout = async () => {
     fetch("127.0.0.1:8000/logout", {
@@ -17,6 +47,9 @@ function Sidebar() {
     })
       .then((response) => {
         response.json();
+        localStorage.setItem("authToken", null);
+        localStorage.setItem("userName", null);
+        localStorage.setItem("userMail", null);
         console.log("response: ", response);
         window.location.href = "/login";
       })
@@ -73,7 +106,7 @@ function Sidebar() {
             >
               <div className="displayName">
                 <span>Hello</span>
-                {username != null ? <span>, {username}</span> : null}
+                {currentUser != null ? <span>, {currentUser}</span> : null}
                 <span>!</span>
               </div>
               <div id="logoutButton">
