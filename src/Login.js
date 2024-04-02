@@ -34,7 +34,10 @@ function Login() {
   };
 
   return (
-    <div className="mycontainer" style={{ backgroundColor: "#d9def2" }}>
+    <div
+      className="mycontainer"
+      style={{ backgroundImage: "url('bookBackground.jpg')" }}
+    >
       <div className="loginComponent">
         <div
           className="pageTitle"

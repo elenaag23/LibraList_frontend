@@ -136,6 +136,15 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
       document.body.appendChild(span);
       console.log("book: ", span);
       insertIntoDb(highlight);
+
+      const liElement = $(`<li>${selection.toString()}</li>`);
+      $(
+        `.colorHeader.backgroundColor${
+          selectedColor != null ? selectedColor : "def"
+        }`
+      )
+        .next(".contentHighlight")
+        .append(liElement);
     }
 
     console.log("selected range: ", selectedText);
