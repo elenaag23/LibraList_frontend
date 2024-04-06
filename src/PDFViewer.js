@@ -7,7 +7,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const PDFViewer = ({ pdfUrl, book, highs }) => {
+const PDFViewer = ({ pdfUrl, book, highs, highlighted }) => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [selectedText, setSelectedText] = useState("");
@@ -19,6 +19,8 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
 
   useEffect(() => {
     console.log("in pdf viewer: ", pdfUrl);
+    console.log("in pdf highs: ", highs);
+    console.log("in pdf highlightedColors: ", highlighted);
     setHighlights(highs);
   }, []);
 
@@ -86,6 +88,8 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
   };
 
   const onDocumentLoadSuccess = ({ numPages }) => {
+    console.log("highlights: ", highlights);
+    console.log("highlighted colors: ", highlighted);
     setTimeout(() => {
       var elements = document.getElementsByClassName(
         "react-pdf__Page__textContent textLayer"
@@ -103,23 +107,6 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
         console.log("Element not found");
       }
     }, 1000);
-
-    var canvasElement = document.getElementsByTagName("canvas");
-    console.log("canvasElement: ", canvasElement);
-
-    var element = document.getElementsByClassName(
-      "react-pdf__Page__textContent textLayer"
-    );
-    console.log("page element: ", element);
-
-    var jqElement = $(".react-pdf__Page__textContent.textLayer");
-    console.log("page element length jquery: ", jqElement);
-
-    //console.log("page element length: ", element.size);
-
-    // for (var i = 0; i < element.length; i++) {
-    //   console.log("element of array: ", element[i]);
-    // }
 
     setNumPages(numPages);
   };
@@ -144,6 +131,7 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
 
       const rect = range.getBoundingClientRect();
       const span = document.createElement("span");
+
       span.className =
         selectedColor != null
           ? "highlighted-text-" + selectedColor
@@ -174,14 +162,37 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
       console.log("book: ", span);
       insertIntoDb(highlight);
 
-      const liElement = $(`<li>${selection.toString()}</li>`);
-      $(
-        `.colorHeader.backgroundColor${
+      var liElement = $(`<li>${selection.toString()}</li>`);
+      var classOfElem =
+        "highlighted-text-" + (selectedColor != null ? selectedColor : "def");
+
+      if (highlighted.indexOf(classOfElem) != -1) {
+        console.log("does exist");
+        $(
+          `.colorHeader.backgroundColor${
+            selectedColor != null ? selectedColor : "def"
+          }`
+        )
+          .next(".contentHighlight")
+          .append(liElement);
+      } else {
+        console.log("does not exist");
+        var getCol = highlighted.length < 2 ? "col-4" : "col";
+        var classname = `colorHeader backgroundColor${
           selectedColor != null ? selectedColor : "def"
-        }`
-      )
-        .next(".contentHighlight")
-        .append(liElement);
+        }`;
+        var firstDiv = $(
+          `<div class = '${getCol} highlights'><div class = '${classname}'></div></div>`
+        );
+
+        var liDiv = $("<div class = 'contentHighlight'></div>");
+
+        liDiv.append(liElement);
+        firstDiv.append(liDiv);
+
+        console.log("this is how firstDiv looks like: ", firstDiv);
+        $("#highlightsComponent").append(firstDiv);
+      }
     }
 
     console.log("selected range: ", selection.toString());

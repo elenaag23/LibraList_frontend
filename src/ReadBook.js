@@ -17,7 +17,7 @@ const ReadBook = () => {
   const [pdf, setPdf] = useState(null);
   const [initialLoad, setInitialLoad] = useState(true);
   const [highlights, setHighlights] = useState(null);
-  const [highlightedColors, setHiglightedColors] = useState(null);
+  const [highlightedColors, setHighlightedColors] = useState(null);
   const [col, setCol] = useState(null);
   const [highlighted, setHighlighted] = useState(null);
   const [noHighlights, setNoHighlights] = useState(true);
@@ -128,13 +128,19 @@ const ReadBook = () => {
       })
       .then((data) => {
         console.log("response in user book highlights data: ", data);
-        console.log("highlights data: ", data["highlights"]);
-        console.log("hello ", Object.keys(data["colors"]));
-        console.log("hello1 ", data["colors"]);
-        console.log("hello2 ", data["colors"]["highlighted-text-def"]);
-        if (data["highlights"] != []) setHighlights(data["highlights"]);
-        setHiglightedColors(Object.keys(data["colors"]));
-        setHighlighted(data["colors"]);
+
+        if (data["highlights"].length == 0) {
+          console.log("entered if");
+          setHighlights([]);
+          setHighlightedColors([]);
+          setHighlighted(null);
+        } else {
+          console.log("entered else");
+          setHighlights(data["highlights"]);
+          setHighlightedColors(Object.keys(data["colors"]));
+          setHighlighted(data["colors"]);
+          setNoHighlights(false);
+        }
 
         if (Object.keys(data["colors"]).length < 2) setCol("col-4");
         else setCol("col");
@@ -149,6 +155,9 @@ const ReadBook = () => {
     getPDF();
     console.log("pdf?? ", pdf);
     userHasBook();
+  }, []);
+
+  useEffect(() => {
     userHasHighlights();
   }, []);
 
@@ -160,13 +169,21 @@ const ReadBook = () => {
         <div>
           <div className="readBookContent">
             <div className="iframeDisplay bookBox">
-              {pdf && book && (
-                <PDFViewer
-                  pdfUrl={pdf}
-                  book={book}
-                  highs={highlights}
-                ></PDFViewer>
-              )}
+              {console.log("pdf:", pdf)}
+              {console.log("book:", book)}
+              {console.log("highlights:", highlights)}
+              {console.log("highlightedColors:", highlightedColors)}
+              {pdf &&
+                book &&
+                highlights !== null &&
+                highlightedColors !== null && (
+                  <PDFViewer
+                    pdfUrl={pdf}
+                    book={book}
+                    highs={highlights}
+                    highlighted={highlightedColors}
+                  ></PDFViewer>
+                )}
             </div>
 
             <div className="bookSide">
@@ -210,13 +227,17 @@ const ReadBook = () => {
           </div>
 
           <div className="row" style={{ width: "100%", marginTop: "36px" }}>
-            {highlights && (
+            {highlighted && (
               <div className="pageTitle">
                 <span>Your Highlights</span>
               </div>
             )}
 
-            <div className="row" style={{ marginTop: "16px" }}>
+            <div
+              className="row"
+              style={{ marginTop: "16px" }}
+              id="highlightsComponent"
+            >
               {highlightedColors &&
                 highlightedColors.map((element, index) => (
                   <HighlightComponent
