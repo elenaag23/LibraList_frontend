@@ -16,32 +16,32 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem("prevPage", "/");
-    // const getCurrentUser = async () => {
-    //   try {
-    //     const token = localStorage.getItem("authToken");
-    //     console.log("current token: ", token);
+    const getCurrentUser = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        console.log("current token: ", token);
 
-    //     const response = await fetch("http://127.0.0.1:8000/authUser", {
-    //       method: "GET",
-    //       headers: {
-    //         Accept: "application/json",
-    //         Authorization: `Bearer ${token}`,
-    //       },
-    //     });
-    //     if (!response.ok) {
-    //       throw new Error("Failed to fetch user data");
-    //     }
-    //     const data = await response.json();
+        const response = await fetch("http://127.0.0.1:8000/authUser", {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch user data");
+        }
+        const data = await response.json();
 
-    //     console.log("current user: ", data);
-    //     localStorage.setItem("userName", data.name);
-    //     localStorage.setItem("userMail", data.email);
-    //   } catch (error) {
-    //     console.error("Error fetching user data:", error);
-    //   }
-    // };
+        console.log("current user: ", data);
+        localStorage.setItem("userName", data.name);
+        localStorage.setItem("userMail", data.email);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
 
-    // getCurrentUser();
+    getCurrentUser();
   }, []);
 
   return (

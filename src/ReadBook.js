@@ -20,6 +20,7 @@ const ReadBook = () => {
   const [highlightedColors, setHiglightedColors] = useState(null);
   const [col, setCol] = useState(null);
   const [highlighted, setHighlighted] = useState(null);
+  const [noHighlights, setNoHighlights] = useState(true);
 
   const addToLibrary = () => {
     setAdded(true);
@@ -74,6 +75,7 @@ const ReadBook = () => {
     })
       .then((response) => response.blob())
       .then((blob) => {
+        console.log("here s blob: ", blob);
         setPdf(blob);
       })
       .catch((error) => {
@@ -126,9 +128,12 @@ const ReadBook = () => {
       })
       .then((data) => {
         console.log("response in user book highlights data: ", data);
+        console.log("highlights data: ", data["highlights"]);
         console.log("hello ", Object.keys(data["colors"]));
         console.log("hello1 ", data["colors"]);
         console.log("hello2 ", data["colors"]["highlighted-text-def"]);
+        if (data["highlights"] == []) setNoHighlights(true);
+        else setNoHighlights(false);
         setHighlights(data["highlights"]);
         setHiglightedColors(Object.keys(data["colors"]));
         setHighlighted(data["colors"]);
@@ -142,11 +147,16 @@ const ReadBook = () => {
   useEffect(() => {
     console.log("prev page: ", localStorage.getItem("prevPage"));
     localStorage.setItem("prevPage", location.pathname);
-    console.log("pdf?? ", pdf);
 
     getPDF();
+    console.log("pdf?? ", pdf);
     userHasBook();
     userHasHighlights();
+
+    console.log(
+      "value of condition: ",
+      pdf && book && (noHighlights || highlights)
+    );
   }, []);
 
   // Render the book details
@@ -157,13 +167,14 @@ const ReadBook = () => {
         <div>
           <div className="readBookContent">
             <div className="iframeDisplay bookBox">
-              {pdf && book && highlights && (
-                <PDFViewer
-                  pdfUrl={pdf}
-                  book={book}
-                  highs={highlights}
-                ></PDFViewer>
-              )}
+              {((pdf && book && noHighlights) ||
+                (pdf && book && highlights) && (
+                  <PDFViewer
+                    pdfUrl={pdf}
+                    book={book}
+                    highs={highlights}
+                  ></PDFViewer>
+                ))}
             </div>
 
             <div className="bookSide">

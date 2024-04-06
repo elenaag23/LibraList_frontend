@@ -5,36 +5,37 @@ import { Link, NavLink } from "react-router-dom";
 
 function Sidebar() {
   const [currentUser, setCurrentUser] = useState(null);
+  const user = localStorage.getItem("userName");
 
   useEffect(() => {
     localStorage.setItem("prevPage", "/");
-    const getCurrentUser = async () => {
-      try {
-        const token = localStorage.getItem("authToken");
-        console.log("current token: ", token);
+    // const getCurrentUser = async () => {
+    //   try {
+    //     const token = localStorage.getItem("authToken");
+    //     console.log("current token: ", token);
 
-        const response = await fetch("http://127.0.0.1:8000/authUser", {
-          method: "GET",
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch user data");
-        }
-        const data = await response.json();
+    //     const response = await fetch("http://127.0.0.1:8000/authUser", {
+    //       method: "GET",
+    //       headers: {
+    //         Accept: "application/json",
+    //         Authorization: `Bearer ${token}`,
+    //       },
+    //     });
+    //     if (!response.ok) {
+    //       throw new Error("Failed to fetch user data");
+    //     }
+    //     const data = await response.json();
 
-        console.log("current user: ", data);
-        localStorage.setItem("userName", data.name);
-        setCurrentUser(data.name);
-        localStorage.setItem("userMail", data.email);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
+    //     console.log("current user: ", data);
+    //     localStorage.setItem("userName", data.name);
+    //     setCurrentUser(data.name);
+    //     localStorage.setItem("userMail", data.email);
+    //   } catch (error) {
+    //     console.error("Error fetching user data:", error);
+    //   }
+    // };
 
-    getCurrentUser();
+    // getCurrentUser();
   }, []);
 
   const handleLogout = async () => {
@@ -106,7 +107,7 @@ function Sidebar() {
             >
               <div className="displayName">
                 <span>Hello</span>
-                {currentUser != null ? <span>, {currentUser}</span> : null}
+                {user != null ? <span>, {user}</span> : null}
                 <span>!</span>
               </div>
               <div id="logoutButton">

@@ -15,8 +15,10 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
   const [idCounter, setIdCounter] = useState(0);
   const [highlights, setHighlights] = useState(null);
   const userMail = localStorage.getItem("userMail");
+  const [scale, setScale] = useState(1.7);
 
   useEffect(() => {
+    console.log("in pdf viewer: ", pdfUrl);
     setHighlights(highs);
   }, []);
 
@@ -27,10 +29,10 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
         const span = document.createElement("span");
         span.className = highlight.classname;
         span.style.position = "absolute";
-        span.style.top = highlight.top + "px";
-        span.style.left = highlight.left + "px";
-        span.style.width = highlight.width + "px";
-        span.style.height = highlight.height + "px";
+        span.style.top = highlight.top * scale + "px";
+        span.style.left = highlight.left * scale + "px";
+        span.style.width = highlight.width * scale + "px";
+        span.style.height = highlight.height * scale + "px";
         span.id = highlight.id;
 
         console.log("span creat: ", span);
@@ -84,6 +86,37 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
   };
 
   const onDocumentLoadSuccess = ({ numPages }) => {
+    // Wait for the DOM to be fully loaded
+    $(document).ready(function () {
+      // Execute code after DOM is ready
+
+      // Get the canvas element
+      var $canvas = $(".react-pdf__Page__canvas");
+
+      // Check if the canvas element exists
+      if ($canvas.length > 0) {
+        // Get the inline style of the canvas element
+        var canvasStyle = $canvas.attr("style");
+
+        // Check if inline style is defined
+        if (canvasStyle) {
+          // Extract width and height from the inline style
+          var matchWidth = canvasStyle.match(/width:\s*([\d.]+)px/);
+          var matchHeight = canvasStyle.match(/height:\s*([\d.]+)px/);
+
+          // Extracted width and height values
+          var canvasWidth = matchWidth ? parseFloat(matchWidth[1]) : null;
+          var canvasHeight = matchHeight ? parseFloat(matchHeight[1]) : null;
+
+          console.log("Width:", canvasWidth, "Height:", canvasHeight);
+        } else {
+          console.log("Canvas element style attribute is not defined.");
+        }
+      } else {
+        console.log("Canvas element not found.");
+      }
+    });
+
     setNumPages(numPages);
   };
 
@@ -112,10 +145,10 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
           ? "highlighted-text-" + selectedColor
           : "highlighted-text-def";
       span.style.position = "absolute";
-      span.style.top = rect.top + window.scrollY + "px";
-      span.style.left = rect.left + "px";
-      span.style.width = rect.width + "px";
-      span.style.height = rect.height + "px";
+      span.style.top = (rect.top + window.scrollY) * scale + "px";
+      span.style.left = rect.left * scale + "px";
+      span.style.width = rect.width * scale + "px";
+      span.style.height = rect.height * scale + "px";
 
       span.id = generateId(
         rect.top.toString().split(".")[0],
@@ -147,7 +180,7 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
         .append(liElement);
     }
 
-    console.log("selected range: ", selectedText);
+    console.log("selected range: ", selection.toString());
     setSelectedText(selection.toString());
   };
 
@@ -177,7 +210,8 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
 
     if (pageNumber > 1) {
       setPageNumber(pageNumber - 1);
-      displayHighlights(pageNumber - 1);
+      console.log("highlights 1: ", highlights);
+      if (highlights != null) displayHighlights(pageNumber - 1);
     }
   };
 
@@ -186,7 +220,9 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
 
     if (pageNumber < numPages) {
       setPageNumber(pageNumber + 1);
-      displayHighlights(pageNumber + 1);
+      console.log("highlights 2: ", highlights);
+
+      if (highlights != null) displayHighlights(pageNumber + 1);
     }
   };
 
@@ -200,8 +236,18 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
     setSelectedColor(null);
   };
 
+  const handleZoomIn = () => {
+    setScale(scale + 0.1);
+  };
+
+  const handleZoomOut = () => {
+    setScale(scale - 0.1);
+  };
+
   return (
     <div style={{ display: "flex" }}>
+      <button onClick={handleZoomIn}>Zoom In</button>
+      <button onClick={handleZoomOut}>Zoom Out</button>
       <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
         <Page
           pageNumber={pageNumber}
@@ -209,6 +255,7 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
           renderTextLayer={true}
           loading={<div>Wait, your pdf is loading...</div>}
           onMouseUp={handleTextSelection}
+          scale={scale}
         ></Page>
       </Document>
 
