@@ -132,9 +132,7 @@ const ReadBook = () => {
         console.log("hello ", Object.keys(data["colors"]));
         console.log("hello1 ", data["colors"]);
         console.log("hello2 ", data["colors"]["highlighted-text-def"]);
-        if (data["highlights"] == []) setNoHighlights(true);
-        else setNoHighlights(false);
-        setHighlights(data["highlights"]);
+        if (data["highlights"] != []) setHighlights(data["highlights"]);
         setHiglightedColors(Object.keys(data["colors"]));
         setHighlighted(data["colors"]);
 
@@ -152,11 +150,6 @@ const ReadBook = () => {
     console.log("pdf?? ", pdf);
     userHasBook();
     userHasHighlights();
-
-    console.log(
-      "value of condition: ",
-      pdf && book && (noHighlights || highlights)
-    );
   }, []);
 
   // Render the book details
@@ -167,14 +160,13 @@ const ReadBook = () => {
         <div>
           <div className="readBookContent">
             <div className="iframeDisplay bookBox">
-              {((pdf && book && noHighlights) ||
-                (pdf && book && highlights) && (
-                  <PDFViewer
-                    pdfUrl={pdf}
-                    book={book}
-                    highs={highlights}
-                  ></PDFViewer>
-                ))}
+              {pdf && book && (
+                <PDFViewer
+                  pdfUrl={pdf}
+                  book={book}
+                  highs={highlights}
+                ></PDFViewer>
+              )}
             </div>
 
             <div className="bookSide">

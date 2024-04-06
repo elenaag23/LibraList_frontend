@@ -15,7 +15,7 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
   const [idCounter, setIdCounter] = useState(0);
   const [highlights, setHighlights] = useState(null);
   const userMail = localStorage.getItem("userMail");
-  const [scale, setScale] = useState(1.7);
+  const [scale, setScale] = useState(1);
 
   useEffect(() => {
     console.log("in pdf viewer: ", pdfUrl);
@@ -29,10 +29,10 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
         const span = document.createElement("span");
         span.className = highlight.classname;
         span.style.position = "absolute";
-        span.style.top = highlight.top * scale + "px";
-        span.style.left = highlight.left * scale + "px";
-        span.style.width = highlight.width * scale + "px";
-        span.style.height = highlight.height * scale + "px";
+        span.style.top = highlight.top + "px";
+        span.style.left = highlight.left + "px";
+        span.style.width = highlight.width + "px";
+        span.style.height = highlight.height + "px";
         span.id = highlight.id;
 
         console.log("span creat: ", span);
@@ -86,36 +86,40 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
   };
 
   const onDocumentLoadSuccess = ({ numPages }) => {
-    // Wait for the DOM to be fully loaded
-    $(document).ready(function () {
-      // Execute code after DOM is ready
-
-      // Get the canvas element
-      var $canvas = $(".react-pdf__Page__canvas");
-
-      // Check if the canvas element exists
-      if ($canvas.length > 0) {
-        // Get the inline style of the canvas element
-        var canvasStyle = $canvas.attr("style");
-
-        // Check if inline style is defined
-        if (canvasStyle) {
-          // Extract width and height from the inline style
-          var matchWidth = canvasStyle.match(/width:\s*([\d.]+)px/);
-          var matchHeight = canvasStyle.match(/height:\s*([\d.]+)px/);
-
-          // Extracted width and height values
-          var canvasWidth = matchWidth ? parseFloat(matchWidth[1]) : null;
-          var canvasHeight = matchHeight ? parseFloat(matchHeight[1]) : null;
-
-          console.log("Width:", canvasWidth, "Height:", canvasHeight);
-        } else {
-          console.log("Canvas element style attribute is not defined.");
+    setTimeout(() => {
+      var elements = document.getElementsByClassName(
+        "react-pdf__Page__textContent textLayer"
+      );
+      if (elements.length > 0) {
+        var firstElement = elements[0];
+        var width = firstElement.clientWidth;
+        if (width < 500) {
+          setScale(1.7);
         }
+        console.log("First page element: ", firstElement);
+        console.log("height: ", firstElement.clientHeight);
+        console.log("width: ", firstElement.clientWidth);
       } else {
-        console.log("Canvas element not found.");
+        console.log("Element not found");
       }
-    });
+    }, 1000);
+
+    var canvasElement = document.getElementsByTagName("canvas");
+    console.log("canvasElement: ", canvasElement);
+
+    var element = document.getElementsByClassName(
+      "react-pdf__Page__textContent textLayer"
+    );
+    console.log("page element: ", element);
+
+    var jqElement = $(".react-pdf__Page__textContent.textLayer");
+    console.log("page element length jquery: ", jqElement);
+
+    //console.log("page element length: ", element.size);
+
+    // for (var i = 0; i < element.length; i++) {
+    //   console.log("element of array: ", element[i]);
+    // }
 
     setNumPages(numPages);
   };
@@ -145,10 +149,10 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
           ? "highlighted-text-" + selectedColor
           : "highlighted-text-def";
       span.style.position = "absolute";
-      span.style.top = (rect.top + window.scrollY) * scale + "px";
-      span.style.left = rect.left * scale + "px";
-      span.style.width = rect.width * scale + "px";
-      span.style.height = rect.height * scale + "px";
+      span.style.top = rect.top + window.scrollY + "px";
+      span.style.left = rect.left + "px";
+      span.style.width = rect.width + "px";
+      span.style.height = rect.height + "px";
 
       span.id = generateId(
         rect.top.toString().split(".")[0],
@@ -181,6 +185,7 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
     }
 
     console.log("selected range: ", selection.toString());
+
     setSelectedText(selection.toString());
   };
 
@@ -246,8 +251,6 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
 
   return (
     <div style={{ display: "flex" }}>
-      <button onClick={handleZoomIn}>Zoom In</button>
-      <button onClick={handleZoomOut}>Zoom Out</button>
       <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
         <Page
           pageNumber={pageNumber}
