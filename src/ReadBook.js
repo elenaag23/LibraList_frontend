@@ -271,7 +271,11 @@ const ReadBook = () => {
             </div>
           </div>
 
-          <div className="row" style={{ width: "100%", marginTop: "36px" }}>
+          <div
+            className="row"
+            style={{ width: "100%", marginTop: "36px" }}
+            id="highlightsContainer"
+          >
             {highlighted && (
               <div className="pageTitle">
                 <span>Your Highlights</span>

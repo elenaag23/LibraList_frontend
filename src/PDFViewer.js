@@ -16,12 +16,14 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted }) => {
   const [highlights, setHighlights] = useState(null);
   const userMail = localStorage.getItem("userMail");
   const [scale, setScale] = useState(1);
+  const [noColors, setNoColors] = useState(0);
 
   useEffect(() => {
     console.log("in pdf viewer: ", pdfUrl);
     console.log("in pdf highs: ", highs);
     console.log("in pdf highlightedColors: ", highlighted);
     setHighlights(highs);
+    setNoColors(highlighted.length);
   }, []);
 
   const displayHighlights = (pageNumber) => {
@@ -177,12 +179,13 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted }) => {
           .append(liElement);
       } else {
         console.log("does not exist");
-        var getCol = highlighted.length < 2 ? "col-4" : "col";
+
+        //var getCol = noColors < 2 ? "col-2" : "col";
         var classname = `colorHeader backgroundColor${
           selectedColor != null ? selectedColor : "def"
         }`;
         var firstDiv = $(
-          `<div class = '${getCol} highlights'><div class = '${classname}'></div></div>`
+          `<div class = 'col-3 highlights'><div class = '${classname}'></div></div>`
         );
 
         var liDiv = $("<div class = 'contentHighlight'></div>");
@@ -192,6 +195,14 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted }) => {
 
         console.log("this is how firstDiv looks like: ", firstDiv);
         $("#highlightsComponent").append(firstDiv);
+        // if (noColors == 0) {
+        //   var title = $(
+        //     '<div class="pageTitle"><span>Your Highlights</span></div>'
+        //   );
+
+        //   $("#highlightsContainer").append(title);
+        // }
+        setNoColors(noColors + 1);
       }
     }
 
