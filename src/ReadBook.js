@@ -5,6 +5,8 @@ import Sidebar from "./Sidebar";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import HighlightComponent from "./HighlightComponent";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ReadBook = () => {
   const location = useLocation();
@@ -22,8 +24,14 @@ const ReadBook = () => {
   const [highlighted, setHighlighted] = useState(null);
   const [noHighlights, setNoHighlights] = useState(true);
 
+  const showToastMessage = () => {
+    console.log("entered toast");
+    toast.info("Book added to your library!", {
+      position: "top-center",
+    });
+  };
+
   const addToLibrary = () => {
-    setAdded(true);
     fetch("http://127.0.0.1:8000/addToLibrary", {
       method: "POST",
       headers: {
@@ -34,6 +42,10 @@ const ReadBook = () => {
     })
       .then((response) => {
         console.log("response: ", response.json());
+        if (response.ok) {
+          setAdded(true);
+          showToastMessage();
+        }
       })
       .catch((error) => {
         // Handle any errors
@@ -210,6 +222,7 @@ const ReadBook = () => {
   return (
     <div>
       <Sidebar></Sidebar>
+      <ToastContainer />
       {book ? (
         <div>
           <div className="readBookContent">

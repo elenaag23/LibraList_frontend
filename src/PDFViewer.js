@@ -99,8 +99,12 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted }) => {
       if (elements.length > 0) {
         var firstElement = elements[0];
         var width = firstElement.clientWidth;
-        if (width < 500) {
+        if (width < 300) {
+          setScale(2);
+        } else if (width < 400) {
           setScale(1.7);
+        } else if (width < 500) {
+          setScale(1.5);
         }
         console.log("First page element: ", firstElement);
         console.log("height: ", firstElement.clientHeight);
