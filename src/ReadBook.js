@@ -148,6 +148,50 @@ const ReadBook = () => {
       .catch((error) => {});
   };
 
+  const deleteHighlights = () => {
+    var highsDef = document.getElementsByClassName("highlighted-text-def");
+
+    if (highsDef.length > 0) {
+      Array.from(highsDef).forEach((element) => {
+        element.remove();
+      });
+    }
+
+    var highsRed = document.getElementsByClassName("highlighted-text-red");
+
+    if (highsRed.length > 0) {
+      Array.from(highsRed).forEach((element) => {
+        element.remove();
+      });
+    }
+
+    var highsBlue = document.getElementsByClassName("highlighted-text-blue");
+
+    if (highsBlue.length > 0) {
+      Array.from(highsBlue).forEach((element) => {
+        element.remove();
+      });
+    }
+
+    var highsGreen = document.getElementsByClassName("highlighted-text-green");
+
+    if (highsGreen.length > 0) {
+      Array.from(highsGreen).forEach((element) => {
+        element.remove();
+      });
+    }
+
+    var highsOrange = document.getElementsByClassName(
+      "highlighted-text-orange"
+    );
+
+    if (highsOrange.length > 0) {
+      Array.from(highsOrange).forEach((element) => {
+        element.remove();
+      });
+    }
+  };
+
   useEffect(() => {
     console.log("prev page: ", localStorage.getItem("prevPage"));
     localStorage.setItem("prevPage", location.pathname);
@@ -155,10 +199,11 @@ const ReadBook = () => {
     getPDF();
     console.log("pdf?? ", pdf);
     userHasBook();
-  }, []);
-
-  useEffect(() => {
     userHasHighlights();
+
+    return () => {
+      deleteHighlights();
+    };
   }, []);
 
   // Render the book details
