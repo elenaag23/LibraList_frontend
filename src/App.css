@@ -577,3 +577,17 @@ li{
 li::marker{
   color: #5569c3;
 }
+
+.noBooks{
+  background-color: #a1acde;
+  margin-top: 100px;
+  width: 30%;
+  display: inline-block;
+  height: 50px;
+  text-align: center;
+  padding-top: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 5px;
+  color:white;
+}
