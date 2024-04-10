@@ -17,6 +17,7 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted }) => {
   const userMail = localStorage.getItem("userMail");
   const [scale, setScale] = useState(1);
   const [noColors, setNoColors] = useState(0);
+  const [value, setValue] = useState(pageNumber);
 
   useEffect(() => {
     console.log("in pdf viewer: ", pdfUrl);
@@ -275,6 +276,19 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted }) => {
     setScale(scale - 0.1);
   };
 
+  const handleChangePage = (e) => {
+    const newPageNumber = parseInt(e.target.value);
+    setPageNumber(newPageNumber);
+  };
+
+  const handleClickOutside = () => {
+    // Handle click outside by triggering blur event
+    const input = document.getElementById("pageInput");
+    if (input) {
+      input.blur();
+    }
+  };
+
   return (
     <div style={{ display: "flex" }}>
       <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
@@ -290,10 +304,19 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted }) => {
 
       <div>
         <div className="pagesDiv">
-          <p>
-            Page {pageNumber} of {numPages}
-          </p>
-          <div style={{ paddingLeft: "15px" }}>
+          <div className="row" style={{ paddingTop: "15px", height: "50%" }}>
+            <div>
+              <input
+                id="pageInput"
+                type="number"
+                value={pageNumber}
+                onChange={handleChangePage}
+              />
+              <span className="pageNumberFont">/ {numPages}</span>
+            </div>
+          </div>
+
+          <div className="row" style={{ paddingLeft: "15px" }}>
             <button disabled={pageNumber <= 1} onClick={goToPreviousPage}>
               Previous
             </button>
@@ -301,7 +324,7 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted }) => {
               Next
             </button>
           </div>
-          <div className="selected-text">Selected Text: {selectedText}</div>
+          {/* <div className="selected-text">Selected Text: {selectedText}</div> */}
         </div>
 
         <div className="pagesDiv" style={{ height: "85px" }}>

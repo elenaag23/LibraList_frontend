@@ -591,3 +591,15 @@ li::marker{
   border-radius: 5px;
   color:white;
 }
+
+#pageInput{
+  width: 45px;
+  height: 25px;
+  margin-right:8px;
+}
+
+.pageNumberFont{
+  font-size: 18px;
+  font-weight: 600;
+  color:#eceef8;
+}
