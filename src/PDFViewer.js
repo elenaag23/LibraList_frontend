@@ -278,7 +278,12 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted }) => {
 
   const handleChangePage = (e) => {
     const newPageNumber = parseInt(e.target.value);
+    console.log("page no: ", newPageNumber);
+    //let lastPageNumber = pageNumber;
+    //if (newPageNumber) {
+    //console.log("entered change");
     setPageNumber(newPageNumber);
+    //}
   };
 
   const handleClickOutside = () => {
@@ -286,23 +291,28 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted }) => {
     const input = document.getElementById("pageInput");
     if (input) {
       input.blur();
+      if (!pageNumber) {
+        setPageNumber(1);
+      }
     }
   };
 
   return (
-    <div style={{ display: "flex" }}>
-      <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
-        <Page
-          pageNumber={pageNumber}
-          className="pdf-page"
-          renderTextLayer={true}
-          loading={<div>Wait, your pdf is loading...</div>}
-          onMouseUp={handleTextSelection}
-          scale={scale}
-        ></Page>
-      </Document>
+    <div style={{ width: "100%" }} className="row">
+      <div className="col-7">
+        <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
+          <Page
+            pageNumber={pageNumber ? pageNumber : 1}
+            className="pdf-page"
+            renderTextLayer={true}
+            loading={<div>Wait, your pdf is loading...</div>}
+            onMouseUp={handleTextSelection}
+            scale={scale}
+          ></Page>
+        </Document>
+      </div>
 
-      <div>
+      <div className="col-5">
         <div className="pagesDiv">
           <div className="row" style={{ paddingTop: "15px", height: "50%" }}>
             <div>
@@ -316,7 +326,10 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted }) => {
             </div>
           </div>
 
-          <div className="row" style={{ paddingLeft: "15px" }}>
+          <div
+            className="row"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
             <button disabled={pageNumber <= 1} onClick={goToPreviousPage}>
               Previous
             </button>
@@ -327,12 +340,22 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted }) => {
           {/* <div className="selected-text">Selected Text: {selectedText}</div> */}
         </div>
 
-        <div className="pagesDiv" style={{ height: "85px" }}>
-          <div style={{ marginTop: "8px", color: "white", fontWeight: "BOLD" }}>
-            <span>Choose higlight color</span>
+        <div className="pagesDiv" style={{ height: "70px" }}>
+          <div
+            style={{
+              color: "#eceef8",
+              fontWeight: "BOLD",
+              display: "flex",
+              justifyContent: "end",
+              marginRight: "20px",
+              marginBottom: "8px",
+              marginTop: "3px",
+            }}
+          >
+            {/* <span>Choose higlight color</span> */}
             <div className="removeColor">
               <button onClick={removeColor}>
-                <ClearIcon />
+                <ClearIcon style={{ color: "#eceef8" }} />
               </button>
             </div>
           </div>
