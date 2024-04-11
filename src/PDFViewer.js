@@ -7,7 +7,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const PDFViewer = ({ pdfUrl, book, highs, highlighted }) => {
+const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [selectedText, setSelectedText] = useState("");
@@ -19,15 +19,45 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted }) => {
   const [noColors, setNoColors] = useState(0);
   const [value, setValue] = useState(pageNumber);
 
+  const setReadingPage = (pageNumber) => {
+    fetch("http://127.0.0.1:8000/setPage", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        user: localStorage.getItem("userMail"),
+        book: book.identifier,
+        pageNumber: pageNumber,
+      }),
+    })
+      .then((response) => {
+        console.log("response to save page: ", response.json());
+      })
+      .catch((error) => {
+        // Handle any errors
+      });
+  };
+
+  useEffect(() => {
+    return () => {
+      setReadingPage(pageNumber);
+    };
+  }, [pageNumber]);
+
   useEffect(() => {
     console.log("in pdf viewer: ", pdfUrl);
     console.log("in pdf highs: ", highs);
     console.log("in pdf highlightedColors: ", highlighted);
     setHighlights(highs);
     setNoColors(highlighted.length);
+    setPageNumber(currentPageNumber);
+    $("#pageInput").val(currentPageNumber);
   }, []);
 
   const displayHighlights = (pageNumber) => {
+    console.log("in display highlights: ", pageNumber, highlights);
     if (Object.keys(highlights).indexOf(pageNumber.toString()) != -1) {
       for (var highlight of highlights[pageNumber]) {
         console.log("current highlight: ", highlight);
@@ -93,6 +123,7 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted }) => {
   const onDocumentLoadSuccess = ({ numPages }) => {
     console.log("highlights: ", highlights);
     console.log("highlighted colors: ", highlighted);
+    displayHighlights(pageNumber);
     setTimeout(() => {
       var elements = document.getElementsByClassName(
         "react-pdf__Page__textContent textLayer"
@@ -293,7 +324,6 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted }) => {
     if (!pageNumber) {
       console.log("entered if");
       setPageNumber(1);
-      $("#pageInput").val(2);
     }
 
     const input = document.getElementById("pageInput");
@@ -326,6 +356,8 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted }) => {
                 type="number"
                 value={pageNumber}
                 onChange={handleChangePage}
+                min="1"
+                max={numPages}
               />
               <span className="pageNumberFont">/ {numPages}</span>
             </div>

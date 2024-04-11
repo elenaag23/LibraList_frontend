@@ -23,6 +23,7 @@ const ReadBook = () => {
   const [col, setCol] = useState(null);
   const [highlighted, setHighlighted] = useState(null);
   const [noHighlights, setNoHighlights] = useState(true);
+  const [pageNumber, setPageNumber] = useState(1);
 
   const showToastMessage = () => {
     console.log("entered toast");
@@ -71,8 +72,10 @@ const ReadBook = () => {
       })
       .then((data) => {
         console.log("response in ujser has book data: ", data);
-        if (data.has == true) setAdded(true);
-        else setAdded(false);
+        if (data.has == true) {
+          setAdded(true);
+          setPageNumber(data.pageNumber);
+        } else setAdded(false);
         setLoading(false);
       })
       .catch((error) => {});
@@ -218,13 +221,28 @@ const ReadBook = () => {
     };
   }, []);
 
+  const handleClickOutside = () => {
+    // Handle click outside by triggering blur event
+    //console.log("entered here: ", $("#pageInput").val());
+    console.log("page pageNumber: ", pageNumber);
+    if (!pageNumber) {
+      console.log("entered if");
+      setPageNumber(1);
+    }
+
+    const input = document.getElementById("pageInput");
+    if (!input) {
+      input.blur();
+    }
+  };
+
   // Render the book details
   return (
     <div>
       <Sidebar></Sidebar>
       <ToastContainer />
       {book ? (
-        <div>
+        <div onClick={handleClickOutside}>
           <div className="readBookContent">
             <div className="iframeDisplay bookBox">
               {console.log("pdf:", pdf)}
@@ -240,6 +258,7 @@ const ReadBook = () => {
                     book={book}
                     highs={highlights}
                     highlighted={highlightedColors}
+                    currentPageNumber={pageNumber}
                   ></PDFViewer>
                 )}
             </div>
