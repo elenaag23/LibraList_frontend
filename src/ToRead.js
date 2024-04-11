@@ -278,6 +278,12 @@ function ToRead() {
           <BookGrid books={bookData} />
         </div>
       ) : null}
+
+      {bookData != null && bookData.length == 0 ? (
+        <div className="noBooks">
+          <span>Sorry, we found no books that match your search</span>
+        </div>
+      ) : null}
     </div>
   );
 }

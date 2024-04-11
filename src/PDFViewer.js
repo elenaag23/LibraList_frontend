@@ -4,10 +4,11 @@ import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import $ from "jquery";
 import ClearIcon from "@mui/icons-material/Clear";
+import LoadingComponent from "./LoadingComponent";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const PDFViewer = ({ pdfUrl, book, highs }) => {
+const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [selectedText, setSelectedText] = useState("");
@@ -16,13 +17,48 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
   const [highlights, setHighlights] = useState(null);
   const userMail = localStorage.getItem("userMail");
   const [scale, setScale] = useState(1);
+  const [noColors, setNoColors] = useState(0);
+  const [value, setValue] = useState(pageNumber);
+
+  const setReadingPage = (pageNumber) => {
+    fetch("http://127.0.0.1:8000/setPage", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        user: localStorage.getItem("userMail"),
+        book: book.identifier,
+        pageNumber: pageNumber,
+      }),
+    })
+      .then((response) => {
+        console.log("response to save page: ", response.json());
+      })
+      .catch((error) => {
+        // Handle any errors
+      });
+  };
+
+  useEffect(() => {
+    return () => {
+      setReadingPage(pageNumber);
+    };
+  }, [pageNumber]);
 
   useEffect(() => {
     console.log("in pdf viewer: ", pdfUrl);
+    console.log("in pdf highs: ", highs);
+    console.log("in pdf highlightedColors: ", highlighted);
     setHighlights(highs);
+    setNoColors(highlighted.length);
+    setPageNumber(currentPageNumber);
+    $("#pageInput").val(currentPageNumber);
   }, []);
 
   const displayHighlights = (pageNumber) => {
+    console.log("in display highlights: ", pageNumber, highlights);
     if (Object.keys(highlights).indexOf(pageNumber.toString()) != -1) {
       for (var highlight of highlights[pageNumber]) {
         console.log("current highlight: ", highlight);
@@ -86,6 +122,9 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
   };
 
   const onDocumentLoadSuccess = ({ numPages }) => {
+    console.log("highlights: ", highlights);
+    console.log("highlighted colors: ", highlighted);
+    displayHighlights(pageNumber);
     setTimeout(() => {
       var elements = document.getElementsByClassName(
         "react-pdf__Page__textContent textLayer"
@@ -93,8 +132,12 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
       if (elements.length > 0) {
         var firstElement = elements[0];
         var width = firstElement.clientWidth;
-        if (width < 500) {
+        if (width < 300) {
+          setScale(2);
+        } else if (width < 400) {
           setScale(1.7);
+        } else if (width < 500) {
+          setScale(1.5);
         }
         console.log("First page element: ", firstElement);
         console.log("height: ", firstElement.clientHeight);
@@ -103,23 +146,6 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
         console.log("Element not found");
       }
     }, 1000);
-
-    var canvasElement = document.getElementsByTagName("canvas");
-    console.log("canvasElement: ", canvasElement);
-
-    var element = document.getElementsByClassName(
-      "react-pdf__Page__textContent textLayer"
-    );
-    console.log("page element: ", element);
-
-    var jqElement = $(".react-pdf__Page__textContent.textLayer");
-    console.log("page element length jquery: ", jqElement);
-
-    //console.log("page element length: ", element.size);
-
-    // for (var i = 0; i < element.length; i++) {
-    //   console.log("element of array: ", element[i]);
-    // }
 
     setNumPages(numPages);
   };
@@ -144,6 +170,7 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
 
       const rect = range.getBoundingClientRect();
       const span = document.createElement("span");
+
       span.className =
         selectedColor != null
           ? "highlighted-text-" + selectedColor
@@ -174,14 +201,46 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
       console.log("book: ", span);
       insertIntoDb(highlight);
 
-      const liElement = $(`<li>${selection.toString()}</li>`);
-      $(
-        `.colorHeader.backgroundColor${
+      var liElement = $(`<li>${selection.toString()}</li>`);
+      var classOfElem =
+        "highlighted-text-" + (selectedColor != null ? selectedColor : "def");
+
+      if (highlighted.indexOf(classOfElem) != -1) {
+        console.log("does exist");
+        $(
+          `.colorHeader.backgroundColor${
+            selectedColor != null ? selectedColor : "def"
+          }`
+        )
+          .next(".contentHighlight")
+          .append(liElement);
+      } else {
+        console.log("does not exist");
+
+        //var getCol = noColors < 2 ? "col-2" : "col";
+        var classname = `colorHeader backgroundColor${
           selectedColor != null ? selectedColor : "def"
-        }`
-      )
-        .next(".contentHighlight")
-        .append(liElement);
+        }`;
+        var firstDiv = $(
+          `<div class = 'col-3 highlights'><div class = '${classname}'></div></div>`
+        );
+
+        var liDiv = $("<div class = 'contentHighlight'></div>");
+
+        liDiv.append(liElement);
+        firstDiv.append(liDiv);
+
+        console.log("this is how firstDiv looks like: ", firstDiv);
+        $("#highlightsComponent").append(firstDiv);
+        // if (noColors == 0) {
+        //   var title = $(
+        //     '<div class="pageTitle"><span>Your Highlights</span></div>'
+        //   );
+
+        //   $("#highlightsContainer").append(title);
+        // }
+        setNoColors(noColors + 1);
+      }
     }
 
     console.log("selected range: ", selection.toString());
@@ -249,25 +308,74 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
     setScale(scale - 0.1);
   };
 
-  return (
-    <div style={{ display: "flex" }}>
-      <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
-        <Page
-          pageNumber={pageNumber}
-          className="pdf-page"
-          renderTextLayer={true}
-          loading={<div>Wait, your pdf is loading...</div>}
-          onMouseUp={handleTextSelection}
-          scale={scale}
-        ></Page>
-      </Document>
+  const handleChangePage = (e) => {
+    const newPageNumber = parseInt(e.target.value);
+    console.log("page no: ", newPageNumber);
+    //let lastPageNumber = pageNumber;
+    //if (newPageNumber) {
+    //console.log("entered change");
+    setPageNumber(newPageNumber);
+    //}
+  };
 
-      <div>
+  const handleClickOutside = () => {
+    // Handle click outside by triggering blur event
+    console.log("entered here: ", $("#pageInput").val());
+    console.log("page pageNumber: ", pageNumber);
+    if (!pageNumber) {
+      console.log("entered if");
+      setPageNumber(1);
+    }
+
+    const input = document.getElementById("pageInput");
+    if (!input) {
+      input.blur();
+    }
+  };
+
+  return (
+    <div style={{ width: "100%" }} className="row" onClick={handleClickOutside}>
+      <div className="col-7">
+        <Document
+          file={pdfUrl}
+          onLoadSuccess={onDocumentLoadSuccess}
+          loading={
+            <div style={{ marginLeft: "20%", marginTop: "15%" }}>
+              <LoadingComponent current={"pdf"} />
+            </div>
+          }
+        >
+          <Page
+            pageNumber={pageNumber ? pageNumber : 1}
+            className="pdf-page"
+            renderTextLayer={true}
+            loading={<LoadingComponent current={"pdf"} />}
+            onMouseUp={handleTextSelection}
+            scale={scale}
+          ></Page>
+        </Document>
+      </div>
+
+      <div className="col-5">
         <div className="pagesDiv">
-          <p>
-            Page {pageNumber} of {numPages}
-          </p>
-          <div style={{ paddingLeft: "15px" }}>
+          <div className="row" style={{ paddingTop: "15px", height: "50%" }}>
+            <div>
+              <input
+                id="pageInput"
+                type="number"
+                value={pageNumber}
+                onChange={handleChangePage}
+                min="1"
+                max={numPages}
+              />
+              <span className="pageNumberFont">/ {numPages}</span>
+            </div>
+          </div>
+
+          <div
+            className="row"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
             <button disabled={pageNumber <= 1} onClick={goToPreviousPage}>
               Previous
             </button>
@@ -275,15 +383,25 @@ const PDFViewer = ({ pdfUrl, book, highs }) => {
               Next
             </button>
           </div>
-          <div className="selected-text">Selected Text: {selectedText}</div>
+          {/* <div className="selected-text">Selected Text: {selectedText}</div> */}
         </div>
 
-        <div className="pagesDiv" style={{ height: "85px" }}>
-          <div style={{ marginTop: "8px", color: "white", fontWeight: "BOLD" }}>
-            <span>Choose higlight color</span>
+        <div className="pagesDiv" style={{ height: "70px" }}>
+          <div
+            style={{
+              color: "#eceef8",
+              fontWeight: "BOLD",
+              display: "flex",
+              justifyContent: "end",
+              marginRight: "20px",
+              marginBottom: "8px",
+              marginTop: "3px",
+            }}
+          >
+            {/* <span>Choose higlight color</span> */}
             <div className="removeColor">
               <button onClick={removeColor}>
-                <ClearIcon />
+                <ClearIcon style={{ color: "#eceef8" }} />
               </button>
             </div>
           </div>

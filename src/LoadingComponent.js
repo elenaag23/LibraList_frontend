@@ -1,6 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-function LoadingComponent(current) {
+function LoadingComponent({ current }) {
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    if (current == "search") {
+      setMessage("Wait, books are loading");
+    } else if (current == "book") {
+      setMessage("Wait, your book is loading");
+    } else if (current == "pdf") {
+      setMessage("Loading PDF...");
+    } else {
+      setMessage("Loading...");
+    }
+  }, []);
+
   return (
     <div className="spinner-container">
       <div class="lds-default">
@@ -18,11 +32,7 @@ function LoadingComponent(current) {
         <div></div>
       </div>
       <div className="spinnerTitle">
-        {current == "search" ? (
-          <span>Wait, books are loading...</span>
-        ) : (
-          <span>Your books are being processed...</span>
-        )}
+        <span>{message}</span>
       </div>
     </div>
   );

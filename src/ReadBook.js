@@ -5,6 +5,9 @@ import Sidebar from "./Sidebar";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import HighlightComponent from "./HighlightComponent";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import LoadingComponent from "./LoadingComponent";
 
 const ReadBook = () => {
   const location = useLocation();
@@ -17,13 +20,20 @@ const ReadBook = () => {
   const [pdf, setPdf] = useState(null);
   const [initialLoad, setInitialLoad] = useState(true);
   const [highlights, setHighlights] = useState(null);
-  const [highlightedColors, setHiglightedColors] = useState(null);
+  const [highlightedColors, setHighlightedColors] = useState(null);
   const [col, setCol] = useState(null);
   const [highlighted, setHighlighted] = useState(null);
   const [noHighlights, setNoHighlights] = useState(true);
+  const [pageNumber, setPageNumber] = useState(1);
+
+  const showToastMessage = () => {
+    console.log("entered toast");
+    toast.info("Book added to your library!", {
+      position: "top-center",
+    });
+  };
 
   const addToLibrary = () => {
-    setAdded(true);
     fetch("http://127.0.0.1:8000/addToLibrary", {
       method: "POST",
       headers: {
@@ -34,6 +44,10 @@ const ReadBook = () => {
     })
       .then((response) => {
         console.log("response: ", response.json());
+        if (response.ok) {
+          setAdded(true);
+          showToastMessage();
+        }
       })
       .catch((error) => {
         // Handle any errors
@@ -59,8 +73,10 @@ const ReadBook = () => {
       })
       .then((data) => {
         console.log("response in ujser has book data: ", data);
-        if (data.has == true) setAdded(true);
-        else setAdded(false);
+        if (data.has == true) {
+          setAdded(true);
+          setPageNumber(data.pageNumber);
+        } else setAdded(false);
         setLoading(false);
       })
       .catch((error) => {});
@@ -128,18 +144,68 @@ const ReadBook = () => {
       })
       .then((data) => {
         console.log("response in user book highlights data: ", data);
-        console.log("highlights data: ", data["highlights"]);
-        console.log("hello ", Object.keys(data["colors"]));
-        console.log("hello1 ", data["colors"]);
-        console.log("hello2 ", data["colors"]["highlighted-text-def"]);
-        if (data["highlights"] != []) setHighlights(data["highlights"]);
-        setHiglightedColors(Object.keys(data["colors"]));
-        setHighlighted(data["colors"]);
+
+        if (data["highlights"].length == 0) {
+          console.log("entered if");
+          setHighlights([]);
+          setHighlightedColors([]);
+          setHighlighted(null);
+        } else {
+          console.log("entered else");
+          setHighlights(data["highlights"]);
+          setHighlightedColors(Object.keys(data["colors"]));
+          setHighlighted(data["colors"]);
+          setNoHighlights(false);
+        }
 
         if (Object.keys(data["colors"]).length < 2) setCol("col-4");
         else setCol("col");
       })
       .catch((error) => {});
+  };
+
+  const deleteHighlights = () => {
+    var highsDef = document.getElementsByClassName("highlighted-text-def");
+
+    if (highsDef.length > 0) {
+      Array.from(highsDef).forEach((element) => {
+        element.remove();
+      });
+    }
+
+    var highsRed = document.getElementsByClassName("highlighted-text-red");
+
+    if (highsRed.length > 0) {
+      Array.from(highsRed).forEach((element) => {
+        element.remove();
+      });
+    }
+
+    var highsBlue = document.getElementsByClassName("highlighted-text-blue");
+
+    if (highsBlue.length > 0) {
+      Array.from(highsBlue).forEach((element) => {
+        element.remove();
+      });
+    }
+
+    var highsGreen = document.getElementsByClassName("highlighted-text-green");
+
+    if (highsGreen.length > 0) {
+      Array.from(highsGreen).forEach((element) => {
+        element.remove();
+      });
+    }
+
+    var highsOrange = document.getElementsByClassName(
+      "highlighted-text-orange"
+    );
+
+    if (highsOrange.length > 0) {
+      Array.from(highsOrange).forEach((element) => {
+        element.remove();
+      });
+    }
   };
 
   useEffect(() => {
@@ -150,21 +216,56 @@ const ReadBook = () => {
     console.log("pdf?? ", pdf);
     userHasBook();
     userHasHighlights();
+
+    return () => {
+      deleteHighlights();
+    };
   }, []);
+
+  const handleClickOutside = () => {
+    // Handle click outside by triggering blur event
+    //console.log("entered here: ", $("#pageInput").val());
+    console.log("page pageNumber: ", pageNumber);
+    if (!pageNumber) {
+      console.log("entered if");
+      setPageNumber(1);
+    }
+
+    const input = document.getElementById("pageInput");
+    if (!input) {
+      input.blur();
+    }
+  };
 
   // Render the book details
   return (
     <div>
       <Sidebar></Sidebar>
+      <ToastContainer />
       {book ? (
-        <div>
+        <div onClick={handleClickOutside}>
           <div className="readBookContent">
             <div className="iframeDisplay bookBox">
-              {pdf && book && (
+              {console.log("pdf:", pdf)}
+              {console.log("book:", book)}
+              {console.log("highlights:", highlights)}
+              {console.log("highlightedColors:", highlightedColors)}
+              {!(
+                pdf &&
+                book &&
+                highlights !== null &&
+                highlightedColors !== null
+              ) ? (
+                <div style={{ marginLeft: "20%", marginTop: "15%" }}>
+                  <LoadingComponent current={"book"} />
+                </div>
+              ) : (
                 <PDFViewer
                   pdfUrl={pdf}
                   book={book}
                   highs={highlights}
+                  highlighted={highlightedColors}
+                  currentPageNumber={pageNumber}
                 ></PDFViewer>
               )}
             </div>
@@ -209,14 +310,22 @@ const ReadBook = () => {
             </div>
           </div>
 
-          <div className="row" style={{ width: "100%", marginTop: "36px" }}>
-            {highlights && (
+          <div
+            className="row"
+            style={{ width: "100%", marginTop: "36px" }}
+            id="highlightsContainer"
+          >
+            {highlighted && (
               <div className="pageTitle">
                 <span>Your Highlights</span>
               </div>
             )}
 
-            <div className="row" style={{ marginTop: "16px" }}>
+            <div
+              className="row"
+              style={{ marginTop: "16px" }}
+              id="highlightsComponent"
+            >
               {highlightedColors &&
                 highlightedColors.map((element, index) => (
                   <HighlightComponent
