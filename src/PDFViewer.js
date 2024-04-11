@@ -4,6 +4,7 @@ import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import $ from "jquery";
 import ClearIcon from "@mui/icons-material/Clear";
+import LoadingComponent from "./LoadingComponent";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -335,12 +336,20 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
   return (
     <div style={{ width: "100%" }} className="row" onClick={handleClickOutside}>
       <div className="col-7">
-        <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
+        <Document
+          file={pdfUrl}
+          onLoadSuccess={onDocumentLoadSuccess}
+          loading={
+            <div style={{ marginLeft: "20%", marginTop: "15%" }}>
+              <LoadingComponent current={"pdf"} />
+            </div>
+          }
+        >
           <Page
             pageNumber={pageNumber ? pageNumber : 1}
             className="pdf-page"
             renderTextLayer={true}
-            loading={<div>Wait, your pdf is loading...</div>}
+            loading={<LoadingComponent current={"pdf"} />}
             onMouseUp={handleTextSelection}
             scale={scale}
           ></Page>

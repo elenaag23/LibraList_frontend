@@ -7,6 +7,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import HighlightComponent from "./HighlightComponent";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import LoadingComponent from "./LoadingComponent";
 
 const ReadBook = () => {
   const location = useLocation();
@@ -249,18 +250,24 @@ const ReadBook = () => {
               {console.log("book:", book)}
               {console.log("highlights:", highlights)}
               {console.log("highlightedColors:", highlightedColors)}
-              {pdf &&
+              {!(
+                pdf &&
                 book &&
                 highlights !== null &&
-                highlightedColors !== null && (
-                  <PDFViewer
-                    pdfUrl={pdf}
-                    book={book}
-                    highs={highlights}
-                    highlighted={highlightedColors}
-                    currentPageNumber={pageNumber}
-                  ></PDFViewer>
-                )}
+                highlightedColors !== null
+              ) ? (
+                <div style={{ marginLeft: "20%", marginTop: "15%" }}>
+                  <LoadingComponent current={"book"} />
+                </div>
+              ) : (
+                <PDFViewer
+                  pdfUrl={pdf}
+                  book={book}
+                  highs={highlights}
+                  highlighted={highlightedColors}
+                  currentPageNumber={pageNumber}
+                ></PDFViewer>
+              )}
             </div>
 
             <div className="bookSide">
