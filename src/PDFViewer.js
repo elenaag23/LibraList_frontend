@@ -288,17 +288,22 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted }) => {
 
   const handleClickOutside = () => {
     // Handle click outside by triggering blur event
+    console.log("entered here: ", $("#pageInput").val());
+    console.log("page pageNumber: ", pageNumber);
+    if (!pageNumber) {
+      console.log("entered if");
+      setPageNumber(1);
+      $("#pageInput").val(2);
+    }
+
     const input = document.getElementById("pageInput");
-    if (input) {
+    if (!input) {
       input.blur();
-      if (!pageNumber) {
-        setPageNumber(1);
-      }
     }
   };
 
   return (
-    <div style={{ width: "100%" }} className="row">
+    <div style={{ width: "100%" }} className="row" onClick={handleClickOutside}>
       <div className="col-7">
         <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
           <Page
