@@ -76,7 +76,6 @@
 #mycell {
   margin: 16px;
     background-color: #F7F8FF;
-    padding-top: 24px;
     border-radius: 20px;
     position: relative;
     height: 370px;
@@ -604,4 +603,32 @@ li::marker{
   font-size: 18px;
   font-weight: 600;
   color:#eceef8;
+}
+
+.hovered{
+  display:none;
+  background-color: #5569c3;
+  opacity:0.7;
+  height: 100%;
+  width:100%;
+  position: absolute;
+  border-radius: 15px;
+  color:white;
+  font-weight: bold;
+  font-size: 30px;
+  padding-top: 47%;
+}
+
+.pagingStatus{
+  display: flex;
+  justify-content: center;
+}
+
+.bookItemWrapper:hover .hovered{
+  display:block;
+}
+
+.bookItemWrapper:hover .bookName{
+  background-color: white;
+  color:#5569c3;
 }

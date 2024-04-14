@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const BookItem = ({ book }) => (
-  <div className="col" id="mycell">
+const BookItem = ({ book, number }) => (
+  <div className={number % 3 == 0 ? "col" : "col-4"} id="mycell">
     {/* <a
       href={`https://archive.org/download/${encodeURIComponent(
         book.identifier
@@ -13,6 +13,12 @@ const BookItem = ({ book }) => (
 
     <Link to="/read-book" state={{ book: book }} className="book-link">
       <div className="bookItemWrapper">
+        <div className="hovered">
+          <div className="pagingStatus">
+            Read: {book.pageNumber}/{book.totalPages}
+          </div>
+        </div>
+
         <img
           src={`https://archive.org/download/${encodeURIComponent(
             book.identifier
@@ -32,7 +38,7 @@ const BookItem = ({ book }) => (
 const BookRow = ({ books }) => (
   <div className="row">
     {books.map((book, index) => (
-      <BookItem key={index} book={book} />
+      <BookItem key={index} book={book} number={books.length} />
     ))}
   </div>
 );
