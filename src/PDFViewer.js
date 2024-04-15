@@ -5,6 +5,7 @@ import "react-pdf/dist/Page/TextLayer.css";
 import $ from "jquery";
 import ClearIcon from "@mui/icons-material/Clear";
 import LoadingComponent from "./LoadingComponent";
+import { Link, NavLink } from "react-router-dom";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -471,6 +472,15 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
               }}
             ></label>
           </div>
+        </div>
+        <div className="playlistButton">
+          <Link
+            to="/playlist"
+            className="myLibraryButton"
+            state={{ book: book }}
+          >
+            <div className="playlistDiv">Generate playlist</div>
+          </Link>
         </div>
       </div>
     </div>

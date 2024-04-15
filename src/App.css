@@ -632,3 +632,42 @@ li::marker{
   background-color: white;
   color:#5569c3;
 }
+
+.playlistButton{
+  display: flex;
+  justify-content: center;
+  border-radius: 25px;
+}
+
+.playlistDiv{
+  background-color:#5569c3;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    color:#eceef8;
+}
+
+
+.songItem{
+  background-color:#a1acde;
+  width: 40%;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 5px;
+}
+
+.songFont{
+  padding-top: 5%;
+  padding-left: 15px;
+  font-weight: 350;
+  color:white;
+}
+
+.songItem:hover{
+  background-color:#5569c3;
+  transition:0.2s;
+}
+
+.songLink{
+  margin:16px;
+}

@@ -9,6 +9,7 @@ import Login from "./Login";
 import { useEffect } from "react";
 import Library from "./Library";
 import "@react-pdf-viewer/core/lib/styles/index.css";
+import Playlist from "./Playlist";
 
 function App() {
   let local = "http://127.0.0.1:8000";
@@ -53,6 +54,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/library" element={<Library />} />
+          <Route path="/playlist" element={<Playlist />} />
         </Routes>
       </BrowserRouter>
     </div>
