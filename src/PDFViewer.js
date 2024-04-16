@@ -22,6 +22,19 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
   const [value, setValue] = useState(pageNumber);
 
   const setReadingPage = (pageNumber) => {
+    var currentdate = new Date();
+    var datetime =
+      currentdate.getFullYear() +
+      "-" +
+      (currentdate.getMonth() + 1) +
+      "-" +
+      currentdate.getDate() +
+      " " +
+      currentdate.getHours() +
+      ":" +
+      currentdate.getMinutes() +
+      ":" +
+      currentdate.getSeconds();
     fetch("http://127.0.0.1:8000/setPage", {
       method: "PATCH",
       headers: {
@@ -32,6 +45,7 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
         user: localStorage.getItem("userMail"),
         book: book.identifier,
         pageNumber: pageNumber,
+        accessTime: datetime,
       }),
     })
       .then((response) => {
@@ -138,7 +152,7 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
         } else if (width < 400) {
           setScale(1.7);
         } else if (width < 500) {
-          setScale(1.5);
+          setScale(1.4);
         }
         console.log("First page element: ", firstElement);
         console.log("height: ", firstElement.clientHeight);

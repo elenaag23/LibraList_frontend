@@ -13,11 +13,14 @@ const BookItem = ({ book, number }) => (
 
     <Link to="/read-book" state={{ book: book }} className="book-link">
       <div className="bookItemWrapper">
-        <div className="hovered">
-          <div className="pagingStatus">
-            Read: {book.pageNumber}/{book.totalPages}
+        {console.log("book pages: ", book.pageNumber, book.totalPages)}
+        {book.pageNumber && book.totalPages ? (
+          <div className="hovered">
+            <div className="pagingStatus">
+              Read: {book.pageNumber}/{book.totalPages}
+            </div>
           </div>
-        </div>
+        ) : null}
 
         <img
           src={`https://archive.org/download/${encodeURIComponent(

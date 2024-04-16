@@ -617,6 +617,7 @@ li::marker{
   font-weight: bold;
   font-size: 30px;
   padding-top: 47%;
+  transition:0.2s;
 }
 
 .pagingStatus{
