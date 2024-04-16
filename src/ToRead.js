@@ -127,7 +127,8 @@ function ToRead() {
     for (const book of data) {
       if (
         book["mediatype"] === "texts" &&
-        book["format"].includes("Text PDF")
+        book["format"].includes("Text PDF") &&
+        (book["language"] == "eng" || book["language"] == "English")
       ) {
         arrBooks.push(book);
         console.log("identifier: ", book["identifier"]);

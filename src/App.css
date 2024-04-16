@@ -608,15 +608,16 @@ li::marker{
 .hovered{
   display:none;
   background-color: #5569c3;
-  opacity:0.7;
+  opacity:1;
   height: 100%;
   width:100%;
   position: absolute;
   border-radius: 15px;
   color:white;
-  font-weight: bold;
-  font-size: 30px;
-  padding-top: 47%;
+  font-weight: 700;
+  font-size: 20px;
+  padding-top: 30%;
+  transition:0.5s;
 }
 
 .pagingStatus{
@@ -624,11 +625,12 @@ li::marker{
   justify-content: center;
 }
 
-.bookItemWrapper:hover .hovered{
+#mycell:hover .hovered{
   display:block;
+  transition: 0.5s;
 }
 
-.bookItemWrapper:hover .bookName{
+#mycell:hover .bookName{
   background-color: white;
   color:#5569c3;
 }
@@ -659,7 +661,7 @@ li::marker{
 .songFont{
   padding-top: 5%;
   padding-left: 15px;
-  font-weight: 350;
+  font-weight: 400;
   color:white;
 }
 

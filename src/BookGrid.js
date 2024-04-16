@@ -7,17 +7,20 @@ const BookItem = ({ book, number }) => (
       href={`https://archive.org/download/${encodeURIComponent(
         book.identifier
       )}/${book.url}`}
-      target="_blank"
+      target="_blank" 
       rel="noopener noreferrer"
     > */}
 
     <Link to="/read-book" state={{ book: book }} className="book-link">
       <div className="bookItemWrapper">
-        <div className="hovered">
-          <div className="pagingStatus">
-            Read: {book.pageNumber}/{book.totalPages}
+        {console.log("book pages: ", book.pageNumber, book.totalPages)}
+        {book.pageNumber && book.totalPages ? (
+          <div className="hovered">
+            <div className="pagingStatus">
+              Page {book.pageNumber} of {book.totalPages}
+            </div>
           </div>
-        </div>
+        ) : null}
 
         <img
           src={`https://archive.org/download/${encodeURIComponent(
