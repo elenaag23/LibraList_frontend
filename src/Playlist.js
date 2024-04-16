@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { OpenAI } from "openai";
+import LoadingComponent from "./LoadingComponent";
 
 const Playlist = () => {
   const location = useLocation();
@@ -22,49 +23,56 @@ const Playlist = () => {
     //   songArtist: "Leona Lewis",
     // },
   ]);
-  const [links, setLinks] = useState([
-    // [
-    //   "https://www.youtube.com/watch?v=8xg3vE8Ie_E",
-    //   "https://i.ytimg.com/vi/8xg3vE8Ie_E/default.jpg",
-    // ],
-    // {
-    //   artist: "Taylor Swift",
-    //   link: "https://www.youtube.com/watch?v=8xg3vE8Ie_E",
-    //   name: "Love Story",
-    //   url: "https://i.ytimg.com/vi/8xg3vE8Ie_E/default.jpg",
-    // },
-  ]);
+  //const [links, setLinks] = useState([
+  // [
+  //   "https://www.youtube.com/watch?v=8xg3vE8Ie_E",
+  //   "https://i.ytimg.com/vi/8xg3vE8Ie_E/default.jpg",
+  // ],
+  // {
+  //   artist: "Taylor Swift",
+  //   link: "https://www.youtube.com/watch?v=8xg3vE8Ie_E",
+  //   name: "Love Story",
+  //   url: "https://i.ytimg.com/vi/8xg3vE8Ie_E/default.jpg",
+  // },
+  //]);
+
+  const [links, setLinks] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   console.log("yt: ", process.env.REACT_APP_YT_KEY);
   console.log("yt2: ", process.env.REACT_APP_API_KEY);
   console.log("linksss: ", links);
 
   const generatePlaylist = async () => {
-    const apiUrl = "https://api.openai.com/v1/chat/completions";
-    const inputText = `Generate playlist 3 songs based on the subject of the book ${book.title} as JSON with 'songName' and 'songArtist' as attributes`;
-    await fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.REACT_APP_API_KEY}`, // Replace with your OpenAI API key
-      },
-      body: JSON.stringify({
-        model: "gpt-3.5-turbo-0125", // Specify the ChatGPT model you want to use
-        messages: [{ role: "user", content: inputText }],
-        response_format: { type: "json_object" },
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("RASPUNS LA OPENAI", data.choices[0].message.content);
-        let playlist11 = JSON.parse(data.choices[0].message.content);
-        console.log("playlist: ", playlist11.playlist);
-        //console.log("playlist: ", playlist11.playlist);
-        setPlaylist(playlist11.playlist);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
+    try {
+      const apiUrl = "https://api.openai.com/v1/chat/completions";
+      const inputText = `Generate playlist 5 songs based on the subject of the book ${book.title} as JSON with 'songName' and 'songArtist' as attributes`;
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.REACT_APP_API_KEY}`, // Replace with your OpenAI API key
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo-0125", // Specify the ChatGPT model you want to use
+          messages: [{ role: "user", content: inputText }],
+          response_format: { type: "json_object" },
+        }),
       });
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+      console.log("RASPUNS LA OPENAI", data.choices[0].message.content);
+      let playlist11 = JSON.parse(data.choices[0].message.content);
+      console.log("playlist: ", playlist11.playlist);
+      //console.log("playlist: ", playlist11.playlist);
+      setPlaylist(playlist11.playlist);
+      return playlist11.playlist;
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   const getYTLink = async (song) => {
@@ -103,12 +111,12 @@ const Playlist = () => {
     }
   };
 
-  const getSongs = async () => {
-    console.log("entered get songs: ", playlist);
-    if (playlist.length !== 0) {
+  const getSongs = async (myPlaylist) => {
+    console.log("entered get songs: ", myPlaylist);
+    if (myPlaylist.length !== 0) {
       var linksArray = [];
       await Promise.all(
-        playlist.map(async (song) => {
+        myPlaylist.map(async (song) => {
           try {
             const data = await getYTLink(song);
             let obj = {
@@ -133,13 +141,15 @@ const Playlist = () => {
   };
 
   const playlistCreation = async () => {
-    await generatePlaylist();
-    console.log("playlist: ", playlist);
-    if (playlist) {
+    setLoading(true);
+    const myPlaylist = await generatePlaylist();
+    console.log("playlist: ", myPlaylist);
+    if (myPlaylist) {
       try {
-        const songs = await getSongs();
+        const songs = await getSongs(myPlaylist);
         console.log("songs in fetchSongs: ", songs);
         setLinks(songs); // This sets the links variable
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching songs:", error);
       }
@@ -154,12 +164,13 @@ const Playlist = () => {
       </div>
 
       <div>
-        <button onClick={playlistCreation}></button>
+        <button onClick={playlistCreation}>Generate</button>
       </div>
       <div>
-        <h2>Playlist</h2>
-        <ul>
+        {loading && <LoadingComponent current={"playlist"}></LoadingComponent>}
+        <div className="row">
           {console.log("links at render: ", links)}
+
           {links &&
             links.map((song, index) => (
               <div key={index} className="songLink">
@@ -180,7 +191,7 @@ const Playlist = () => {
                 </a>
               </div>
             ))}
-        </ul>
+        </div>
       </div>
     </div>
   );

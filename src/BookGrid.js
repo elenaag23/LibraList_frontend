@@ -7,7 +7,7 @@ const BookItem = ({ book, number }) => (
       href={`https://archive.org/download/${encodeURIComponent(
         book.identifier
       )}/${book.url}`}
-      target="_blank"
+      target="_blank" 
       rel="noopener noreferrer"
     > */}
 
@@ -17,7 +17,7 @@ const BookItem = ({ book, number }) => (
         {book.pageNumber && book.totalPages ? (
           <div className="hovered">
             <div className="pagingStatus">
-              Read: {book.pageNumber}/{book.totalPages}
+              Page {book.pageNumber} of {book.totalPages}
             </div>
           </div>
         ) : null}

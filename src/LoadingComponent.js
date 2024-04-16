@@ -10,6 +10,8 @@ function LoadingComponent({ current }) {
       setMessage("Wait, your book is loading");
     } else if (current == "pdf") {
       setMessage("Loading PDF...");
+    } else if (current == "playlist") {
+      setMessage("Generating your playlist...");
     } else {
       setMessage("Loading...");
     }
