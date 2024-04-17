@@ -616,13 +616,16 @@ li::marker{
   color:white;
   font-weight: 700;
   font-size: 20px;
-  padding-top: 30%;
+  padding-top: 5%;
+  padding-right: 5%;
   transition:0.5s;
 }
 
 .pagingStatus{
   display: flex;
   justify-content: center;
+  margin-top: 20%;
+  padding-left: 5%;
 }
 
 #mycell:hover .hovered{
@@ -672,4 +675,15 @@ li::marker{
 
 .songLink{
   margin:16px;
+}
+
+.deleteButton{
+    height: 28px;
+      width: 25px;
+  margin-left: 93%;
+}
+
+.deleteButton:hover{
+  color:#5569c3;
+  background-color: white;
 }

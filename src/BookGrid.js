@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const BookItem = ({ book, number }) => (
   <div className={number % 3 == 0 ? "col" : "col-4"} id="mycell">
@@ -16,6 +17,12 @@ const BookItem = ({ book, number }) => (
         {console.log("book pages: ", book.pageNumber, book.totalPages)}
         {book.pageNumber && book.totalPages ? (
           <div className="hovered">
+            <div
+              className="deleteButton"
+              style={{ display: "flex", justifyContent: "end" }}
+            >
+              <DeleteIcon></DeleteIcon>
+            </div>
             <div className="pagingStatus">
               Page {book.pageNumber} of {book.totalPages}
             </div>
