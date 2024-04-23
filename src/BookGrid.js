@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const BookItem = ({ book, number, onDelete }) => {
+const BookItem = ({ book, number, onDelete, origin }) => {
   // const [hidden, setHidden] = useState(false);
 
   const handleDelete = () => {
@@ -12,7 +12,7 @@ const BookItem = ({ book, number, onDelete }) => {
     <div
       className={number % 3 == 0 ? "mycell col" : "mycell col-4"}
       id={book.identifier}
-      style={{ paddingLeft: "0px" }}
+      style={{ paddingLeft: "0px", position: "relative" }}
     >
       {/* <a
       href={`https://archive.org/download/${encodeURIComponent(
@@ -21,6 +21,17 @@ const BookItem = ({ book, number, onDelete }) => {
       target="_blank" 
       rel="noopener noreferrer"
     > */}
+
+      {origin === "library" ? (
+        <div
+          className="deleteButton2"
+          style={{ display: "flex", justifyContent: "end" }}
+        >
+          <button onClick={handleDelete} className="deleteButton">
+            <DeleteIcon></DeleteIcon>
+          </button>
+        </div>
+      ) : null}
 
       <Link to="/read-book" state={{ book: book }} className="book-link">
         <div className="bookItemWrapper">
@@ -45,20 +56,12 @@ const BookItem = ({ book, number, onDelete }) => {
 
       <div className="bookName">
         <span>{book.title}</span>
-        <div
-          className="deleteButton"
-          style={{ display: "flex", justifyContent: "end" }}
-        >
-          <button onClick={handleDelete} className="deleteButton">
-            <DeleteIcon></DeleteIcon>
-          </button>
-        </div>
       </div>
     </div>
   );
 };
 
-const BookRow = ({ books, onDelete }) => (
+const BookRow = ({ books, onDelete, origin }) => (
   <div className="row">
     {books.map((book, index) => (
       <BookItem
@@ -66,12 +69,13 @@ const BookRow = ({ books, onDelete }) => (
         book={book}
         number={books.length}
         onDelete={onDelete}
+        origin={origin}
       />
     ))}
   </div>
 );
 
-const BookGrid = ({ books, onDelete }) => {
+const BookGrid = ({ books, onDelete, origin }) => {
   const rows = [];
   console.log("books: ", books);
   for (let i = 0; i < books.length; i += 3) {
@@ -81,7 +85,7 @@ const BookGrid = ({ books, onDelete }) => {
   return (
     <div style={{ margin: "16px" }}>
       {rows.map((row, index) => (
-        <BookRow key={index} books={row} onDelete={onDelete} />
+        <BookRow key={index} books={row} onDelete={onDelete} origin={origin} />
       ))}
     </div>
   );

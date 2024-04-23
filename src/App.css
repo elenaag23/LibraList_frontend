@@ -638,6 +638,15 @@ li::marker{
   color:#5569c3;
 }
 
+.mycell:hover .deleteButton2{
+  border:2px solid white;
+  border-radius:5px;
+}
+
+.mycell:hover .deleteButton{
+color:white;
+}
+
 .playlistButton{
   display: flex;
   justify-content: center;
@@ -681,12 +690,21 @@ li::marker{
     height: 30px;
       width: 38px;
   margin-left: 93%;
-  color:#eceef8;
+  color:#5569c3; 
   background-color: inherit;
   border:none;
 }
 
+.deleteButton2{
+      position: absolute;
+        display: flex;
+        justify-content: end;
+        z-index: 1;
+         margin-top: 7px; 
+        margin-left: 90%;
+}
+
 .deleteButton:hover{
-  color:#5569c3;
-  background-color: white;
+  color:#eceef8;
+  background-color: #5569c3;
 }

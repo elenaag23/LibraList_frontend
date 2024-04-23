@@ -88,7 +88,11 @@ function Library() {
         <span>My library</span>
       </div>
       {userBooks.length > 0 ? (
-        <BookGrid books={userBooks} onDelete={onDelete}></BookGrid>
+        <BookGrid
+          books={userBooks}
+          onDelete={onDelete}
+          origin={"library"}
+        ></BookGrid>
       ) : (
         <div className="noBooks">
           <span>No books in your library</span>
