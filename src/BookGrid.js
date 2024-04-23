@@ -5,6 +5,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 const BookItem = ({ book, number, onDelete, origin }) => {
   // const [hidden, setHidden] = useState(false);
 
+  console.log("origin of book item: ", origin);
+
   const handleDelete = () => {
     onDelete(book.identifier);
   };
@@ -85,7 +87,7 @@ const BookGrid = ({ books, onDelete, origin }) => {
   return (
     <div style={{ margin: "16px" }}>
       {rows.map((row, index) => (
-        <BookRow key={index} books={row} onDelete={onDelete} />
+        <BookRow key={index} books={row} onDelete={onDelete} origin={origin} />
       ))}
     </div>
   );

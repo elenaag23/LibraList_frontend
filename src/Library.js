@@ -4,6 +4,7 @@ import Sidebar from "./Sidebar";
 import { Link } from "react-router-dom";
 import $ from "jquery";
 import BookGrid from "./BookGrid";
+import LoadingComponent from "./LoadingComponent";
 
 function Library() {
   const [userBooks, setUserBooks] = useState([]);
@@ -53,11 +54,10 @@ function Library() {
     }
   };
 
-  useEffect(() => {}, [userBooks]);
-
   useEffect(() => {
     $("#myLibraryButton").addClass("selected");
     getUserBooks();
+    setLoading(true);
   }, []);
 
   const getUserBooks = () => {
@@ -76,6 +76,7 @@ function Library() {
           JSON.parse(jsonString)
         );
         setUserBooks(parsed);
+        setLoading(false);
       })
       .catch((error) => {});
   };
@@ -87,16 +88,19 @@ function Library() {
       <div className="pageTitle">
         <span>My library</span>
       </div>
-      {userBooks.length > 0 ? (
+      {loading && <LoadingComponent current={"library"}></LoadingComponent>}
+      {!loading && userBooks.length > 0 ? (
         <BookGrid
           books={userBooks}
           onDelete={onDelete}
           origin={"library"}
         ></BookGrid>
       ) : (
-        <div className="noBooks">
-          <span>No books in your library</span>
-        </div>
+        !loading && (
+          <div className="noBooks">
+            <span>No books in your library</span>
+          </div>
+        )
       )}
     </div>
   );
