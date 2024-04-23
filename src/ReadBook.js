@@ -266,6 +266,7 @@ const ReadBook = () => {
                   highs={highlights}
                   highlighted={highlightedColors}
                   currentPageNumber={pageNumber}
+                  ownStatus={added}
                 ></PDFViewer>
               )}
             </div>
