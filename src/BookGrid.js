@@ -85,7 +85,7 @@ const BookGrid = ({ books, onDelete, origin }) => {
   return (
     <div style={{ margin: "16px" }}>
       {rows.map((row, index) => (
-        <BookRow key={index} books={row} onDelete={onDelete} origin={origin} />
+        <BookRow key={index} books={row} onDelete={onDelete} />
       ))}
     </div>
   );

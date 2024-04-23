@@ -9,14 +9,7 @@ import { Link, NavLink } from "react-router-dom";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const PDFViewer = ({
-  pdfUrl,
-  book,
-  highs,
-  highlighted,
-  currentPageNumber,
-  ownStatus,
-}) => {
+const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [selectedText, setSelectedText] = useState("");
@@ -53,6 +46,7 @@ const PDFViewer = ({
         book: book.identifier,
         pageNumber: pageNumber,
         accessTime: datetime,
+        bookPages: numPages,
       }),
     })
       .then((response) => {
@@ -65,7 +59,7 @@ const PDFViewer = ({
 
   useEffect(() => {
     return () => {
-      if (ownStatus) setReadingPage(pageNumber);
+      setReadingPage(pageNumber);
     };
   }, [pageNumber]);
 
