@@ -276,7 +276,7 @@ function ToRead() {
 
       {bookData != null ? (
         <div>
-          <BookGrid books={bookData} />
+          <BookGrid books={bookData} origin={"search"} />
         </div>
       ) : null}
 

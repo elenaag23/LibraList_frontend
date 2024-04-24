@@ -46,6 +46,7 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
         book: book.identifier,
         pageNumber: pageNumber,
         accessTime: datetime,
+        bookPages: numPages,
       }),
     })
       .then((response) => {
