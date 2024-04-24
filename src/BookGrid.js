@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
+import $ from "jquery";
 
 const BookItem = ({ book, number, onDelete, origin }) => {
   // const [hidden, setHidden] = useState(false);
@@ -10,6 +11,15 @@ const BookItem = ({ book, number, onDelete, origin }) => {
   const handleDelete = () => {
     onDelete(book.identifier);
   };
+
+  const confirmation = () => {
+    $(".deleteConfirmation").css({ display: "block" });
+  };
+
+  const disableScreen = () => {
+    $(".deleteConfirmation").css({ display: "none" });
+  };
+
   return (
     <div
       className={number % 3 == 0 ? "mycell col" : "mycell col-4"}
@@ -24,12 +34,32 @@ const BookItem = ({ book, number, onDelete, origin }) => {
       rel="noopener noreferrer"
     > */}
 
+      <div className="deleteConfirmation" style={{ display: "none" }}>
+        <div className="deleteText" style={{ marginTop: "28%" }}>
+          <span>Are you sure you want to delete the book?</span>
+        </div>
+        <div
+          style={{
+            marginTop: "25px",
+            display: "flex",
+            justifyContent: "space-evenly",
+          }}
+        >
+          <button onClick={handleDelete} className="deleteConfirmationButton">
+            Yes
+          </button>
+          <button onClick={disableScreen} className="deleteConfirmationButton">
+            No
+          </button>
+        </div>
+      </div>
+
       {origin === "library" ? (
         <div
           className="deleteButton2"
           style={{ display: "flex", justifyContent: "end" }}
         >
-          <button onClick={handleDelete} className="deleteButton">
+          <button onClick={confirmation} className="deleteButton">
             <DeleteIcon></DeleteIcon>
           </button>
         </div>

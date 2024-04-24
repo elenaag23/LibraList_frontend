@@ -5,11 +5,20 @@ import { Link } from "react-router-dom";
 import $ from "jquery";
 import BookGrid from "./BookGrid";
 import LoadingComponent from "./LoadingComponent";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Library() {
   const [userBooks, setUserBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const userMail = localStorage.getItem("userMail");
+
+  const showToastMessage = () => {
+    console.log("entered toast");
+    toast.info("Book deleted from your library!", {
+      position: "top-center",
+    });
+  };
 
   const onDelete = async (book) => {
     console.log("ENTERED ON DELETE: ", book);
@@ -48,7 +57,7 @@ function Library() {
       console.log("new user books array: ", userBooks);
       const newBooksArray = [...userBooks];
       setUserBooks(newBooksArray);
-      //showToastMessage();
+      showToastMessage();
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
@@ -84,7 +93,7 @@ function Library() {
   return (
     <div style={{ width: "100%" }}>
       <Sidebar></Sidebar>
-
+      <ToastContainer />
       <div className="pageTitle">
         <span>My library</span>
       </div>
