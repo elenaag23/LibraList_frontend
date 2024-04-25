@@ -54,20 +54,24 @@ function ToRead() {
 
     const token = localStorage.getItem("authToken");
 
-    fetch("http://127.0.0.1:8000/insertBook", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(bookData),
-    })
-      .then((response) => {
-        console.log("response: ", response.json());
-      })
-      .catch((error) => {
-        // Handle any errors
+    try {
+      const response = await fetch("http://127.0.0.1:8000/insertBook", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(bookData),
       });
+      if (!response.ok) {
+        throw new Error("Failed inserting books in database");
+      }
+
+      const data = await response.json();
+      console.log("insert book response: ", data);
+    } catch (error) {
+      // Handle any errors
+    }
   };
 
   const addDataIntoCache = (cacheName, values, url) => {
