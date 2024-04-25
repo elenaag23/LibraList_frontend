@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { OpenAI } from "openai";
 import LoadingComponent from "./LoadingComponent";
+import LibraryMusicIcon from "@mui/icons-material/LibraryMusic";
 
 const Playlist = () => {
   const location = useLocation();
@@ -156,6 +157,33 @@ const Playlist = () => {
     }
   };
 
+  const savePlaylist = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/savePlaylist`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          user: localStorage.getItem("userMail"),
+          book: book,
+          links: links,
+        }),
+      });
+
+      console.log("response stst: ", response);
+      if (response.status != 200) {
+        throw new Error("Failed to fetch user data");
+      }
+      const data = response.json();
+
+      console.log("data after inserting into playlists: ", data);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
   return (
     <div style={{ width: "100%" }}>
       <Sidebar></Sidebar>
@@ -168,8 +196,19 @@ const Playlist = () => {
       </div>
       <div>
         {loading && <LoadingComponent current={"playlist"}></LoadingComponent>}
-        <div className="row">
+        <div className="row" style={{ width: "99%" }}>
           {console.log("links at render: ", links)}
+
+          {links.length > 0 && (
+            <div>
+              <div>
+                <span>Add playlist to your collection</span>
+              </div>
+              <button onClick={savePlaylist}>
+                <LibraryMusicIcon></LibraryMusicIcon>
+              </button>
+            </div>
+          )}
 
           {links &&
             links.map((song, index) => (
