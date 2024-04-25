@@ -11,7 +11,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 
 const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
   const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
+  const [pageNumber, setPageNumber] = useState(currentPageNumber);
   const [selectedText, setSelectedText] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
   const [idCounter, setIdCounter] = useState(0);
@@ -76,7 +76,7 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
     console.log("in pdf highlightedColors: ", highlighted);
     setHighlights(highs);
     setNoColors(highlighted.length);
-    setPageNumber(currentPageNumber);
+    //setPageNumber(currentPageNumber);
     $("#pageInput").val(currentPageNumber);
   }, []);
 
@@ -219,6 +219,25 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
         classname: span.className,
         text: selection.toString(),
       };
+
+      if (pageNumber in highlights) {
+        highlights[pageNumber].push(highlight);
+      } else highlights[pageNumber] = [highlight];
+
+      const deepCopy = (highlights) => {
+        if (typeof highlights !== "object" || highlights === null) {
+          return highlights;
+        }
+
+        const newObj = Array.isArray(highlights) ? [] : {};
+        for (let key in highlights) {
+          newObj[key] = [...highlights[key]];
+        }
+
+        return newObj;
+      };
+
+      setHighlights(deepCopy);
 
       document.body.appendChild(span);
       console.log("book: ", span);

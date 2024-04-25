@@ -7,7 +7,7 @@ function LoadingComponent({ current }) {
     if (current == "search") {
       setMessage("Wait, books are loading");
     } else if (current == "book") {
-      setMessage("Wait, your book is loading");
+      setMessage("Wait, your book is loading...");
     } else if (current == "pdf") {
       setMessage("Loading PDF...");
     } else if (current == "playlist") {

@@ -85,7 +85,7 @@ const Playlist = () => {
         song.songArtist.indexOf(" ") != -1
           ? song.songArtist.split(" ").join(",")
           : song.songartist
-      }}&key=${process.env.REACT_APP_YT_KEY}`;
+      }}&order=viewCount&key=${process.env.REACT_APP_YT_KEY}`;
       //console.log("yt api url: ", ytApi);
       const response = await fetch(ytApi, {
         method: "GET",
