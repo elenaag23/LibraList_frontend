@@ -21,7 +21,7 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
   const [noColors, setNoColors] = useState(0);
   const [value, setValue] = useState(pageNumber);
 
-  const setReadingPage = (pageNumber) => {
+  const setReadingPage = async (pageNumber) => {
     var currentdate = new Date();
     var datetime =
       currentdate.getFullYear() +
@@ -35,32 +35,39 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
       currentdate.getMinutes() +
       ":" +
       currentdate.getSeconds();
-    fetch("http://127.0.0.1:8000/setPage", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        user: localStorage.getItem("userMail"),
-        book: book.identifier,
-        pageNumber: pageNumber,
-        accessTime: datetime,
-        bookPages: numPages,
-      }),
-    })
-      .then((response) => {
-        console.log("response to save page: ", response.json());
-      })
-      .catch((error) => {
-        // Handle any errors
+    try {
+      const response = await fetch("http://127.0.0.1:8000/setPage", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          user: localStorage.getItem("userMail"),
+          book: book.identifier,
+          pageNumber: pageNumber,
+          accessTime: datetime,
+          bookPages: numPages,
+        }),
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to update book page");
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      // Handle any errors
+    }
   };
 
   useEffect(() => {
-    return () => {
-      setReadingPage(pageNumber);
+    const setPageNumberAsync = async () => {
+      await setReadingPage(pageNumber);
     };
+
+    setPageNumberAsync();
+    return () => {};
   }, [pageNumber]);
 
   useEffect(() => {
