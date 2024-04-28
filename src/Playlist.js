@@ -158,17 +158,44 @@ const Playlist = () => {
   };
 
   const savePlaylist = async () => {
+    var currentdate = new Date();
+    var datetime =
+      currentdate.getFullYear() +
+      "-" +
+      (currentdate.getMonth() + 1) +
+      "-" +
+      currentdate.getDate() +
+      " " +
+      currentdate.getHours() +
+      ":" +
+      currentdate.getMinutes() +
+      ":" +
+      currentdate.getSeconds();
+
+    console.log(
+      "body: ",
+      localStorage.getItem("userMail"),
+      book,
+      links,
+      datetime
+    );
+
+    const token = localStorage.getItem("authToken");
+
     try {
       const response = await fetch(`http://127.0.0.1:8000/savePlaylist`, {
         method: "POST",
         headers: {
           Accept: "application/json",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           user: localStorage.getItem("userMail"),
-          book: book,
+          book: book.identifier,
           links: links,
+          date: datetime,
+          playlistName: "name",
         }),
       });
 
