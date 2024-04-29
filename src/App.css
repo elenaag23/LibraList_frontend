@@ -737,3 +737,42 @@ color:white;
   background-color: #6d7fcc;
   color:#eceef8;
 }
+
+.promptName{
+  margin-top: 25px;
+  font-size: larger;
+  font-weight: 600;
+  color: white;
+}
+
+.inputPromptComponent{
+  margin-top: 30px;
+  display: inline-grid;
+}
+
+.savePlaylistButton{
+  margin-top: 25px;
+  width: 110px;
+  height: 35px;
+  margin-left: 35%;
+  border-radius: 5px;
+  font-size: large;
+  font-weight: 500;
+  color: #5569c3;
+}
+
+.savePlaylistButton:hover {
+  border: 2px solid #eceef8;
+  background-color: #6d7fcc;
+  color: #eceef8;
+}
+
+.playlistPrompt{
+  background-color:#6d7fcc;
+  display: none;
+  height: 250px;
+  width: 550px;
+  z-index: 2;
+  position: absolute;
+  border-radius: 5px;
+}

@@ -4,6 +4,9 @@ import Sidebar from "./Sidebar";
 import { OpenAI } from "openai";
 import LoadingComponent from "./LoadingComponent";
 import LibraryMusicIcon from "@mui/icons-material/LibraryMusic";
+import $ from "jquery";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Playlist = () => {
   const location = useLocation();
@@ -39,6 +42,7 @@ const Playlist = () => {
 
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [inputValue, setInputValue] = useState("");
 
   console.log("yt: ", process.env.REACT_APP_YT_KEY);
   console.log("yt2: ", process.env.REACT_APP_API_KEY);
@@ -100,6 +104,8 @@ const Playlist = () => {
       }
 
       const data = await response.json();
+
+      console.log("data from yt api: ", data);
       return [
         data.items[0].id.videoId,
         data.items[0].snippet.thumbnails.default.url,
@@ -195,33 +201,78 @@ const Playlist = () => {
           book: book.identifier,
           links: links,
           date: datetime,
-          playlistName: "name",
+          playlistName: inputValue,
         }),
       });
 
       console.log("response stst: ", response);
-      if (response.status != 200) {
-        throw new Error("Failed to fetch user data");
+      if (response.status != 201) {
+        throw new Error("Failed to add playlist data");
       }
       const data = response.json();
 
       console.log("data after inserting into playlists: ", data);
+      showToastMessage();
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
   };
 
-  return (
-    <div style={{ width: "100%" }}>
-      <Sidebar></Sidebar>
-      <div className="pageTitle">
-        <span>{book.title}'s playlist</span>
-      </div>
+  const showToastMessage = () => {
+    console.log("entered toast");
+    toast.info("Playlist saved successfully!", {
+      position: "top-center",
+    });
+  };
 
-      <div>
+  const getPrompt = () => {
+    $("#playlistNamePrompt").css({ display: "block" });
+    $("#firstRow").css({ opacity: "0.5" });
+    $("#content").css({ opacity: "0.5" });
+  };
+
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+    console.log(e.target.value);
+  };
+
+  const savePlaylistTitle = () => {
+    console.log("Prompt submitted:", inputValue);
+    $("#playlistNamePrompt").css({ display: "none" });
+    $("#firstRow").css({ opacity: "1" });
+    $("#content").css({ opacity: "1" });
+    savePlaylist();
+    //setInputValue("");
+  };
+
+  return (
+    <div style={{ width: "100%" }} id="fullPage">
+      <Sidebar></Sidebar>
+      <ToastContainer />
+      <div className="pageTitle" id="firstRow">
+        <span>{book.title}'s playlist</span>
         <button onClick={playlistCreation}>Generate</button>
       </div>
-      <div>
+
+      <div style={{ position: "relative", marginTop: "3%", marginLeft: "35%" }}>
+        <div className="playlistPrompt" id="playlistNamePrompt">
+          <div className="promptName">Give your playlist a name</div>
+          <div className="inputPromptComponent">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={handleInputChange}
+              placeholder="Playlist name"
+              style={{ width: "400px", height: "50px" }}
+            />
+            <button onClick={savePlaylistTitle} className="savePlaylistButton">
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="content">
         {loading && <LoadingComponent current={"playlist"}></LoadingComponent>}
         <div className="row" style={{ width: "99%" }}>
           {console.log("links at render: ", links)}
@@ -231,7 +282,7 @@ const Playlist = () => {
               <div>
                 <span>Add playlist to your collection</span>
               </div>
-              <button onClick={savePlaylist}>
+              <button onClick={getPrompt} className="addToLibraryButton">
                 <LibraryMusicIcon></LibraryMusicIcon>
               </button>
             </div>
