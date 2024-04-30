@@ -776,3 +776,21 @@ color:white;
   position: absolute;
   border-radius: 5px;
 }
+
+.addPlaylistButton {
+  background-color: #6d7fcc;
+  color:white;
+  border: 2px solid #6d7fcc;
+  border-radius: 5px;
+}
+
+.addPlaylistButton:hover {
+  color: #6d7fcc;
+  border: 2px solid #6d7fcc;
+  background-color: white;
+}
+
+.addPlaylistFont{
+  font-weight: 500;
+  color:#a1acde;
+}

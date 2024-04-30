@@ -7,6 +7,7 @@ import LibraryMusicIcon from "@mui/icons-material/LibraryMusic";
 import $ from "jquery";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ClearIcon from "@mui/icons-material/Clear";
 
 const Playlist = () => {
   const location = useLocation();
@@ -245,6 +246,12 @@ const Playlist = () => {
     //setInputValue("");
   };
 
+  const exitSaving = () => {
+    $("#playlistNamePrompt").css({ display: "none" });
+    $("#firstRow").css({ opacity: "1" });
+    $("#content").css({ opacity: "1" });
+  };
+
   return (
     <div style={{ width: "100%" }} id="fullPage">
       <Sidebar></Sidebar>
@@ -254,9 +261,19 @@ const Playlist = () => {
         <button onClick={playlistCreation}>Generate</button>
       </div>
 
-      <div style={{ position: "relative", marginTop: "3%", marginLeft: "35%" }}>
+      <div style={{ position: "relative", marginTop: "1%", marginLeft: "35%" }}>
         <div className="playlistPrompt" id="playlistNamePrompt">
-          <div className="promptName">Give your playlist a name</div>
+          <div className="promptName" style={{ position: "relative" }}>
+            <span>Give your playlist a name</span>
+            <div
+              className="removeColor"
+              style={{ position: "absolute", paddingLeft: "20%" }}
+            >
+              <button onClick={exitSaving}>
+                <ClearIcon style={{ color: "#eceef8" }} />
+              </button>
+            </div>
+          </div>
           <div className="inputPromptComponent">
             <input
               type="text"
@@ -278,11 +295,11 @@ const Playlist = () => {
           {console.log("links at render: ", links)}
 
           {links.length > 0 && (
-            <div>
-              <div>
+            <div style={{ marginBottom: "15px" }}>
+              <div className="addPlaylistFont">
                 <span>Add playlist to your collection</span>
               </div>
-              <button onClick={getPrompt} className="addToLibraryButton">
+              <button onClick={getPrompt} className="addPlaylistButton">
                 <LibraryMusicIcon></LibraryMusicIcon>
               </button>
             </div>
