@@ -794,3 +794,17 @@ color:white;
   font-weight: 500;
   color:#a1acde;
 }
+
+
+.playlistsList{
+  margin-top: 24px;
+  background-color: #a1acde;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 5px;
+  padding-bottom: 5px;
+}
+
+#playlistRectangle{
+  border-right:2px solid #a1acde;
+}
