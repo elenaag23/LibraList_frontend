@@ -802,9 +802,37 @@ color:white;
   display: flex;
   justify-content: space-between;
   border-radius: 5px;
-  padding-bottom: 5px;
 }
 
 #playlistRectangle{
   border-right:2px solid #a1acde;
+}
+
+.songItem2{
+  background-color: #d9def2;
+  width: 40%;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 5px;
+  color:#6d7fcc;
+}
+
+.songItem2:hover{
+  background-color: white;
+  border: 2px solid #a1acde;
+  transition: 0.5s;
+}
+
+.songFont2{
+  padding-top: 4%;
+  padding-left: 15px;
+  font-weight: 600;
+  color: #6d7fcc;
+}
+
+.songTitle{
+  color:white;
+  font-size: larger;
+  font-weight: 700;
+  padding-top: 20px;
 }
