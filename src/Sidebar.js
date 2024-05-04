@@ -98,7 +98,7 @@ function Sidebar() {
               style={{ height: "60px" }}
               id="playlistButton"
             >
-              <Link to="/userPlaylists" className="myLibraryButton">
+              <Link to="/playlistUser" className="myLibraryButton">
                 <div className="littleDiv">Playlists</div>
               </Link>
             </div>

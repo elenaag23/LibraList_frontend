@@ -2,18 +2,19 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import $ from "jquery";
 
-const UserPlaylists = () => {
+const PlaylistUser = () => {
   const [loading, setLoading] = useState(false);
-  const [playlists, setPlaylist] = useState(null);
-  const [songs, setSongs] = useState(null);
+  const [playlists, setPlaylist] = useState([]);
+  const [songs, setSongs] = useState([]);
   const [selectedPlaylist, setSelectedPlaylist] = useState(0);
-  const userMail = localStorage.getItem("userMail");
+  const [selectedSong, setSelectedSong] = useState(0);
+  const token = localStorage.getItem("authToken");
 
   useEffect(() => {
+    getUserPlaylists();
     console.log("entered user playlist");
     $("#playlistButton").addClass("selected");
     setLoading(true);
-    getUserPlaylists();
   }, []);
 
   const getUserPlaylists = () => {
@@ -21,7 +22,7 @@ const UserPlaylists = () => {
       method: "GET",
       headers: {
         Accept: "application/json",
-        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((response) => {
@@ -48,6 +49,11 @@ const UserPlaylists = () => {
   const selectPlaylist = (event) => {
     setSelectedPlaylist(event.target.value);
     console.log("changed color: ", event.target.value);
+  };
+
+  const selectSong = (event) => {
+    setSelectedSong(event.target.value);
+    console.log("changed song: ", event.target.value);
   };
 
   return (
@@ -120,22 +126,23 @@ const UserPlaylists = () => {
           <div className="col-8" style={{ height: "100vh" }}>
             <div className="video-container">
               <iframe
-                width="560"
-                height="315"
-                src={"https://www.youtube.com/embed/xo1VInw-SKc"}
+                width="600"
+                height="400"
+                src={`https://www.youtube.com/embed/${selectedSong}`}
                 title="YouTube video player"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
+                style={{ border: "7px solid white", borderRadius: "5px" }}
               ></iframe>
             </div>
           </div>
           <div className="col-4" style={{ height: "100vh" }}>
             <div className="songTitle">
-              <span>{playlists[0]["playlistName"]} songs</span>
+              <span>{playlists[selectedPlaylist]["playlistName"]} songs</span>
             </div>
             {songs &&
-              songs[playlists[{ selectedPlaylist }]["playlistId"]] &&
-              songs[playlists[{ selectedPlaylist }]["playlistId"]].map(
+              songs[playlists[selectedPlaylist]["playlistId"]] &&
+              songs[playlists[selectedPlaylist]["playlistId"]].map(
                 (song, index) => (
                   <div key={index} className="playlistsList">
                     {console.log("playlist: ", song)}
@@ -144,9 +151,33 @@ const UserPlaylists = () => {
                       className="songItem2"
                       style={{ height: "50px", width: "100%" }}
                     >
-                      <span className="songFont2">
+                      {/* <span className="songFont2">
                         {song.songName} - {song.songArtist}
-                      </span>
+                      </span> */}
+                      <input
+                        type="radio"
+                        class="btn-check2"
+                        name="songOptions"
+                        id={`song${index}`}
+                        autocomplete="off"
+                        value={song.songLink.split("?v=")[1]}
+                        onChange={selectSong}
+                        style={{ position: "absolute", bottom: "0px" }}
+                      ></input>
+                      <label
+                        class="btn "
+                        for={`song${index}`}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          color: "white",
+                          fontWeight: "500",
+                        }}
+                      >
+                        <span className="songFont2">
+                          {song.songName} - {song.songArtist}
+                        </span>
+                      </label>
                     </div>
                   </div>
                 )
@@ -158,4 +189,4 @@ const UserPlaylists = () => {
   );
 };
 
-export default UserPlaylists;
+export default PlaylistUser;

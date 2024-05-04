@@ -836,3 +836,19 @@ color:white;
   font-weight: 700;
   padding-top: 20px;
 }
+
+.btn-check2+.btn:hover {
+  border: 2px solid white !important;
+  background-color: #5569c3;
+  transition: 0.2s;
+}
+
+.btn-check2:checked+.btn {
+  border: 2px solid white !important;
+  background-color: #5569c3;
+    transition: 0.2s;
+}
+
+.video-container{
+  margin-top:15%;
+}
