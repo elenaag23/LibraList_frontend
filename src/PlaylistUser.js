@@ -74,7 +74,7 @@ const PlaylistUser = () => {
       >
         <div
           className="col-3"
-          style={{ backgroundColor: "#d9def2" }}
+          style={{ backgroundColor: "#6d7fcc" }}
           id="playlistRectangle"
         >
           {console.log("SELECTED PLAYLIST: ", selectedPlaylist)}
@@ -98,15 +98,15 @@ const PlaylistUser = () => {
                     autocomplete="off"
                     value={index}
                     onChange={selectPlaylist}
-                    style={{ position: "absolute", bottom: "0px" }}
+                    style={{ position: "absolute", appearance: "none" }}
                   ></input>
                   <label
-                    class="btn "
+                    id="songLabel"
+                    class="btn"
                     for={`option${index}`}
                     style={{
                       width: "100%",
                       height: "100%",
-                      color: "white",
                       fontWeight: "500",
                     }}
                   >
@@ -119,7 +119,7 @@ const PlaylistUser = () => {
         <div
           className="col-9 row"
           style={{
-            backgroundColor: "#6d7fcc",
+            backgroundColor: "#d9def2",
             borderLeft: "2px solid #a1acde",
           }}
         >
@@ -132,7 +132,7 @@ const PlaylistUser = () => {
                 title="YouTube video player"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
-                style={{ border: "7px solid white", borderRadius: "5px" }}
+                style={{ border: "7px solid #6d7fcc", borderRadius: "5px" }}
               ></iframe>
             </div>
           </div>
@@ -149,20 +149,20 @@ const PlaylistUser = () => {
 
                     <div
                       className="songItem2"
-                      style={{ height: "50px", width: "100%" }}
+                      style={{ height: "40px", width: "100%" }}
                     >
                       {/* <span className="songFont2">
                         {song.songName} - {song.songArtist}
                       </span> */}
                       <input
                         type="radio"
-                        class="btn-check2"
+                        class="btn-check3"
                         name="songOptions"
                         id={`song${index}`}
                         autocomplete="off"
                         value={song.songLink.split("?v=")[1]}
                         onChange={selectSong}
-                        style={{ position: "absolute", bottom: "0px" }}
+                        style={{ position: "absolute", appearance: "none" }}
                       ></input>
                       <label
                         class="btn "
@@ -172,6 +172,7 @@ const PlaylistUser = () => {
                           height: "100%",
                           color: "white",
                           fontWeight: "500",
+                          display: "flex",
                         }}
                       >
                         <span className="songFont2">
