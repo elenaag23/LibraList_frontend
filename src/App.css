@@ -871,3 +871,12 @@ color:white;
   color: #6d7fcc;
   transition: 0.2s;
 }
+
+.btn-check3:checked+.songFont2 {
+  color: #6d7fcc;
+  transition: 0.2s;
+}
+
+.songItem2 label{
+  color:white;
+}
