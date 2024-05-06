@@ -11,6 +11,7 @@ const PlaylistUser = () => {
   const token = localStorage.getItem("authToken");
 
   useEffect(() => {
+    $("#playlistButton").addClass("selected");
     initiateData();
     console.log("entered user playlist");
     setLoading(true);
