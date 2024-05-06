@@ -11,44 +11,54 @@ const PlaylistUser = () => {
   const token = localStorage.getItem("authToken");
 
   useEffect(() => {
-    getUserPlaylists();
+    initiateData();
     console.log("entered user playlist");
-    $("#playlistButton").addClass("selected");
     setLoading(true);
   }, []);
 
-  const getUserPlaylists = () => {
-    fetch(`http://127.0.0.1:8000/userPlaylists2`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        console.log("data received: ", data);
-        console.log(
-          "selected playlist: ",
-          data["playlistData"][0]["playlistId"]
-        );
-        console.log(data["map"]["7"]);
-        setPlaylist(data["playlistData"]);
-        console.log(" playlis data: ");
-        setSongs(data["map"]);
-        console.log(" songssss");
-        console.log(" final");
+  const initiateData = async () => {
+    const response = await getUserPlaylists();
+    setSelectedSong(
+      songs[playlists[selectedPlaylist]["playlistId"]][0]["songLink"].split(
+        "?v="
+      )[1]
+    );
+    $("#option0").prop("checked", true);
+    $("#song0").prop("checked", true);
+  };
 
-        setLoading(false);
-      })
-      .catch((error) => {});
+  const getUserPlaylists = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/userPlaylists2`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+      setPlaylist(data["playlistData"]);
+      console.log(" playlis data: ");
+      setSongs(data["map"]);
+      console.log(" songssss");
+      console.log(" final");
+
+      setLoading(false);
+    } catch (error) {}
   };
 
   const selectPlaylist = (event) => {
     setSelectedPlaylist(event.target.value);
     console.log("changed color: ", event.target.value);
+    setSelectedSong(
+      songs[playlists[event.target.value]["playlistId"]][0]["songLink"].split(
+        "?v="
+      )[1]
+    );
   };
 
   const selectSong = (event) => {
@@ -62,11 +72,11 @@ const PlaylistUser = () => {
     // </div>
     <div style={{ width: "100%" }}>
       <Sidebar></Sidebar>
-      <div className="pageTitle">
+      {/* <div className="pageTitle">
         <span>Playlists</span>
       </div>
 
-      <div></div>
+      <div></div> */}
 
       <div
         className="row"
