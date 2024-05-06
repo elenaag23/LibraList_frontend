@@ -93,7 +93,15 @@ function Sidebar() {
         </div>
         <div className="col-4">
           <div className="row">
-            <div className="col-6"></div>
+            <div
+              className="col-4 pageActive"
+              style={{ height: "60px" }}
+              id="playlistButton"
+            >
+              <Link to="/playlistUser" className="myLibraryButton">
+                <div className="littleDiv">Playlists</div>
+              </Link>
+            </div>
             <div className="col-6"></div>
           </div>
         </div>

@@ -794,3 +794,80 @@ color:white;
   font-weight: 500;
   color:#a1acde;
 }
+
+
+.playlistsList{
+  margin-top: 24px;
+  background-color: #a1acde;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 5px;
+}
+
+#playlistRectangle{
+  border-right:2px solid #a1acde;
+}
+
+.songItem2{
+  background-color:  #6d7fcc;
+  width: 40%;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 5px;
+  color:#d9def2;
+}
+
+.songItem2:hover .songFont2{
+  background-color: #d9def2;
+  transition: 0.5s;
+  color:#5569c3;
+}
+
+.songFont2{
+  padding-left: 15px;
+  font-weight: 600;
+}
+
+.songTitle{
+  color:#6d7fcc;
+  font-size: larger;
+  font-weight: 700;
+  padding-top: 20px;
+}
+
+.btn-check2+.btn:hover {
+  border: 2px solid white !important;
+  background-color: #d9def2;
+  color: #6d7fcc;
+  transition: 0.2s;
+}
+
+.btn-check2:checked+.btn {
+  border: 2px solid white !important;
+  background-color: #d9def2;
+  color: #6d7fcc;
+  transition: 0.2s;
+}
+
+.songItem label{
+  color:white;
+}
+
+
+.video-container{
+  margin-top:15%;
+}
+
+.btn-check3+.btn:hover {
+  border: 2px solid #6d7fcc !important;
+  background-color: #d9def2;
+  color: #6d7fcc;
+  transition: 0.2s;
+}
+
+.btn-check3:checked+.btn {
+  border: 2px solid #6d7fcc !important;
+  background-color: #d9def2;
+  color: #6d7fcc;
+  transition: 0.2s;
+}
