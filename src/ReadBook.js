@@ -210,9 +210,12 @@ const ReadBook = () => {
   };
 
   const getBookInfo = () => {
-    fetch(`http://127.0.0.1:8000/getBookInfo?book=${book.title}`, {
-      method: "GET",
-    })
+    fetch(
+      `http://127.0.0.1:8000/getBookInfo?bookTitle=${book.title}&bookIdentifier=${book.identifier}`,
+      {
+        method: "GET",
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         console.log("info received");
