@@ -7,7 +7,7 @@ const BookItem = ({ book, number }) => {
   return (
     <div
       className={"mycell col-3"}
-      id={book.bookIdentifier}
+      id={book.identifier}
       style={{ paddingLeft: "0px", position: "relative" }}
     >
       {/* <a
@@ -22,8 +22,8 @@ const BookItem = ({ book, number }) => {
         <div className="bookItemWrapper">
           <img
             src={`https://archive.org/download/${encodeURIComponent(
-              book.bookIdentifier
-            )}/${encodeURIComponent(book.bookCover)}`}
+              book.identifier
+            )}/${encodeURIComponent(book.jpg)}`}
             alt="Book Cover"
             className="bookImage"
           />
@@ -31,7 +31,7 @@ const BookItem = ({ book, number }) => {
       </Link>
 
       <div className="bookName">
-        <span>{book.bookName}</span>
+        <span>{book.title}</span>
       </div>
     </div>
   );
