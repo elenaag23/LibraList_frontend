@@ -26,6 +26,8 @@ const ReadBook = () => {
   const [noHighlights, setNoHighlights] = useState(true);
   const [pageNumber, setPageNumber] = useState(1);
   const token = localStorage.getItem("authToken");
+  const [genre, setGenre] = useState(null);
+  const [description, setDescription] = useState(null);
 
   const showToastMessage = () => {
     console.log("entered toast");
@@ -209,20 +211,27 @@ const ReadBook = () => {
     }
   };
 
-  const getBookInfo = () => {
-    fetch(
-      `http://127.0.0.1:8000/getBookInfo?bookTitle=${book.title}&bookIdentifier=${book.identifier}`,
-      {
-        method: "GET",
+  const getBookInfo = async () => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/getBookInfo?bookTitle=${book.title}&bookIdentifier=${book.identifier}`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (response.status == 200) {
+        const data = await response.json();
+        setGenre(data["bookGenre"]);
+        setDescription(data["bookDescription"]);
+
+        console.log(
+          "genre and description: ",
+          data["bookGenre"],
+          data["bookDescription"]
+        );
       }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("info received");
-      })
-      .catch((error) => {
-        console.error("Error fetching PDF:", error);
-      });
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -319,6 +328,19 @@ const ReadBook = () => {
                     </div>
                   ) : null}
                 </div>
+                {genre && description && (
+                  <div>
+                    <li className="noListType">
+                      <span style={{ fontWeight: "600" }}>{description}</span>
+                    </li>
+
+                    <li className="noListType">
+                      <span className="propertyFont">Genre: </span>
+                      <span>{genre}</span>
+                    </li>
+                  </div>
+                )}
+
                 <div className="horizontalLine">
                   <hr></hr>
                 </div>
