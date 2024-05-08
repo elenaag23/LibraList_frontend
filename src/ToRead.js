@@ -8,6 +8,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useLocation } from "react-router-dom";
 import $ from "jquery";
 import Sidebar from "./Sidebar";
+import BookRecommendations from "./BookRecommandations";
 
 function ToRead() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -20,10 +21,13 @@ function ToRead() {
   const [prevPage, setPrevPage] = useState(null);
   const location = useLocation();
   const [currentUser, setCurrentUser] = useState(null);
+  const token = localStorage.getItem("authToken");
+  const [titles, setTitles] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
 
   useEffect(() => {
     $("#bookshelfButton").addClass("selected");
-    //getCurrentUser();
+    getBookRecommendations();
     console.log("previous page: ", localStorage.getItem("prevPage"));
 
     if (localStorage.getItem("prevPage") == "/read-book") {
@@ -47,6 +51,28 @@ function ToRead() {
   useEffect(() => {
     if (bookData) insertIntoDB();
   }, [bookData]);
+
+  const getBookRecommendations = async () => {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/getBookRecommendations",
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed inserting books in database");
+      }
+
+      const data = await response.json();
+      setRecommendations(data["genreBooks"]);
+    } catch (error) {}
+  };
 
   const insertIntoDB = async () => {
     console.log("enetered insert into database");
@@ -119,8 +145,30 @@ function ToRead() {
     });
   };
 
+  const findBookDB = async (identifier) => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/getBookData?book=${identifier}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+      if (response == 204) {
+        return null;
+      } else {
+        const data = await response.json();
+        const foundBook = data["book"];
+        return foundBook;
+      }
+    } catch (error) {}
+  };
+
   const processData = async (data, url) => {
-    console.log("data in process data: ", data);
+    console.log("data in process data & origin: ", data, origin);
     setSearching(false);
     setProcessing(true);
 
@@ -137,14 +185,20 @@ function ToRead() {
         arrBooks.push(book);
         console.log("identifier: ", book["identifier"]);
 
-        try {
-          const cBook = await pdfAvailable(book["identifier"], book["title"]);
-          if (cBook && "url" in cBook) {
-            bookIds.push([book["identifier"], book["title"]]);
-            availableBooks.push(cBook);
+        const res = await findBookDB(book["identifier"]);
+
+        if (res != null) {
+          availableBooks.push(res);
+        } else {
+          try {
+            const cBook = await pdfAvailable(book["identifier"], book["title"]);
+            if (cBook && "url" in cBook) {
+              bookIds.push([book["identifier"], book["title"]]);
+              availableBooks.push(cBook);
+            }
+          } catch (error) {
+            console.error("Error fetching PDF:", error);
           }
-        } catch (error) {
-          console.error("Error fetching PDF:", error);
         }
       }
     }
@@ -283,6 +337,15 @@ function ToRead() {
           <BookGrid books={bookData} origin={"search"} />
         </div>
       ) : null}
+
+      {!bookData && recommendations && (
+        <div>
+          <div className="recommendationsTitle">
+            <span>Recommended for you</span>
+          </div>
+          <BookRecommendations books={recommendations}></BookRecommendations>
+        </div>
+      )}
 
       {bookData != null && bookData.length == 0 ? (
         <div className="noBooks">

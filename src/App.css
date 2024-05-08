@@ -248,13 +248,13 @@
 }
 
 .boxZones{
-  height: 180px;
   display: flex;
   justify-content: center;
   background-color: #d9def2;
   margin: 10px;
   border-radius: 10px;
   color:#6d7fcc;
+  padding-bottom: 36px;
 }
 
 .boxZones h3{
@@ -879,4 +879,22 @@ color:white;
 
 .songItem2 label{
   color:white;
+}
+
+.noListType
+{
+  list-style-type: none;
+  padding-left: 24px;
+}
+
+.propertyFont{
+  font-weight: 700;
+}
+
+.recommendationsTitle{
+  display: flex;
+  margin-left: 54px;
+  font-size: large;
+  font-weight: 700;
+  color: #6d7fcc;
 }
