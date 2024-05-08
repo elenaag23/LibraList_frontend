@@ -119,6 +119,28 @@ function ToRead() {
     });
   };
 
+  const findBookDB = async (identifier) => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/getBookData?book=${identifier}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+      if (response == 204) {
+        return null;
+      } else {
+        const data = await response.json();
+        const foundBook = data["book"];
+        return foundBook;
+      }
+    } catch (error) {}
+  };
+
   const processData = async (data, url) => {
     console.log("data in process data: ", data);
     setSearching(false);
@@ -137,14 +159,20 @@ function ToRead() {
         arrBooks.push(book);
         console.log("identifier: ", book["identifier"]);
 
-        try {
-          const cBook = await pdfAvailable(book["identifier"], book["title"]);
-          if (cBook && "url" in cBook) {
-            bookIds.push([book["identifier"], book["title"]]);
-            availableBooks.push(cBook);
+        const res = await findBookDB(book["identifier"]);
+
+        if (res != null) {
+          availableBooks.push(res);
+        } else {
+          try {
+            const cBook = await pdfAvailable(book["identifier"], book["title"]);
+            if (cBook && "url" in cBook) {
+              bookIds.push([book["identifier"], book["title"]]);
+              availableBooks.push(cBook);
+            }
+          } catch (error) {
+            console.error("Error fetching PDF:", error);
           }
-        } catch (error) {
-          console.error("Error fetching PDF:", error);
         }
       }
     }

@@ -25,6 +25,7 @@ const ReadBook = () => {
   const [highlighted, setHighlighted] = useState(null);
   const [noHighlights, setNoHighlights] = useState(true);
   const [pageNumber, setPageNumber] = useState(1);
+  const token = localStorage.getItem("authToken");
 
   const showToastMessage = () => {
     console.log("entered toast");
@@ -208,9 +209,24 @@ const ReadBook = () => {
     }
   };
 
+  const getBookInfo = () => {
+    fetch(`http://127.0.0.1:8000/getBookInfo?book=${book.title}`, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("info received");
+      })
+      .catch((error) => {
+        console.error("Error fetching PDF:", error);
+      });
+  };
+
   useEffect(() => {
     console.log("prev page: ", localStorage.getItem("prevPage"));
     localStorage.setItem("prevPage", location.pathname);
+
+    getBookInfo();
 
     getPDF();
     console.log("pdf?? ", pdf);

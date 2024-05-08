@@ -17,7 +17,7 @@ const UserPlaylists = () => {
   }, []);
 
   const getUserPlaylists = () => {
-    fetch(`http://127.0.0.1:8000/userPlaylists2`, {
+    fetch(`http://127.0.0.1:8000/userPlaylists`, {
       method: "GET",
       headers: {
         Accept: "application/json",
