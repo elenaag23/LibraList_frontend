@@ -890,3 +890,11 @@ color:white;
 .propertyFont{
   font-weight: 700;
 }
+
+.recommendationsTitle{
+  display: flex;
+  margin-left: 54px;
+  font-size: large;
+  font-weight: 700;
+  color: #6d7fcc;
+}

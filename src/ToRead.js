@@ -167,7 +167,7 @@ function ToRead() {
     } catch (error) {}
   };
 
-  const processData = async (data, url, origin) => {
+  const processData = async (data, url) => {
     console.log("data in process data & origin: ", data, origin);
     setSearching(false);
     setProcessing(true);
@@ -189,14 +189,12 @@ function ToRead() {
 
         if (res != null) {
           availableBooks.push(res);
-          if (origin == "recommendation") break;
         } else {
           try {
             const cBook = await pdfAvailable(book["identifier"], book["title"]);
             if (cBook && "url" in cBook) {
               bookIds.push([book["identifier"], book["title"]]);
               availableBooks.push(cBook);
-              if (origin == "recommendation") break;
             }
           } catch (error) {
             console.error("Error fetching PDF:", error);
@@ -254,7 +252,7 @@ function ToRead() {
       fetch(apiUrl)
         .then((response) => response.json())
         .then((data) => {
-          processData(data["response"]["docs"], apiUrl, "search");
+          processData(data["response"]["docs"], apiUrl);
           setSearchResults(data);
           setSearch(true);
           console.log("raspuns: ", data);
@@ -266,34 +264,6 @@ function ToRead() {
       console.log("search term: ", searchTerm);
       localStorage.setItem("search", [searchTerm, apiUrl]);
     }
-  };
-
-  const getRecBook = async (title) => {
-    //setSearching(true);
-    console.log("getRecBook");
-    const apiUrl = `https://archive.org/advancedsearch.php?q=${encodeURIComponent(
-      title
-    )}&output=json&mediatype=texts`;
-
-    //const searchCache = await searchInCache(apiUrl);
-
-    //if (!searchCache)
-    fetch(apiUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        processData(data["response"]["docs"], apiUrl, "recommendation");
-        setSearchResults(data);
-        setSearch(true);
-        console.log("raspuns: ", data);
-        console.log("available books");
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-    // else {
-    //   console.log("search term: ", searchTerm);
-    //   localStorage.setItem("search", [searchTerm, apiUrl]);
-    // }
   };
 
   const getCurrentUser = async () => {
@@ -370,6 +340,9 @@ function ToRead() {
 
       {!bookData && recommendations && (
         <div>
+          <div className="recommendationsTitle">
+            <span>Recommended for you</span>
+          </div>
           <BookRecommendations books={recommendations}></BookRecommendations>
         </div>
       )}
