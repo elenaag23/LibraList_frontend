@@ -6,9 +6,9 @@ import $ from "jquery";
 const BookItem = ({ book, number }) => {
   return (
     <div
-      className={"mycell col-3"}
+      className={"mycell col-2"}
       id={book.identifier}
-      style={{ paddingLeft: "0px", position: "relative" }}
+      style={{ paddingLeft: "0px", position: "relative", margin: "20px" }}
     >
       {/* <a
       href={`https://archive.org/download/${encodeURIComponent(
@@ -38,7 +38,7 @@ const BookItem = ({ book, number }) => {
 };
 
 const BookRow = ({ books }) => (
-  <div className="row">
+  <div className="row" style={{ marginLeft: "20px" }}>
     {books.map((book, index) => (
       <BookItem key={index} book={book} number={books.length} />
     ))}
