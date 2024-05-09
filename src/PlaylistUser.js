@@ -10,9 +10,9 @@ const PlaylistUser = () => {
   const [selectedSong, setSelectedSong] = useState(0);
   const token = localStorage.getItem("authToken");
 
-  useEffect(() => {
+  useEffect(async () => {
     $("#playlistButton").addClass("selected");
-    initiateData();
+    await initiateData();
     console.log("entered user playlist");
     setLoading(true);
   }, []);
@@ -30,7 +30,7 @@ const PlaylistUser = () => {
 
   const getUserPlaylists = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/userPlaylists2`, {
+      const response = await fetch(`http://127.0.0.1:8000/userPlaylists`, {
         method: "GET",
         headers: {
           Accept: "application/json",
@@ -88,7 +88,6 @@ const PlaylistUser = () => {
           style={{ backgroundColor: "#6d7fcc" }}
           id="playlistRectangle"
         >
-          {console.log("SELECTED PLAYLIST: ", selectedPlaylist)}
           {playlists &&
             playlists.map((playlist, index) => (
               <div
