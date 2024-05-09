@@ -12,6 +12,7 @@ import "@react-pdf-viewer/core/lib/styles/index.css";
 import Playlist from "./Playlist";
 import UserPlaylists from "./UserPlaylists";
 import PlaylistUser from "./PlaylistUser";
+import Highlights from "./HighlightsPage";
 
 function App() {
   let local = "http://127.0.0.1:8000";
@@ -58,6 +59,7 @@ function App() {
           <Route path="/library" element={<Library />} />
           <Route path="/playlist" element={<Playlist />} />
           <Route path="/playlistUser" element={<PlaylistUser />} />
+          <Route path="/highlights" element={<Highlights />} />
         </Routes>
       </BrowserRouter>
     </div>
