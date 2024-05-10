@@ -4,6 +4,7 @@ import Sidebar from "./Sidebar";
 import $ from "jquery";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import { ToastContainer, toast } from "react-toastify";
 
 const HighlightsPage = () => {
   const token = localStorage.getItem("authToken");
@@ -23,6 +24,27 @@ const HighlightsPage = () => {
     console.log("eleemnt: ", $("#option0"));
     initiateCall();
   }, []);
+
+  const showToastMessageSuccessAdd = () => {
+    console.log("entered toast");
+    toast.info("Quote added to favorites!", {
+      position: "top-center",
+    });
+  };
+
+  const showToastMessageSuccessRemove = () => {
+    console.log("entered toast");
+    toast.info("Quote removed from your favorites!", {
+      position: "top-center",
+    });
+  };
+
+  const showToastMessageError = () => {
+    console.log("entered toast");
+    toast.error("Error at like! Try again", {
+      position: "top-center",
+    });
+  };
 
   const initiateCall = async () => {
     const res = await bookHighlights();
@@ -68,6 +90,51 @@ const HighlightsPage = () => {
     } catch (error) {}
   };
 
+  const likeButton = async (highlightId) => {
+    console.log("click like: ", likes);
+    const res = await toggleLike(highlightId);
+
+    if (res == 1) {
+      if (likes.indexOf(highlightId) == -1) {
+        var newLikes = likes.slice();
+        newLikes.push(highlightId);
+        setLikes(newLikes);
+        console.log("likes in if: ", newLikes);
+        showToastMessageSuccessAdd();
+      } else {
+        likes.splice(likes.indexOf(highlightId), 1);
+        var newLikes = likes.slice();
+        setLikes(newLikes);
+        console.log("likes in else: ", newLikes);
+        showToastMessageSuccessRemove();
+      }
+      console.log("new likes: ", likes);
+    } else showToastMessageError();
+  };
+
+  const toggleLike = async (highlightId) => {
+    console.log("click like2: ", highlightId);
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/toggleLike`, {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(highlightId),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+        return 0;
+      }
+
+      const data = await response.json();
+      console.log("data returned: ", data);
+      return 1;
+    } catch (error) {}
+  };
+
   const selectOption = (event) => {
     console.log("clicked: ", colors);
     console.log("clicked2: ", highlights);
@@ -92,6 +159,7 @@ const HighlightsPage = () => {
   return (
     <div>
       <Sidebar></Sidebar>
+      <ToastContainer />
       <div className="pageTitle">
         <span>Book quotes</span>
       </div>
@@ -197,13 +265,17 @@ const HighlightsPage = () => {
                           <div
                             style={{ display: "inline-flex", marginLeft: "8%" }}
                           >
-                            <span>
-                              {likes.indexOf(quote.highlightId) == -1 ? (
-                                <FavoriteBorderIcon></FavoriteBorderIcon>
-                              ) : (
-                                <FavoriteIcon></FavoriteIcon>
-                              )}
-                            </span>
+                            <button
+                              onClick={() => likeButton(quote.highlightId)}
+                            >
+                              <span>
+                                {likes.indexOf(quote.highlightId) == -1 ? (
+                                  <FavoriteBorderIcon></FavoriteBorderIcon>
+                                ) : (
+                                  <FavoriteIcon></FavoriteIcon>
+                                )}
+                              </span>
+                            </button>
                           </div>
                         )}
                       </li>
