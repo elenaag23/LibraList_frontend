@@ -33,6 +33,24 @@ const Profile = () => {
     } catch (error) {}
   };
 
+  const getRecommandations = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/getRecommandations`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+      //setUser(data["user"]);
+    } catch (error) {}
+  };
+
   const selectOption = (event) => {
     setOption(event.target.value);
   };
