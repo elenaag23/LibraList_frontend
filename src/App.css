@@ -934,4 +934,34 @@ color:white;
   color:white;
 }
 
+.star {
+  color: #6d7fcc;
+  cursor: pointer;
+  font-size: x-large;
+}
+
+.star.filled {
+  color: gold;
+}
+
+.star:hover,
+.star:hover~.star {
+  color: #d9def2;
+}
+
+.reviewFont{
+  font-size: medium;
+  font-weight: 600;
+  color:#6d7fcc;
+}
+
+.reviewBox{
+  display: flex;
+  justify-content: center;
+  border: 5px solid rgb(109, 127, 204);
+  width: 50%;
+  margin-left: 25%;
+  border-radius: 5px;
+}
+
 

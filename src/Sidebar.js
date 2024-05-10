@@ -111,7 +111,15 @@ function Sidebar() {
                 <div className="littleDiv">Highlights</div>
               </Link>
             </div>
-            <div className="col-4"></div>
+            <div
+              className="col-4 pageActive"
+              style={{ height: "60px" }}
+              id="profileButton"
+            >
+              <Link to="/profile" className="myLibraryButton">
+                <div className="littleDiv">Profile</div>
+              </Link>
+            </div>
           </div>
         </div>
         <div className="col-4">
@@ -122,17 +130,12 @@ function Sidebar() {
               className="displayIn col-6"
               style={{ paddingLeft: "80px", paddingTop: "10px" }}
             >
-              <Link
-                to="/profile"
-                className="myLibraryButton"
-                id="profileButton"
-              >
-                <div className="littleDiv">
-                  <span>Hello</span>
-                  {user != null ? <span>, {user}</span> : null}
-                  <span>!</span>
-                </div>
-              </Link>
+              <div className="displayName">
+                <span>Hello</span>
+                {user != null ? <span>, {user}</span> : null}
+                <span>!</span>
+              </div>
+
               <div id="logoutButton">
                 <button
                   onClick={handleLogout}
