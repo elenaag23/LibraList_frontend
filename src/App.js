@@ -13,6 +13,7 @@ import Playlist from "./Playlist";
 import UserPlaylists from "./UserPlaylists";
 import PlaylistUser from "./PlaylistUser";
 import Highlights from "./HighlightsPage";
+import Profile from "./Profile";
 
 function App() {
   let local = "http://127.0.0.1:8000";
@@ -60,6 +61,7 @@ function App() {
           <Route path="/playlist" element={<Playlist />} />
           <Route path="/playlistUser" element={<PlaylistUser />} />
           <Route path="/highlights" element={<Highlights />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </BrowserRouter>
     </div>

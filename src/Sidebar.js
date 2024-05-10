@@ -122,11 +122,17 @@ function Sidebar() {
               className="displayIn col-6"
               style={{ paddingLeft: "80px", paddingTop: "10px" }}
             >
-              <div className="displayName">
-                <span>Hello</span>
-                {user != null ? <span>, {user}</span> : null}
-                <span>!</span>
-              </div>
+              <Link
+                to="/profile"
+                className="myLibraryButton"
+                id="profileButton"
+              >
+                <div className="littleDiv">
+                  <span>Hello</span>
+                  {user != null ? <span>, {user}</span> : null}
+                  <span>!</span>
+                </div>
+              </Link>
               <div id="logoutButton">
                 <button
                   onClick={handleLogout}
