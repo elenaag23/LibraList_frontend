@@ -898,3 +898,40 @@ color:white;
   font-weight: 700;
   color: #6d7fcc;
 }
+
+.bulletColorred
+{
+  li::marker{
+    color:red;
+  }
+}
+
+.bulletColororange {
+  li::marker {
+    color: orange;
+  }
+}
+
+.bulletColorgreen {
+  li::marker {
+    color: green;
+  }
+}
+
+.bulletColorblue {
+  li::marker {
+    color: blue;
+  }
+}
+
+.bulletColordef {
+  li::marker {
+    color: #6d7fcc;
+  }
+}
+
+.bookBar label{
+  color:white;
+}
+
+
