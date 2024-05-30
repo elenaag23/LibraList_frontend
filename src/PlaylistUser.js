@@ -10,16 +10,30 @@ const PlaylistUser = () => {
   const [selectedSong, setSelectedSong] = useState(0);
   const token = localStorage.getItem("authToken");
 
-  useEffect(async () => {
-    $("#playlistButton").addClass("selected");
-
-    async function fetchData() {
+  useEffect(() => {
+    const fetchData = async () => {
       await initiateData();
-    }
+      setLoading(true);
+      console.log("entered user playlist");
+    };
+
+    $("#playlistButton").addClass("selected");
     fetchData();
 
-    console.log("entered user playlist");
-    setLoading(true);
+    // Optionally return a cleanup function here if needed
+    return () => {
+      // Cleanup logic if necessary
+    };
+  }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      await initiateData();
+      setLoading(true);
+      console.log("entered user playlist");
+    };
+
+    $("#playlistButton").addClass("selected");
+    fetchData();
   }, []);
 
   const initiateData = async () => {

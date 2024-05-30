@@ -225,107 +225,139 @@ const Profile = () => {
     return 0;
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUser({
-      ...user,
-      [name]: value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("User data submitted:", user);
-    editUser();
-  };
-
-  const editUser = async () => {
-    console.log("user in edit user: ", user);
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/editUser`, {
-        method: "PUT",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
-      }
-
-      const data = await response.json();
-      //setUser(data["user"]);
-    } catch (error) {}
-  };
-
   return (
     <div>
       <Sidebar></Sidebar>
-      <div className="pageTitle">
-        <span>Profile page</span>
-      </div>
-
-      <div className="recommendationsTitle" style={{ marginLeft: "90px" }}>
-        <span>Profile settings</span>
-      </div>
-
-      {user && (
-        <div className="userForm">
-          <form onSubmit={handleSubmit} className="user-form">
-            <div className="form-group" style={{ marginBottom: "10px" }}>
-              <label
-                className="userDetailsLabel"
-                style={{ marginLeft: "25px" }}
-              >
-                Username:
-                <input
-                  type="text"
-                  name="name"
-                  value={user.name}
-                  className="userDetailsInput"
-                  onChange={handleInputChange}
-                />
-              </label>
-            </div>
-            <div className="form-group" style={{ marginBottom: "10px" }}>
-              <label
-                className="userDetailsLabel"
-                style={{ marginLeft: "25px" }}
-              >
-                Email:
-                <input
-                  type="email"
-                  name="email"
-                  value={user.email}
-                  className="userDetailsInput"
-                  onChange={handleInputChange}
-                />
-              </label>
-            </div>
-            <div className="form-group" style={{ marginBottom: "15px" }}>
-              <label className="userDetailsLabel">
-                Password:
-                <input
-                  type="password"
-                  name="password"
-                  value={user.password}
-                  className="userDetailsInput"
-                  onChange={handleInputChange}
-                />
-              </label>
-            </div>
-            <button
-              type="submit"
-              className="savePlaylistButton"
-              style={{ marginLeft: "0" }}
+      <div
+        className="row"
+        style={{ width: "97vw", height: "100vh", margin: "16px" }}
+      >
+        <div
+          className="col-3"
+          style={{ backgroundColor: "#a1acde", paddingLeft: "0px" }}
+        >
+          <div style={{ width: "100%", height: "50px" }} className="bookBar">
+            <input
+              type="radio"
+              class="btn-check2"
+              name="profileSidebar"
+              id="option1"
+              autocomplete="off"
+              value="1"
+              onChange={selectOption}
+              style={{ position: "absolute", appearance: "none" }}
+            ></input>
+            <label
+              id="songLabel"
+              class="btn settingsLabel"
+              htmlFor="option1"
+              style={{
+                borderRadius: "0px",
+                paddingTop: "10px",
+                fontSize: "large",
+                fontWeight: "700",
+                width: "100%",
+                height: "50px",
+              }}
             >
-              Submit
-            </button>
-          </form>
+              Profile Settings
+            </label>
+          </div>
+
+          <div style={{ width: "100%", height: "50px" }} className="bookBar">
+            <input
+              type="radio"
+              class="btn-check2"
+              name="profileSidebar"
+              id="option2"
+              autocomplete="off"
+              value="2"
+              onChange={selectOption}
+              style={{ position: "absolute", appearance: "none" }}
+            ></input>
+            <label
+              id="songLabel"
+              class="btn settingsLabel"
+              htmlFor="option2"
+              style={{
+                borderRadius: "0px",
+                paddingTop: "10px",
+                fontSize: "large",
+                fontWeight: "700",
+                width: "100%",
+                height: "50px",
+              }}
+            >
+              Recommendations
+            </label>
+          </div>
+
+          <div style={{ width: "100%", height: "50px" }} className="bookBar">
+            <input
+              type="radio"
+              class="btn-check2"
+              name="profileSidebar"
+              id="option3"
+              autocomplete="off"
+              value="3"
+              onChange={selectOption}
+              style={{ position: "absolute", appearance: "none" }}
+            ></input>
+            <label
+              id="songLabel"
+              class="btn settingsLabel"
+              htmlFor="option3"
+              style={{
+                borderRadius: "0px",
+                paddingTop: "10px",
+                fontSize: "large",
+                fontWeight: "700",
+                width: "100%",
+                height: "50px",
+              }}
+            >
+              Favorite quotes
+            </label>
+          </div>
+
+          <div style={{ width: "100%", height: "50px" }} className="bookBar">
+            <input
+              type="radio"
+              class="btn-check2"
+              name="profileSidebar"
+              id="option4"
+              autocomplete="off"
+              value="4"
+              onChange={selectOption}
+              style={{ position: "absolute", appearance: "none" }}
+            ></input>
+            <label
+              id="songLabel"
+              class="btn settingsLabel"
+              htmlFor="option4"
+              style={{
+                borderRadius: "0px",
+                paddingTop: "10px",
+                fontSize: "large",
+                fontWeight: "700",
+                width: "100%",
+                height: "50px",
+              }}
+            >
+              Reviews
+            </label>
+          </div>
         </div>
-      )}
+        <div
+          className="col-9 row"
+          style={{
+            backgroundColor: "#c6cdeb",
+            borderLeft: "2px solid #a1acde",
+          }}
+        >
+          {option == "1" && user && <UserProfile user={user}></UserProfile>}
+        </div>
+      </div>
     </div>
   );
 };

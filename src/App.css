@@ -963,4 +963,26 @@ color:white;
   border-radius: 5px;
 }
 
+.userDetailsInput{
+  margin-left: 15px;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom-color: #6d7fcc;
+  font-size: large;
+  color:#7386D5;
+}
+
+.userDetailsLabel{
+  display: inline-block;
+  color:#5569c3;
+  font-weight: 600;
+}
+
+.userForm{
+  display: flex;
+  margin-top: 25px;
+  margin-left: 35px;
+}
+
 
