@@ -12,17 +12,28 @@ const PlaylistUser = () => {
 
   useEffect(async () => {
     $("#playlistButton").addClass("selected");
-    await initiateData();
+
+    async function fetchData() {
+      await initiateData();
+    }
+    fetchData();
+
     console.log("entered user playlist");
     setLoading(true);
   }, []);
 
   const initiateData = async () => {
     const response = await getUserPlaylists();
+    console.log("response of initiate data: ", response);
+    const firstPlaylist = response["playlistData"][0]["playlistId"];
+    console.log("first playlist: ", firstPlaylist);
+    const firstSong = response["map"][firstPlaylist][0]["songId"];
+    console.log(
+      "first song: ",
+      response["map"][firstPlaylist][0]["songLink"].split("?v=")[1]
+    );
     setSelectedSong(
-      songs[playlists[selectedPlaylist]["playlistId"]][0]["songLink"].split(
-        "?v="
-      )[1]
+      response["map"][firstPlaylist][0]["songLink"].split("?v=")[1]
     );
     $("#option0").prop("checked", true);
     $("#song0").prop("checked", true);
@@ -43,16 +54,19 @@ const PlaylistUser = () => {
 
       const data = await response.json();
       setPlaylist(data["playlistData"]);
-      console.log(" playlis data: ");
+      console.log(" playlis data: ", data);
       setSongs(data["map"]);
       console.log(" songssss");
       console.log(" final");
+
+      return data;
 
       setLoading(false);
     } catch (error) {}
   };
 
   const selectPlaylist = (event) => {
+    event.preventDefault();
     setSelectedPlaylist(event.target.value);
     console.log("changed color: ", event.target.value);
     setSelectedSong(
@@ -63,6 +77,7 @@ const PlaylistUser = () => {
   };
 
   const selectSong = (event) => {
+    event.preventDefault();
     setSelectedSong(event.target.value);
     console.log("changed song: ", event.target.value);
   };
@@ -135,6 +150,7 @@ const PlaylistUser = () => {
         >
           <div className="col-8" style={{ height: "100vh" }}>
             <div className="video-container">
+              {console.log("current slected song: ", selectedSong)}
               <iframe
                 width="600"
                 height="400"
@@ -147,10 +163,16 @@ const PlaylistUser = () => {
             </div>
           </div>
           <div className="col-4" style={{ height: "100vh" }}>
-            <div className="songTitle">
-              <span>{playlists[selectedPlaylist]["playlistName"]} songs</span>
-            </div>
+            {playlists.length > 0 && (
+              <div className="songTitle">
+                <span>{playlists[selectedPlaylist]["playlistName"]} songs</span>
+              </div>
+            )}
+
+            {console.log("SONGS: ", songs)}
+
             {songs &&
+              playlists.length > 0 &&
               songs[playlists[selectedPlaylist]["playlistId"]] &&
               songs[playlists[selectedPlaylist]["playlistId"]].map(
                 (song, index) => (
