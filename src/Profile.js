@@ -10,12 +10,18 @@ const Profile = () => {
   const [option, setOption] = useState("1");
   const [titles, setTitles] = useState([]);
   const [book, setBooks] = useState([]);
+  const [colors, setColors] = useState(null);
   const cheerio = require("cheerio");
+  const [bookData, setBookData] = useState([]);
+  const [quotes, setQuotes] = useState([]);
+  const [map, setMap] = useState([]);
 
   useEffect(() => {
     $("#profileButton").addClass("selected");
     $("#option1").prop("checked", true);
     getUserData();
+    getColorTags();
+    getLikes();
     //getRecommandations();
   }, []);
 
@@ -34,6 +40,45 @@ const Profile = () => {
 
       const data = await response.json();
       setUser(data["user"]);
+    } catch (error) {}
+  };
+
+  const getLikes = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/getLikes`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+      setMap(data["map"]);
+      setQuotes(data["highlights"]);
+      setBookData(data["books"]);
+    } catch (error) {}
+  };
+
+  const getColorTags = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/getColorTags`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+      setColors(data["colors"]);
+      console.log("COLORS: ", data["colors"]);
     } catch (error) {}
   };
 
@@ -233,10 +278,24 @@ const Profile = () => {
     });
   };
 
+  const handleColorChange = (e) => {
+    const { name, value } = e.target;
+    setColors({
+      ...colors,
+      [name]: value,
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("User data submitted:", user);
     editUser();
+  };
+
+  const handleColors = (e) => {
+    e.preventDefault();
+    console.log("Color data submitted:", colors);
+    editColors();
   };
 
   const editUser = async () => {
@@ -260,6 +319,27 @@ const Profile = () => {
     } catch (error) {}
   };
 
+  const editColors = async () => {
+    console.log("colors in edit colors: ", colors);
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/editColorTags`, {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(colors),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+      //setUser(data["user"]);
+    } catch (error) {}
+  };
+
   return (
     <div>
       <Sidebar></Sidebar>
@@ -267,65 +347,184 @@ const Profile = () => {
         <span>Profile page</span>
       </div>
 
-      <div className="recommendationsTitle" style={{ marginLeft: "90px" }}>
-        <span>Profile settings</span>
+      <div className="row" style={{ marginTop: "30px", width: "99%" }}>
+        <div className="col-4">
+          <div className="recommendationsTitle" style={{ marginLeft: "90px" }}>
+            <span>Profile settings</span>
+          </div>
+
+          {user && (
+            <div className="userForm">
+              <form onSubmit={handleSubmit} className="user-form">
+                <div className="form-group" style={{ marginBottom: "10px" }}>
+                  <label
+                    className="userDetailsLabel"
+                    style={{ marginLeft: "25px" }}
+                  >
+                    Username:
+                    <input
+                      type="text"
+                      name="name"
+                      value={user.name}
+                      className="userDetailsInput"
+                      onChange={handleInputChange}
+                    />
+                  </label>
+                </div>
+                <div className="form-group" style={{ marginBottom: "10px" }}>
+                  <label
+                    className="userDetailsLabel"
+                    style={{ marginLeft: "25px" }}
+                  >
+                    Email:
+                    <input
+                      type="email"
+                      name="email"
+                      value={user.email}
+                      className="userDetailsInput"
+                      onChange={handleInputChange}
+                    />
+                  </label>
+                </div>
+                <div className="form-group" style={{ marginBottom: "15px" }}>
+                  <label className="userDetailsLabel">
+                    Password:
+                    <input
+                      type="password"
+                      name="password"
+                      value={user.password}
+                      className="userDetailsInput"
+                      onChange={handleInputChange}
+                    />
+                  </label>
+                </div>
+                <button
+                  type="submit"
+                  className="savePlaylistButton"
+                  style={{ marginLeft: "0" }}
+                >
+                  Save data
+                </button>
+              </form>
+            </div>
+          )}
+        </div>
+
+        <div className="col-4">
+          <div className="recommendationsTitle" style={{ marginLeft: "90px" }}>
+            <span>Colour tags</span>
+          </div>
+
+          {colors && (
+            <div className="userForm">
+              <form onSubmit={handleColors} className="user-form">
+                <div className="form-group" style={{ marginBottom: "10px" }}>
+                  <label
+                    class="btn btn-secondary"
+                    style={{
+                      backgroundColor: "blue",
+                    }}
+                  >
+                    <input
+                      type="text"
+                      name="blue"
+                      value={colors.blue}
+                      className="userDetailsInput"
+                      onChange={handleColorChange}
+                      style={{ marginLeft: "40px" }}
+                    />
+                  </label>
+                </div>
+                <div className="form-group" style={{ marginBottom: "10px" }}>
+                  <label
+                    class="btn btn-secondary"
+                    style={{
+                      backgroundColor: "red",
+                    }}
+                  >
+                    <input
+                      type="text"
+                      name="red"
+                      value={colors.red}
+                      className="userDetailsInput"
+                      onChange={handleColorChange}
+                      style={{ marginLeft: "40px" }}
+                    />
+                  </label>
+                </div>
+                <div className="form-group" style={{ marginBottom: "15px" }}>
+                  <label
+                    class="btn btn-secondary"
+                    style={{
+                      backgroundColor: "green",
+                    }}
+                  >
+                    <input
+                      type="text"
+                      name="green"
+                      value={colors.green}
+                      className="userDetailsInput"
+                      onChange={handleColorChange}
+                      style={{ marginLeft: "40px" }}
+                    />
+                  </label>
+                </div>
+                <div className="form-group" style={{ marginBottom: "15px" }}>
+                  <label
+                    class="btn btn-secondary"
+                    style={{
+                      backgroundColor: "orange",
+                    }}
+                  >
+                    <input
+                      type="text"
+                      name="orange"
+                      value={colors.orange}
+                      className="userDetailsInput"
+                      onChange={handleColorChange}
+                      style={{ marginLeft: "40px" }}
+                    />
+                  </label>
+                </div>
+                <div>
+                  <button
+                    type="submit"
+                    className="savePlaylistButton"
+                    style={{ marginLeft: "0" }}
+                  >
+                    Save tags
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+        </div>
       </div>
 
-      {user && (
-        <div className="userForm">
-          <form onSubmit={handleSubmit} className="user-form">
-            <div className="form-group" style={{ marginBottom: "10px" }}>
-              <label
-                className="userDetailsLabel"
-                style={{ marginLeft: "25px" }}
-              >
-                Username:
-                <input
-                  type="text"
-                  name="name"
-                  value={user.name}
-                  className="userDetailsInput"
-                  onChange={handleInputChange}
-                />
-              </label>
+      <div className="row" style={{ marginTop: "30px", width: "99%" }}>
+        <div>
+          <div className="recommendationsTitle" style={{ marginLeft: "90px" }}>
+            <span>Liked quotes</span>
+          </div>
+
+          <div>
+            <div className="highlights">
+              <div className="contentHighlight">
+                {console.log("QUOTES: ", quotes)}
+                {/* {quotes &&
+                  quotes.map((elem, index) => <li key={index}>{elem}</li>)} */}
+
+                {quotes &&
+                  Object.entries(quotes).map(([key, value]) => (
+                    <li key={key}>
+                      {bookData[map[key]]}: {value}
+                    </li>
+                  ))}
+              </div>
             </div>
-            <div className="form-group" style={{ marginBottom: "10px" }}>
-              <label
-                className="userDetailsLabel"
-                style={{ marginLeft: "25px" }}
-              >
-                Email:
-                <input
-                  type="email"
-                  name="email"
-                  value={user.email}
-                  className="userDetailsInput"
-                  onChange={handleInputChange}
-                />
-              </label>
-            </div>
-            <div className="form-group" style={{ marginBottom: "15px" }}>
-              <label className="userDetailsLabel">
-                Password:
-                <input
-                  type="password"
-                  name="password"
-                  value={user.password}
-                  className="userDetailsInput"
-                  onChange={handleInputChange}
-                />
-              </label>
-            </div>
-            <button
-              type="submit"
-              className="savePlaylistButton"
-              style={{ marginLeft: "0" }}
-            >
-              Submit
-            </button>
-          </form>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

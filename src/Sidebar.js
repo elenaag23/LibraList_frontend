@@ -131,9 +131,13 @@ function Sidebar() {
               style={{ paddingLeft: "80px", paddingTop: "10px" }}
             >
               <div className="displayName">
-                <span>Hello</span>
-                {user != null ? <span>, {user}</span> : null}
-                <span>!</span>
+                <span>Hello,</span>
+                {/* <span>, </span> */}
+              </div>
+              <div className="displayName">
+                {/* <span>Hello ,</span> */}
+                {user != null ? <span> {user}!</span> : null}
+                {/* <span>!</span> */}
               </div>
 
               <div id="logoutButton">
