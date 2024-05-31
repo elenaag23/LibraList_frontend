@@ -6,6 +6,7 @@ import $ from "jquery";
 import ClearIcon from "@mui/icons-material/Clear";
 import LoadingComponent from "./LoadingComponent";
 import { Link, NavLink } from "react-router-dom";
+import RatingComponent from "./RatingComponent";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -20,6 +21,7 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
   const [scale, setScale] = useState(1);
   const [noColors, setNoColors] = useState(0);
   const [value, setValue] = useState(pageNumber);
+  const [rating, setRating] = useState(0);
 
   const setReadingPage = async (pageNumber) => {
     var currentdate = new Date();
@@ -375,6 +377,10 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
     }
   };
 
+  const handleValueChange = (rating) => {
+    setRating(rating);
+  };
+
   return (
     <div style={{ width: "100%" }} className="row" onClick={handleClickOutside}>
       <div className="col-7">
@@ -514,6 +520,16 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
             ></label>
           </div>
         </div>
+
+        <div className="row reviewBox">
+          <div className="reviewFont">
+            <span>Your review</span>
+          </div>
+          <div className="playlistButton">
+            <RatingComponent book={book}></RatingComponent>
+          </div>
+        </div>
+
         <div className="playlistButton">
           <Link
             to="/playlist"

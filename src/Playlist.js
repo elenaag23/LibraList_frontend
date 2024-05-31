@@ -8,6 +8,7 @@ import $ from "jquery";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ClearIcon from "@mui/icons-material/Clear";
+import CachedIcon from "@mui/icons-material/Cached";
 
 const Playlist = () => {
   const location = useLocation();
@@ -44,6 +45,8 @@ const Playlist = () => {
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [playingSong, setPlayingSong] = useState(null);
+  const [generated, setGenerated] = useState(0);
 
   console.log("yt: ", process.env.REACT_APP_YT_KEY);
   console.log("yt2: ", process.env.REACT_APP_API_KEY);
@@ -82,6 +85,7 @@ const Playlist = () => {
   };
 
   const getYTLink = async (song) => {
+    console.log("song in get yt link: ", song);
     try {
       const ytApi = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${
         song.songName.indexOf(" ") != -1
@@ -90,8 +94,8 @@ const Playlist = () => {
       }, ${
         song.songArtist.indexOf(" ") != -1
           ? song.songArtist.split(" ").join(",")
-          : song.songartist
-      }}&order=viewCount&key=${process.env.REACT_APP_YT_KEY}`;
+          : song.songArtist
+      }}&order=relevance&key=${process.env.REACT_APP_YT_KEY}`;
       //console.log("yt api url: ", ytApi);
       const response = await fetch(ytApi, {
         method: "GET",
@@ -150,6 +154,7 @@ const Playlist = () => {
 
   const playlistCreation = async () => {
     setLoading(true);
+    setGenerated(1);
     const myPlaylist = await generatePlaylist();
     console.log("playlist: ", myPlaylist);
     if (myPlaylist) {
@@ -252,13 +257,26 @@ const Playlist = () => {
     $("#content").css({ opacity: "1" });
   };
 
+  const handleLinkClick = (e, song) => {
+    e.preventDefault();
+    setPlayingSong(song);
+  };
+
   return (
     <div style={{ width: "100%" }} id="fullPage">
       <Sidebar></Sidebar>
       <ToastContainer />
-      <div className="pageTitle" id="firstRow">
-        <span>{book.title}'s playlist</span>
-        <button onClick={playlistCreation}>Generate</button>
+      <div
+        className="pageTitle"
+        id="firstRow"
+        style={{ display: "flex", justifyContent: "center", marginLeft: "8%" }}
+      >
+        <span style={{ position: "absolute" }}>{book.title}'s playlist</span>
+        <div style={{ marginLeft: "73%" }}>
+          <button onClick={playlistCreation} className="savePlaylistButton">
+            {generated == 0 ? "Generate" : <CachedIcon></CachedIcon>}
+          </button>
+        </div>
       </div>
 
       <div style={{ position: "relative", marginTop: "1%", marginLeft: "35%" }}>
@@ -289,42 +307,78 @@ const Playlist = () => {
         </div>
       </div>
 
-      <div id="content">
+      <div id="content" style={{ marginTop: "5%" }}>
         {loading && <LoadingComponent current={"playlist"}></LoadingComponent>}
         <div className="row" style={{ width: "99%" }}>
           {console.log("links at render: ", links)}
 
-          {links.length > 0 && (
-            <div style={{ marginBottom: "15px" }}>
-              <div className="addPlaylistFont">
-                <span>Add playlist to your collection</span>
-              </div>
-              <button onClick={getPrompt} className="addPlaylistButton">
-                <LibraryMusicIcon></LibraryMusicIcon>
-              </button>
-            </div>
-          )}
+          <div className="col-6">
+            {links &&
+              links.map((song, index) => (
+                <div key={index} className="songLink">
+                  {console.log(
+                    "song: ",
+                    song.artist,
+                    song.name,
+                    song.link,
+                    song.url
+                  )}
+                  <a
+                    href="#"
+                    style={{ textDecoration: "none" }}
+                    onClick={(e) => handleLinkClick(e, song)}
+                  >
+                    <div className="songItem">
+                      <span className="songFont">
+                        {song.name} - {song.artist}
+                      </span>
+                      <img src={song.url} alt={song.name}></img>
+                    </div>
+                  </a>
+                </div>
+              ))}
+          </div>
 
-          {links &&
-            links.map((song, index) => (
-              <div key={index} className="songLink">
-                {console.log(
-                  "song: ",
-                  song.artist,
-                  song.name,
-                  song.link,
-                  song.url
-                )}
-                <a href={song.link} style={{ textDecoration: "none" }}>
-                  <div className="songItem">
-                    <span className="songFont">
-                      {song.name} - {song.artist}
-                    </span>
-                    <img src={song.url} alt={song.name}></img>
+          <div className="col-6">
+            {console.log("first link: ", links[0])}
+            {links.length > 0 && (
+              <div className="video-container" style={{ marginTop: "1%" }}>
+                <div style={{ display: "inline-flex" }}>
+                  <div className="addPlaylistFont">
+                    <span>Add playlist to your collection</span>
                   </div>
-                </a>
+                  <button
+                    onClick={getPrompt}
+                    className="addPlaylistButton"
+                    style={{ marginLeft: "15px" }}
+                  >
+                    <LibraryMusicIcon></LibraryMusicIcon>
+                  </button>
+                </div>
+                <div className="songTitle">
+                  {playingSong ? playingSong.artist : links[0].artist} -{" "}
+                  {playingSong ? playingSong.name : links[0].name}
+                </div>
+                <iframe
+                  width="600"
+                  height="400"
+                  src={`https://www.youtube.com/embed/${
+                    playingSong
+                      ? playingSong.link.split("?v=")[1]
+                      : links[0].link.split("?v=")[1]
+                  }`}
+                  title="YouTube video player"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  style={{
+                    border: "7px solid #6d7fcc",
+                    borderRadius: "5px",
+                    marginTop: "5%",
+                  }}
+                ></iframe>
               </div>
-            ))}
+            )}
+          </div>
         </div>
       </div>
     </div>

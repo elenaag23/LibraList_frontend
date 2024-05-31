@@ -664,7 +664,6 @@ color:white;
 
 .songItem{
   background-color:#a1acde;
-  width: 40%;
   display: flex;
   justify-content: space-between;
   border-radius: 5px;
@@ -673,7 +672,7 @@ color:white;
 .songFont{
   padding-top: 5%;
   padding-left: 15px;
-  font-weight: 400;
+  font-weight: 600;
   color:white;
 }
 
@@ -687,8 +686,8 @@ color:white;
 }
 
 .deleteButton{
-    height: 30px;
-      width: 38px;
+  height: 30px;
+  width: 38px;
   margin-left: 93%;
   color:#5569c3; 
   background-color: inherit;
@@ -727,9 +726,9 @@ color:white;
 
 .deleteConfirmationButton{
   width: 50px;
-    border-radius: 5px;
-    color: #5569c3;
-    font-weight: 700;
+  border-radius: 5px;
+  color: #5569c3;
+  font-weight: 700;
 }
 
 .deleteConfirmationButton:hover{
@@ -932,6 +931,58 @@ color:white;
 
 .bookBar label{
   color:white;
+}
+
+.star {
+  color: #6d7fcc;
+  cursor: pointer;
+  font-size: x-large;
+}
+
+.star.filled {
+  color: gold;
+}
+
+.star:hover,
+.star:hover~.star {
+  color: #d9def2;
+}
+
+.reviewFont{
+  font-size: medium;
+  font-weight: 600;
+  color:#6d7fcc;
+}
+
+.reviewBox{
+  display: flex;
+  justify-content: center;
+  border: 5px solid rgb(109, 127, 204);
+  width: 50%;
+  margin-left: 25%;
+  border-radius: 5px;
+}
+
+.userDetailsInput{
+  margin-left: 15px;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom-color: #6d7fcc;
+  font-size: large;
+  color:#7386D5;
+}
+
+.userDetailsLabel{
+  display: inline-block;
+  color:#5569c3;
+  font-weight: 600;
+}
+
+.userForm{
+  display: flex;
+  margin-top: 25px;
+  margin-left: 35px;
 }
 
 

@@ -8,11 +8,23 @@ const Profile = () => {
   const token = localStorage.getItem("authToken");
   const [user, setUser] = useState(null);
   const [option, setOption] = useState("1");
+  const [titles, setTitles] = useState([]);
+  const [book, setBooks] = useState([]);
+  const [colors, setColors] = useState(null);
+  const cheerio = require("cheerio");
+  const [bookData, setBookData] = useState([]);
+  const [quotes, setQuotes] = useState([]);
+  const [map, setMap] = useState([]);
+  const [favBooks, setFavBooks] = useState([]);
 
   useEffect(() => {
     $("#profileButton").addClass("selected");
     $("#option1").prop("checked", true);
     getUserData();
+    getColorTags();
+    getLikes();
+    getFavBooks();
+    //getRecommandations();
   }, []);
 
   const getUserData = async () => {
@@ -33,9 +45,9 @@ const Profile = () => {
     } catch (error) {}
   };
 
-  const getRecommandations = async () => {
+  const getFavBooks = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/getRecommandations`, {
+      const response = await fetch(`http://127.0.0.1:8000/getFavBooks`, {
         method: "GET",
         headers: {
           Accept: "application/json",
@@ -47,6 +59,88 @@ const Profile = () => {
       }
 
       const data = await response.json();
+      setFavBooks(data["books"]);
+    } catch (error) {}
+  };
+
+  const getLikes = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/getLikes`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+      setMap(data["map"]);
+      setQuotes(data["highlights"]);
+      setBookData(data["books"]);
+    } catch (error) {}
+  };
+
+  const getColorTags = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/getColorTags`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+      setColors(data["colors"]);
+      console.log("COLORS: ", data["colors"]);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await findBook();
+    }
+    fetchData();
+  }, [titles]);
+
+  const findBook = async () => {
+    var results = [];
+    var resBooks = [];
+    for (var title of titles) {
+      const res = await searchBook(title);
+      console.log("RES RECEIVED: ", res);
+      if (Array.isArray(res)) results.push(res);
+    }
+
+    for (var result of results) {
+      const book = await processData(result);
+      if (book != 0) resBooks.push(book);
+    }
+
+    setBooks(resBooks);
+  };
+
+  const getRecommandations = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/getRecommendations`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+      setTitles(data["titles"]);
       //setUser(data["user"]);
     } catch (error) {}
   };
@@ -55,141 +149,410 @@ const Profile = () => {
     setOption(event.target.value);
   };
 
+  const searchBook = async (searchTerm) => {
+    //setSearching(true);
+    const apiUrl = `https://archive.org/advancedsearch.php?q=${encodeURIComponent(
+      searchTerm
+    )}&output=json&mediatype=texts`;
+
+    //const searchCache = await searchInCache(apiUrl);
+
+    // if (!searchCache) {
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+
+      console.log("data received: ", data);
+
+      if ("response" in data && "docs" in data["response"]) {
+        console.log("look data: ", searchTerm, data["response"]["docs"]);
+        return data["response"]["docs"];
+      } else {
+        return 0;
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return 0;
+    }
+  };
+
+  const pdfAvailable = async (identifier, title) => {
+    return new Promise((resolve, reject) => {
+      const apiUrl = `http://127.0.0.1:8000/pdf/${encodeURIComponent(
+        identifier
+      )}`;
+      fetch(apiUrl)
+        .then((response) => response.text())
+        .then((html) => {
+          const $ = cheerio.load(html);
+
+          const currentBook = {};
+          $("table.directory-listing-table tbody tr").each((index, element) => {
+            const isRestricted = $(element).hasClass(
+              "directory-listing-table__restricted-file"
+            );
+            if (!isRestricted) {
+              const url = $(element).find("td:first-child a").attr("href");
+              if (url && url.split(".")[1] === "pdf") {
+                currentBook.url = url;
+              } else if (url && url.split(".")[1] === "jpg") {
+                currentBook.jpg = url;
+              }
+
+              currentBook.identifier = identifier;
+              currentBook.title = title;
+            }
+          });
+
+          resolve(currentBook);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+
+  const findBookDB = async (identifier) => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/getBookData?book=${identifier}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+      if (response == 204) {
+        return null;
+      } else {
+        const data = await response.json();
+        const foundBook = data["book"];
+        return foundBook;
+      }
+    } catch (error) {}
+  };
+
+  const processData = async (data, url) => {
+    //console.log("data in process data & origin: ", data, origin);
+    //setSearching(false);
+    //setProcessing(true);
+
+    const arrBooks = [];
+    const availableBooks = [];
+    var bookIds = [];
+
+    console.log("Process data function called: ", data);
+
+    if (!Array.isArray(data)) return 0;
+
+    for (const book of data) {
+      if (
+        book["mediatype"] === "texts" &&
+        book["format"].includes("Text PDF") &&
+        (book["language"] == "eng" || book["language"] == "English")
+      ) {
+        arrBooks.push(book);
+        console.log("identifier: ", book["identifier"]);
+
+        const res = await findBookDB(book["identifier"]);
+        //const res = null;
+
+        if (res != null) {
+          //availableBooks.push(res);
+          return res;
+        } else {
+          try {
+            const cBook = await pdfAvailable(book["identifier"], book["title"]);
+            if (cBook && "url" in cBook) {
+              //bookIds.push([book["identifier"], book["title"]]);
+              //availableBooks.push(cBook);
+              return cBook;
+            }
+          } catch (error) {
+            console.error("Error fetching PDF:", error);
+            return 0;
+          }
+        }
+      }
+    }
+
+    // addDataIntoCache("search", availableBooks, url);
+    // console.log("text books: ", arrBooks);
+    // console.log("book results: ", availableBooks);
+    // setBookData(availableBooks);
+    // console.log("search term: ", searchTerm);
+    // localStorage.setItem("search", [searchTerm, url]);
+    // console.log("get item after set: ", localStorage.getItem("search"));
+    // setProcessing(false);
+
+    return 0;
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUser({
+      ...user,
+      [name]: value,
+    });
+  };
+
+  const handleColorChange = (e) => {
+    const { name, value } = e.target;
+    setColors({
+      ...colors,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("User data submitted:", user);
+    editUser();
+  };
+
+  const handleColors = (e) => {
+    e.preventDefault();
+    console.log("Color data submitted:", colors);
+    editColors();
+  };
+
+  const editUser = async () => {
+    console.log("user in edit user: ", user);
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/editUser`, {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+      //setUser(data["user"]);
+    } catch (error) {}
+  };
+
+  const editColors = async () => {
+    console.log("colors in edit colors: ", colors);
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/editColorTags`, {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(colors),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+      //setUser(data["user"]);
+    } catch (error) {}
+  };
+
   return (
     <div>
       <Sidebar></Sidebar>
-      <div
-        className="row"
-        style={{ width: "97vw", height: "100vh", margin: "16px" }}
-      >
-        <div
-          className="col-3"
-          style={{ backgroundColor: "#a1acde", paddingLeft: "0px" }}
-        >
-          <div
-            style={{ width: "100%", height: "50px" }}
-            className="profileSetting"
-          >
-            <input
-              type="radio"
-              class="btn-check2"
-              name="profileSidebar"
-              id="option1"
-              autocomplete="off"
-              value="1"
-              onChange={selectOption}
-              style={{ position: "absolute", appearance: "none" }}
-            ></input>
-            <label
-              id="songLabel"
-              class="btn settingsLabel"
-              htmlFor="option1"
-              style={{
-                borderRadius: "0px",
-                paddingTop: "10px",
-                fontSize: "large",
-                fontWeight: "700",
-              }}
-            >
-              Profile Settings
-            </label>
+      <div className="pageTitle">
+        <span>Profile page</span>
+      </div>
+
+      <div className="row" style={{ marginTop: "30px", width: "99%" }}>
+        <div className="col-4">
+          <div className="recommendationsTitle" style={{ marginLeft: "90px" }}>
+            <span>Profile settings</span>
           </div>
 
-          <div
-            style={{ width: "100%", height: "50px" }}
-            className="profileSetting"
-          >
-            <input
-              type="radio"
-              class="btn-check2"
-              name="profileSidebar"
-              id="option2"
-              autocomplete="off"
-              value="2"
-              onChange={selectOption}
-              style={{ position: "absolute", appearance: "none" }}
-            ></input>
-            <label
-              id="songLabel"
-              class="btn settingsLabel"
-              htmlFor="option2"
-              style={{
-                borderRadius: "0px",
-                paddingTop: "10px",
-                fontSize: "large",
-                fontWeight: "700",
-              }}
-            >
-              Recommandations
-            </label>
+          {user && (
+            <div className="userForm">
+              <form onSubmit={handleSubmit} className="user-form">
+                <div className="form-group" style={{ marginBottom: "10px" }}>
+                  <label
+                    className="userDetailsLabel"
+                    style={{ marginLeft: "25px" }}
+                  >
+                    Username:
+                    <input
+                      type="text"
+                      name="name"
+                      value={user.name}
+                      className="userDetailsInput"
+                      onChange={handleInputChange}
+                    />
+                  </label>
+                </div>
+                <div className="form-group" style={{ marginBottom: "10px" }}>
+                  <label
+                    className="userDetailsLabel"
+                    style={{ marginLeft: "25px" }}
+                  >
+                    Email:
+                    <input
+                      type="email"
+                      name="email"
+                      value={user.email}
+                      className="userDetailsInput"
+                      onChange={handleInputChange}
+                    />
+                  </label>
+                </div>
+                <div className="form-group" style={{ marginBottom: "15px" }}>
+                  <label className="userDetailsLabel">
+                    Password:
+                    <input
+                      type="password"
+                      name="password"
+                      value={user.password}
+                      className="userDetailsInput"
+                      onChange={handleInputChange}
+                    />
+                  </label>
+                </div>
+                <button
+                  type="submit"
+                  className="savePlaylistButton"
+                  style={{ marginLeft: "0" }}
+                >
+                  Save data
+                </button>
+              </form>
+            </div>
+          )}
+        </div>
+
+        <div className="col-4">
+          <div className="recommendationsTitle" style={{ marginLeft: "90px" }}>
+            <span>Colour tags</span>
           </div>
 
-          <div
-            style={{ width: "100%", height: "50px" }}
-            className="profileSetting"
-          >
-            <input
-              type="radio"
-              class="btn-check2"
-              name="profileSidebar"
-              id="option3"
-              autocomplete="off"
-              value="3"
-              onChange={selectOption}
-              style={{ position: "absolute", appearance: "none" }}
-            ></input>
-            <label
-              id="songLabel"
-              class="btn settingsLabel"
-              htmlFor="option3"
-              style={{
-                borderRadius: "0px",
-                paddingTop: "10px",
-                fontSize: "large",
-                fontWeight: "700",
-              }}
-            >
-              Highlights
-            </label>
+          {colors && (
+            <div className="userForm">
+              <form onSubmit={handleColors} className="user-form">
+                <div className="form-group" style={{ marginBottom: "10px" }}>
+                  <label
+                    class="btn btn-secondary"
+                    style={{
+                      backgroundColor: "blue",
+                    }}
+                  >
+                    <input
+                      type="text"
+                      name="blue"
+                      value={colors.blue}
+                      className="userDetailsInput"
+                      onChange={handleColorChange}
+                      style={{ marginLeft: "40px" }}
+                    />
+                  </label>
+                </div>
+                <div className="form-group" style={{ marginBottom: "10px" }}>
+                  <label
+                    class="btn btn-secondary"
+                    style={{
+                      backgroundColor: "red",
+                    }}
+                  >
+                    <input
+                      type="text"
+                      name="red"
+                      value={colors.red}
+                      className="userDetailsInput"
+                      onChange={handleColorChange}
+                      style={{ marginLeft: "40px" }}
+                    />
+                  </label>
+                </div>
+                <div className="form-group" style={{ marginBottom: "15px" }}>
+                  <label
+                    class="btn btn-secondary"
+                    style={{
+                      backgroundColor: "green",
+                    }}
+                  >
+                    <input
+                      type="text"
+                      name="green"
+                      value={colors.green}
+                      className="userDetailsInput"
+                      onChange={handleColorChange}
+                      style={{ marginLeft: "40px" }}
+                    />
+                  </label>
+                </div>
+                <div className="form-group" style={{ marginBottom: "15px" }}>
+                  <label
+                    class="btn btn-secondary"
+                    style={{
+                      backgroundColor: "orange",
+                    }}
+                  >
+                    <input
+                      type="text"
+                      name="orange"
+                      value={colors.orange}
+                      className="userDetailsInput"
+                      onChange={handleColorChange}
+                      style={{ marginLeft: "40px" }}
+                    />
+                  </label>
+                </div>
+                <div>
+                  <button
+                    type="submit"
+                    className="savePlaylistButton"
+                    style={{ marginLeft: "0" }}
+                  >
+                    Save tags
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+        </div>
+        <div className="col-4">
+          <div className="recommendationsTitle" style={{ marginLeft: "90px" }}>
+            <span>Favorite books</span>
           </div>
 
-          <div
-            style={{ width: "100%", height: "50px" }}
-            className="profileSetting"
-          >
-            <input
-              type="radio"
-              class="btn-check2"
-              name="profileSidebar"
-              id="option4"
-              autocomplete="off"
-              value="4"
-              onChange={selectOption}
-              style={{ position: "absolute", appearance: "none" }}
-            ></input>
-            <label
-              id="songLabel"
-              class="btn settingsLabel"
-              htmlFor="options4"
-              style={{
-                borderRadius: "0px",
-                paddingTop: "10px",
-                fontSize: "large",
-                fontWeight: "700",
-              }}
-            >
-              Reviews
-            </label>
+          <div>
+            {favBooks &&
+              favBooks.map((elem, index) => <li key={index}>{elem}</li>)}
           </div>
         </div>
-        <div
-          className="col-9 row"
-          style={{
-            backgroundColor: "#c6cdeb",
-            borderLeft: "2px solid #a1acde",
-          }}
-        >
-          {option == "1" && user && <UserProfile user={user}></UserProfile>}
+      </div>
+
+      <div className="row" style={{ marginTop: "30px", width: "99%" }}>
+        <div>
+          <div className="recommendationsTitle" style={{ marginLeft: "90px" }}>
+            <span>Liked quotes</span>
+          </div>
+
+          <div>
+            <div className="highlights">
+              <div className="contentHighlight">
+                {console.log("QUOTES: ", quotes)}
+                {/* {quotes &&
+                  quotes.map((elem, index) => <li key={index}>{elem}</li>)} */}
+
+                {quotes &&
+                  Object.entries(quotes).map(([key, value]) => (
+                    <li key={key}>
+                      {bookData[map[key]]}: {value}
+                    </li>
+                  ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
