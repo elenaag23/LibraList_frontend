@@ -21,6 +21,7 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
   const [scale, setScale] = useState(1);
   const [noColors, setNoColors] = useState(0);
   const [value, setValue] = useState(pageNumber);
+  const [rating, setRating] = useState(0);
 
   const setReadingPage = async (pageNumber) => {
     var currentdate = new Date();
@@ -376,6 +377,10 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
     }
   };
 
+  const handleValueChange = (rating) => {
+    setRating(rating);
+  };
+
   return (
     <div style={{ width: "100%" }} className="row" onClick={handleClickOutside}>
       <div className="col-7">
@@ -521,7 +526,7 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
             <span>Your review</span>
           </div>
           <div className="playlistButton">
-            <RatingComponent></RatingComponent>
+            <RatingComponent book={book}></RatingComponent>
           </div>
         </div>
 

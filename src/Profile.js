@@ -15,6 +15,7 @@ const Profile = () => {
   const [bookData, setBookData] = useState([]);
   const [quotes, setQuotes] = useState([]);
   const [map, setMap] = useState([]);
+  const [favBooks, setFavBooks] = useState([]);
 
   useEffect(() => {
     $("#profileButton").addClass("selected");
@@ -22,6 +23,7 @@ const Profile = () => {
     getUserData();
     getColorTags();
     getLikes();
+    getFavBooks();
     //getRecommandations();
   }, []);
 
@@ -40,6 +42,24 @@ const Profile = () => {
 
       const data = await response.json();
       setUser(data["user"]);
+    } catch (error) {}
+  };
+
+  const getFavBooks = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/getFavBooks`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+      setFavBooks(data["books"]);
     } catch (error) {}
   };
 
@@ -498,6 +518,16 @@ const Profile = () => {
               </form>
             </div>
           )}
+        </div>
+        <div className="col-4">
+          <div className="recommendationsTitle" style={{ marginLeft: "90px" }}>
+            <span>Favorite books</span>
+          </div>
+
+          <div>
+            {favBooks &&
+              favBooks.map((elem, index) => <li key={index}>{elem}</li>)}
+          </div>
         </div>
       </div>
 
