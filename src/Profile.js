@@ -3,6 +3,7 @@ import "./App.css";
 import Sidebar from "./Sidebar";
 import $ from "jquery";
 import UserProfile from "./UserProfile";
+import Cookies from "js-cookie";
 
 const Profile = () => {
   const token = localStorage.getItem("authToken");
@@ -321,13 +322,15 @@ const Profile = () => {
   const editUser = async () => {
     console.log("user in edit user: ", user);
     try {
-      const response = await fetch(`http://127.0.0.1:8000/editUser`, {
+      const response = await fetch("http://localhost:8000/editUser", {
         method: "PUT",
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
+          "X-XSRF-TOKEN": localStorage.getItem("xsrf"),
         },
+        credentials: "include",
         body: JSON.stringify(user),
       });
       if (!response.ok) {
