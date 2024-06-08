@@ -347,13 +347,15 @@ const Profile = () => {
   const editColors = async () => {
     console.log("colors in edit colors: ", colors);
     try {
-      const response = await fetch(`http://127.0.0.1:8000/editColorTags`, {
+      const response = await fetch(`http://localhost:8000/editColorTags`, {
         method: "PUT",
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
+          "X-XSRF-TOKEN": localStorage.getItem("xsrf"),
         },
+        credentials: "include",
         body: JSON.stringify(colors),
       });
       if (!response.ok) {
