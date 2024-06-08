@@ -86,19 +86,21 @@ const Profile = () => {
 
   const getColorTags = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/getColorTags`, {
+      const response = await fetch(`http://localhost:8000/getColorTags`, {
         method: "GET",
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
+          "X-XSRF-TOKEN": localStorage.getItem("xsrf"),
         },
+        credentials: "include",
       });
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
 
       const data = await response.json();
-      setColors(data["colors"]);
+      setColors(data["colors"]["colors"]);
       console.log("COLORS: ", data["colors"]);
     } catch (error) {}
   };
