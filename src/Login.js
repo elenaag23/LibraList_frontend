@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Cookies from "js-cookie";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -10,13 +11,43 @@ function Login() {
     password: password,
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8000/sanctum/csrf-cookie",
+          {
+            method: "GET", // or 'POST', 'PUT', etc. depending on your API
+            credentials: "include",
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const cookie = Cookies.get("XSRF-TOKEN");
+        localStorage.setItem("xsrf", cookie);
+        console.log("cookie: ", cookie);
+        //const responseData = await response.json();
+        //setData(responseData);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const handleLogin = async () => {
-    fetch("http://127.0.0.1:8000/login", {
+    //await fetchData();
+    fetch("http://localhost:8000/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        "X-XSRF-TOKEN": localStorage.getItem("xsrf"),
       },
+      credentials: "include",
       body: JSON.stringify(userData),
     })
       .then((response) => {
