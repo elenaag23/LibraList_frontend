@@ -46,7 +46,7 @@ const ReadBook = () => {
       body: JSON.stringify({ user: userMail, book: book.identifier }),
     })
       .then((response) => {
-        console.log("response: ", response.json());
+        //console.log("response: ", response.json());
         if (response.ok) {
           setAdded(true);
           showToastMessage();
