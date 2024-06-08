@@ -37,13 +37,16 @@ const ReadBook = () => {
   };
 
   const addToLibrary = () => {
-    fetch("http://127.0.0.1:8000/addToLibrary", {
+    fetch("http://localhost:8000/addToLibrary", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+        "X-XSRF-TOKEN": localStorage.getItem("xsrf"),
       },
-      body: JSON.stringify({ user: userMail, book: book.identifier }),
+      credentials: "include",
+      body: JSON.stringify({ book: book.identifier }),
     })
       .then((response) => {
         //console.log("response: ", response.json());
