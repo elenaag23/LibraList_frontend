@@ -39,23 +39,26 @@ const PlaylistUser = () => {
   const initiateData = async () => {
     const response = await getUserPlaylists();
     console.log("response of initiate data: ", response);
-    const firstPlaylist = response["playlistData"][0]["playlistId"];
-    console.log("first playlist: ", firstPlaylist);
-    const firstSong = response["map"][firstPlaylist][0]["songId"];
-    console.log(
-      "first song: ",
-      response["map"][firstPlaylist][0]["songLink"].split("?v=")[1]
-    );
-    setSelectedSong(
-      response["map"][firstPlaylist][0]["songLink"].split("?v=")[1]
-    );
-    $("#option0").prop("checked", true);
-    $("#song0").prop("checked", true);
+
+    if (response != undefined) {
+      const firstPlaylist = response["playlistData"][0]["playlistId"];
+      console.log("first playlist: ", firstPlaylist);
+      const firstSong = response["map"][firstPlaylist][0]["songId"];
+      console.log(
+        "first song: ",
+        response["map"][firstPlaylist][0]["songLink"].split("?v=")[1]
+      );
+      setSelectedSong(
+        response["map"][firstPlaylist][0]["songLink"].split("?v=")[1]
+      );
+      $("#option0").prop("checked", true);
+      $("#song0").prop("checked", true);
+    }
   };
 
   const getUserPlaylists = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/userPlaylists`, {
+      const response = await fetch(`http://localhost:8000/userPlaylists`, {
         method: "GET",
         headers: {
           Accept: "application/json",
@@ -162,20 +165,23 @@ const PlaylistUser = () => {
             borderLeft: "2px solid #a1acde",
           }}
         >
-          <div className="col-8" style={{ height: "100vh" }}>
-            <div className="video-container">
-              {console.log("current slected song: ", selectedSong)}
-              <iframe
-                width="600"
-                height="400"
-                src={`https://www.youtube.com/embed/${selectedSong}`}
-                title="YouTube video player"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                style={{ border: "7px solid #6d7fcc", borderRadius: "5px" }}
-              ></iframe>
+          {selectedSong && (
+            <div className="col-8" style={{ height: "100vh" }}>
+              <div className="video-container">
+                {console.log("current slected song: ", selectedSong)}
+                <iframe
+                  width="600"
+                  height="400"
+                  src={`https://www.youtube.com/embed/${selectedSong}`}
+                  title="YouTube video player"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  style={{ border: "7px solid #6d7fcc", borderRadius: "5px" }}
+                ></iframe>
+              </div>
             </div>
-          </div>
+          )}
+
           <div className="col-4" style={{ height: "100vh" }}>
             {playlists.length > 0 && (
               <div className="songTitle">
