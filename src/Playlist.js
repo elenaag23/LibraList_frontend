@@ -195,15 +195,16 @@ const Playlist = () => {
     const token = localStorage.getItem("authToken");
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/savePlaylist`, {
+      const response = await fetch(`http://localhost:8000/savePlaylist`, {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          "X-XSRF-TOKEN": localStorage.getItem("xsrf"),
         },
+        credentials: "include",
         body: JSON.stringify({
-          user: localStorage.getItem("userMail"),
           book: book.identifier,
           links: links,
           date: datetime,
