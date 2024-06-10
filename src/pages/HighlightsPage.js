@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "./App.css";
-import Sidebar from "./Sidebar";
+import "../App.css";
+import Sidebar from "../components/Sidebar";
 import $ from "jquery";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";

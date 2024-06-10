@@ -1,13 +1,13 @@
 import { React, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import PDFViewer from "./PDFViewer";
-import Sidebar from "./Sidebar";
+import PDFViewer from "../components/PDFViewer";
+import Sidebar from "../components/Sidebar";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import HighlightComponent from "./HighlightComponent";
+import HighlightComponent from "../components/HighlightComponent";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import LoadingComponent from "./LoadingComponent";
+import LoadingComponent from "../components/LoadingComponent";
 
 const ReadBook = () => {
   const location = useLocation();

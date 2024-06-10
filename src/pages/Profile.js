@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import "./App.css";
-import Sidebar from "./Sidebar";
+import "../App.css";
+import Sidebar from "../components/Sidebar";
 import $ from "jquery";
-import UserProfile from "./UserProfile";
+import UserProfile from "../UserProfile";
 import Cookies from "js-cookie";
 
 const Profile = () => {
@@ -345,26 +345,28 @@ const Profile = () => {
   };
 
   const editColors = async () => {
-    console.log("colors in edit colors: ", colors);
     try {
-      const response = await fetch(`http://localhost:8000/editColorTags`, {
-        method: "PUT",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-          "X-XSRF-TOKEN": localStorage.getItem("xsrf"),
-        },
-        credentials: "include",
-        body: JSON.stringify(colors),
-      });
+      const response = await fetch(
+        process.env.REACT_APP_BACKEND_URL + "/editColorTags",
+        {
+          method: "PUT",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "X-XSRF-TOKEN": localStorage.getItem("xsrf"),
+          },
+          credentials: "include",
+          body: JSON.stringify(colors),
+        }
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
-
       const data = await response.json();
-      //setUser(data["user"]);
-    } catch (error) {}
+    } catch (error) {
+      console.error("Failed editing user tags: ", error);
+    }
   };
 
   return (

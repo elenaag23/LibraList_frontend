@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import "./App.css";
+import "../App.css";
 import SearchIcon from "@mui/icons-material/Search";
-import BookGrid from "./BookGrid";
-import PDFViewer from "./PDFViewer";
-import LoadingComponent from "./LoadingComponent";
+import BookGrid from "../components/BookGrid";
+import PDFViewer from "../components/PDFViewer";
+import LoadingComponent from "../components/LoadingComponent";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useLocation } from "react-router-dom";
 import $ from "jquery";
-import Sidebar from "./Sidebar";
-import BookRecommendations from "./BookRecommandations";
+import Sidebar from "../components/Sidebar";
+import BookRecommendations from "../components/BookRecommandations";
 
 function ToRead() {
   const [searchTerm, setSearchTerm] = useState("");

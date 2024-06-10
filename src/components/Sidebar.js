@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./App.css";
+import "../App.css";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Link, NavLink } from "react-router-dom";
 

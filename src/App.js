@@ -1,19 +1,18 @@
 import logo from "./logo.svg";
 import "./App.css";
-import ToRead from "./ToRead";
+import ToRead from "./pages/ToRead";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import ReadBook from "./ReadBook";
-import Register from "./Register";
-import Login from "./Login";
+import ReadBook from "./pages/ReadBook";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
 import { useEffect } from "react";
-import Library from "./Library";
+import Library from "./pages/Library";
 import "@react-pdf-viewer/core/lib/styles/index.css";
-import Playlist from "./Playlist";
-import UserPlaylists from "./UserPlaylists";
-import PlaylistUser from "./PlaylistUser";
-import Highlights from "./HighlightsPage";
-import Profile from "./Profile";
+import Playlist from "./pages/Playlist";
+import PlaylistUser from "./pages/PlaylistUser";
+import Highlights from "./pages/HighlightsPage";
+import Profile from "./pages/Profile";
 
 function App() {
   let local = "http://127.0.0.1:8000";
@@ -24,15 +23,18 @@ function App() {
     const getCurrentUser = async () => {
       try {
         const token = localStorage.getItem("authToken");
-        console.log("current token: ", token);
+        console.log("current token: ", process.env.REACT_APP_BACKEND_URL);
 
-        const response = await fetch("http://127.0.0.1:8000/authUser", {
-          method: "GET",
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          process.env.REACT_APP_BACKEND_URL + "/authUser",
+          {
+            method: "GET",
+            headers: {
+              Accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch user data");
         }
