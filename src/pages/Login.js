@@ -70,7 +70,7 @@ function Login() {
       <div className="loginComponent">
         <div
           className="pageTitle"
-          style={{ marginTop: "50px", color: "white" }}
+          style={{ marginTop: "10px", color: "white" }}
         >
           <span>Login</span>
         </div>

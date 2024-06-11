@@ -556,7 +556,10 @@ const Profile = () => {
                 {quotes &&
                   Object.entries(quotes).map(([key, value]) => (
                     <li key={key}>
-                      {bookData[map[key]]}: {value}
+                      <span style={{ color: "#6d7fcc", fontWeight: "600" }}>
+                        {bookData[map[key]]}:
+                      </span>{" "}
+                      <span>{value}</span>
                     </li>
                   ))}
               </div>

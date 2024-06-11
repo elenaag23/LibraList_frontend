@@ -272,11 +272,20 @@ const Playlist = () => {
       <div
         className="pageTitle"
         id="firstRow"
-        style={{ display: "flex", justifyContent: "center", marginLeft: "8%" }}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          marginLeft: "8%",
+          width: "92%",
+        }}
       >
         <span style={{ position: "absolute" }}>{book.title}'s playlist</span>
         <div style={{ marginLeft: "73%" }}>
-          <button onClick={playlistCreation} className="savePlaylistButton">
+          <button
+            onClick={playlistCreation}
+            className="savePlaylistButton"
+            style={{ marginLeft: "0" }}
+          >
             {generated == 0 ? "Generate" : <CachedIcon></CachedIcon>}
           </button>
         </div>

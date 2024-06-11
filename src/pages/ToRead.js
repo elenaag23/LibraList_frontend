@@ -340,7 +340,7 @@ function ToRead() {
         </div>
       ) : null}
 
-      {!bookData && recommendations.length > 0 && (
+      {!bookData && recommendations.length > 0 && !processing && !searching && (
         <div>
           <div className="recommendationsTitle">
             <span>Recommended for you</span>

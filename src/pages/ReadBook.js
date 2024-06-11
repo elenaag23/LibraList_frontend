@@ -28,12 +28,38 @@ const ReadBook = () => {
   const token = localStorage.getItem("authToken");
   const [genre, setGenre] = useState(null);
   const [description, setDescription] = useState(null);
+  const [colors, setColors] = useState([]);
 
   const showToastMessage = () => {
     console.log("entered toast");
     toast.info("Book added to your library!", {
       position: "top-center",
     });
+  };
+
+  const getUserColors = () => {
+    fetch(process.env.REACT_APP_BACKEND_URL + "/getColorTags", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("response: ", data);
+        console.log("colors: ", data["colors"]["colors"]);
+        setColors(data["colors"]["colors"]);
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
   };
 
   const addToLibrary = () => {
@@ -247,6 +273,7 @@ const ReadBook = () => {
     console.log("pdf?? ", pdf);
     userHasBook();
     userHasHighlights();
+    getUserColors();
 
     return () => {
       deleteHighlights();
@@ -377,6 +404,7 @@ const ReadBook = () => {
                     colorHeader={`backgroundColor${element.split("-").pop()}`}
                     col={col}
                     highlighted={highlighted[element]}
+                    colors={colors}
                   />
                 ))}
 

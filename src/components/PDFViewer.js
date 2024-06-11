@@ -524,7 +524,10 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
           </div>
         </div>
 
-        <div className="row reviewBox">
+        <div
+          className="row reviewBox"
+          style={{ marginLeft: "25%", marginBottom: "10%" }}
+        >
           <div className="reviewFont">
             <span>Your review</span>
           </div>
