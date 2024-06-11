@@ -22,6 +22,7 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
   const [noColors, setNoColors] = useState(0);
   const [value, setValue] = useState(pageNumber);
   const [rating, setRating] = useState(0);
+  const token = localStorage.getItem("authToken");
 
   const setReadingPage = async (pageNumber) => {
     var currentdate = new Date();
@@ -293,14 +294,16 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
   };
 
   const insertIntoDb = (highlight) => {
-    fetch("http://127.0.0.1:8000/addHighlight", {
+    fetch("http://localhost:8000/addHighlight", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        "X-XSRF-TOKEN": localStorage.getItem("xsrf"),
       },
+      credentials: "include",
       body: JSON.stringify({
-        user: userMail,
         book: book.identifier,
         highlight: highlight,
       }),
@@ -521,7 +524,10 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
           </div>
         </div>
 
-        <div className="row reviewBox">
+        <div
+          className="row reviewBox"
+          style={{ marginLeft: "25%", marginBottom: "10%" }}
+        >
           <div className="reviewFont">
             <span>Your review</span>
           </div>

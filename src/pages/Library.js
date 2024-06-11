@@ -1,10 +1,10 @@
-import "./App.css";
+import "../App.css";
 import React, { useState, useEffect } from "react";
-import Sidebar from "./Sidebar";
+import Sidebar from "../components/Sidebar";
 import { Link } from "react-router-dom";
 import $ from "jquery";
-import BookGrid from "./BookGrid";
-import LoadingComponent from "./LoadingComponent";
+import BookGrid from "../components/BookGrid";
+import LoadingComponent from "../components/LoadingComponent";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

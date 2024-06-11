@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import "./App.css";
-import Sidebar from "./Sidebar";
+import "../App.css";
+import Sidebar from "../components/Sidebar";
 import $ from "jquery";
-import UserProfile from "./UserProfile";
+import UserProfile from "../UserProfile";
+import Cookies from "js-cookie";
 
 const Profile = () => {
   const token = localStorage.getItem("authToken");
@@ -85,19 +86,21 @@ const Profile = () => {
 
   const getColorTags = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/getColorTags`, {
+      const response = await fetch(`http://localhost:8000/getColorTags`, {
         method: "GET",
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
+          "X-XSRF-TOKEN": localStorage.getItem("xsrf"),
         },
+        credentials: "include",
       });
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
 
       const data = await response.json();
-      setColors(data["colors"]);
+      setColors(data["colors"]["colors"]);
       console.log("COLORS: ", data["colors"]);
     } catch (error) {}
   };
@@ -321,13 +324,15 @@ const Profile = () => {
   const editUser = async () => {
     console.log("user in edit user: ", user);
     try {
-      const response = await fetch(`http://127.0.0.1:8000/editUser`, {
+      const response = await fetch("http://localhost:8000/editUser", {
         method: "PUT",
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
+          "X-XSRF-TOKEN": localStorage.getItem("xsrf"),
         },
+        credentials: "include",
         body: JSON.stringify(user),
       });
       if (!response.ok) {
@@ -340,24 +345,28 @@ const Profile = () => {
   };
 
   const editColors = async () => {
-    console.log("colors in edit colors: ", colors);
     try {
-      const response = await fetch(`http://127.0.0.1:8000/editColorTags`, {
-        method: "PUT",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(colors),
-      });
+      const response = await fetch(
+        process.env.REACT_APP_BACKEND_URL + "/editColorTags",
+        {
+          method: "PUT",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "X-XSRF-TOKEN": localStorage.getItem("xsrf"),
+          },
+          credentials: "include",
+          body: JSON.stringify(colors),
+        }
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
-
       const data = await response.json();
-      //setUser(data["user"]);
-    } catch (error) {}
+    } catch (error) {
+      console.error("Failed editing user tags: ", error);
+    }
   };
 
   return (
@@ -547,7 +556,10 @@ const Profile = () => {
                 {quotes &&
                   Object.entries(quotes).map(([key, value]) => (
                     <li key={key}>
-                      {bookData[map[key]]}: {value}
+                      <span style={{ color: "#6d7fcc", fontWeight: "600" }}>
+                        {bookData[map[key]]}:
+                      </span>{" "}
+                      <span>{value}</span>
                     </li>
                   ))}
               </div>

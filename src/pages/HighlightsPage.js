@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "./App.css";
-import Sidebar from "./Sidebar";
+import "../App.css";
+import Sidebar from "../components/Sidebar";
 import $ from "jquery";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -18,9 +18,11 @@ const HighlightsPage = () => {
   const [color, setColor] = useState(null);
   const [displayedColor, setDisplayedColor] = useState([]);
   const [likes, setLikes] = useState([]);
+  const [tags, setTags] = useState([]);
 
   useEffect(() => {
     $("#highlightsButton").addClass("selected");
+    getUserColors();
     console.log("eleemnt: ", $("#option0"));
     initiateCall();
   }, []);
@@ -44,6 +46,31 @@ const HighlightsPage = () => {
     toast.error("Error at like! Try again", {
       position: "top-center",
     });
+  };
+
+  const getUserColors = () => {
+    fetch(process.env.REACT_APP_BACKEND_URL + "/getColorTags", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("response: ", data);
+        console.log("colors: ", data["colors"]["colors"]);
+        setTags(data["colors"]["colors"]);
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
   };
 
   const initiateCall = async () => {
@@ -176,7 +203,7 @@ const HighlightsPage = () => {
             books.map((book, index) => {
               return (
                 <div
-                  style={{ width: "100%", height: "50px" }}
+                  style={{ width: "100%", height: "75px" }}
                   className="bookBar"
                 >
                   <input
@@ -195,11 +222,11 @@ const HighlightsPage = () => {
                     htmlFor={`option${index}`}
                     style={{
                       borderRadius: "0px",
-                      paddingTop: "10px",
+                      padding: "15px",
                       fontSize: "large",
                       fontWeight: "700",
                       width: "100%",
-                      height: "50px",
+                      height: "75px",
                     }}
                   >
                     {book.bookName}
@@ -244,8 +271,11 @@ const HighlightsPage = () => {
                           width: "100%",
                           height: "50px",
                           backgroundColor: color.split("text-")[1],
+                          color: "white",
                         }}
-                      ></label>
+                      >
+                        {tags[color.split("text-")[1]]}
+                      </label>
                     </div>
                   </div>
                 );

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import Sidebar from "./Sidebar";
+import Sidebar from "../components/Sidebar";
 import { OpenAI } from "openai";
-import LoadingComponent from "./LoadingComponent";
+import LoadingComponent from "../components/LoadingComponent";
 import LibraryMusicIcon from "@mui/icons-material/LibraryMusic";
 import $ from "jquery";
 import { ToastContainer, toast } from "react-toastify";
@@ -193,34 +193,37 @@ const Playlist = () => {
     );
 
     const token = localStorage.getItem("authToken");
+    const xsrf = localStorage.getItem("xsrf");
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/savePlaylist`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          user: localStorage.getItem("userMail"),
-          book: book.identifier,
-          links: links,
-          date: datetime,
-          playlistName: inputValue,
-        }),
-      });
+      const response = await fetch(
+        process.env.REACT_APP_BACKEND_URL + "/savePlaylist",
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            "X-XSRF-TOKEN": xsrf,
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            book: book.identifier,
+            links: links,
+            date: datetime,
+            playlistName: inputValue,
+          }),
+        }
+      );
 
       console.log("response stst: ", response);
       if (response.status != 201) {
         throw new Error("Failed to add playlist data");
       }
       const data = response.json();
-
-      console.log("data after inserting into playlists: ", data);
       showToastMessage();
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      console.error("Error at saving playlist: ", error);
     }
   };
 
@@ -269,11 +272,20 @@ const Playlist = () => {
       <div
         className="pageTitle"
         id="firstRow"
-        style={{ display: "flex", justifyContent: "center", marginLeft: "8%" }}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          marginLeft: "8%",
+          width: "92%",
+        }}
       >
         <span style={{ position: "absolute" }}>{book.title}'s playlist</span>
         <div style={{ marginLeft: "73%" }}>
-          <button onClick={playlistCreation} className="savePlaylistButton">
+          <button
+            onClick={playlistCreation}
+            className="savePlaylistButton"
+            style={{ marginLeft: "0" }}
+          >
             {generated == 0 ? "Generate" : <CachedIcon></CachedIcon>}
           </button>
         </div>

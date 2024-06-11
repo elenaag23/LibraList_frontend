@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import "./App.css";
+import "../App.css";
 import SearchIcon from "@mui/icons-material/Search";
-import BookGrid from "./BookGrid";
-import PDFViewer from "./PDFViewer";
-import LoadingComponent from "./LoadingComponent";
+import BookGrid from "../components/BookGrid";
+import PDFViewer from "../components/PDFViewer";
+import LoadingComponent from "../components/LoadingComponent";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useLocation } from "react-router-dom";
 import $ from "jquery";
-import Sidebar from "./Sidebar";
-import BookRecommendations from "./BookRecommandations";
+import Sidebar from "../components/Sidebar";
+import BookRecommendations from "../components/BookRecommandations";
 
 function ToRead() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -81,12 +81,14 @@ function ToRead() {
     const token = localStorage.getItem("authToken");
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/insertBook", {
+      const response = await fetch("http://localhost:8000/insertBook", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
+          "X-XSRF-TOKEN": localStorage.getItem("xsrf"),
         },
+        credentials: "include",
         body: JSON.stringify(bookData),
       });
       if (!response.ok) {
@@ -338,7 +340,7 @@ function ToRead() {
         </div>
       ) : null}
 
-      {!bookData && recommendations.length > 0 && (
+      {!bookData && recommendations.length > 0 && !processing && !searching && (
         <div>
           <div className="recommendationsTitle">
             <span>Recommended for you</span>

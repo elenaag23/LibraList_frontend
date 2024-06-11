@@ -1,13 +1,13 @@
 import { React, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import PDFViewer from "./PDFViewer";
-import Sidebar from "./Sidebar";
+import PDFViewer from "../components/PDFViewer";
+import Sidebar from "../components/Sidebar";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import HighlightComponent from "./HighlightComponent";
+import HighlightComponent from "../components/HighlightComponent";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import LoadingComponent from "./LoadingComponent";
+import LoadingComponent from "../components/LoadingComponent";
 
 const ReadBook = () => {
   const location = useLocation();
@@ -28,6 +28,7 @@ const ReadBook = () => {
   const token = localStorage.getItem("authToken");
   const [genre, setGenre] = useState(null);
   const [description, setDescription] = useState(null);
+  const [colors, setColors] = useState([]);
 
   const showToastMessage = () => {
     console.log("entered toast");
@@ -36,17 +37,45 @@ const ReadBook = () => {
     });
   };
 
+  const getUserColors = () => {
+    fetch(process.env.REACT_APP_BACKEND_URL + "/getColorTags", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("response: ", data);
+        console.log("colors: ", data["colors"]["colors"]);
+        setColors(data["colors"]["colors"]);
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
+  };
+
   const addToLibrary = () => {
-    fetch("http://127.0.0.1:8000/addToLibrary", {
+    fetch("http://localhost:8000/addToLibrary", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+        "X-XSRF-TOKEN": localStorage.getItem("xsrf"),
       },
-      body: JSON.stringify({ user: userMail, book: book.identifier }),
+      credentials: "include",
+      body: JSON.stringify({ book: book.identifier }),
     })
       .then((response) => {
-        console.log("response: ", response.json());
+        //console.log("response: ", response.json());
         if (response.ok) {
           setAdded(true);
           showToastMessage();
@@ -244,6 +273,7 @@ const ReadBook = () => {
     console.log("pdf?? ", pdf);
     userHasBook();
     userHasHighlights();
+    getUserColors();
 
     return () => {
       deleteHighlights();
@@ -374,6 +404,7 @@ const ReadBook = () => {
                     colorHeader={`backgroundColor${element.split("-").pop()}`}
                     col={col}
                     highlighted={highlighted[element]}
+                    colors={colors}
                   />
                 ))}
 

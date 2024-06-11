@@ -38,7 +38,7 @@ const BookItem = ({ book, number }) => {
 };
 
 const BookRow = ({ books }) => (
-  <div className="row" style={{ marginLeft: "20px" }}>
+  <div className="row" style={{ marginLeft: "5%" }}>
     {books.map((book, index) => (
       <BookItem key={index} book={book} number={books.length} />
     ))}
@@ -48,7 +48,7 @@ const BookRow = ({ books }) => (
 const BookRecommendations = ({ books }) => {
   const rows = [];
   console.log("books: ", books);
-  for (let i = 0; i < books.length; i += 5) {
+  for (let i = 0; i < 5; i += 5) {
     rows.push(books.slice(i, i + 5));
   }
 

@@ -15,21 +15,17 @@ function Login() {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8000/sanctum/csrf-cookie",
+          process.env.REACT_APP_BACKEND_URL + "/sanctum/csrf-cookie",
           {
-            method: "GET", // or 'POST', 'PUT', etc. depending on your API
+            method: "GET",
             credentials: "include",
           }
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
-
         const cookie = Cookies.get("XSRF-TOKEN");
         localStorage.setItem("xsrf", cookie);
-        console.log("cookie: ", cookie);
-        //const responseData = await response.json();
-        //setData(responseData);
       } catch (error) {
         setError(error.message);
       }
@@ -39,8 +35,7 @@ function Login() {
   }, []);
 
   const handleLogin = async () => {
-    //await fetchData();
-    fetch("http://localhost:8000/login", {
+    fetch(process.env.REACT_APP_BACKEND_URL + "/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -51,13 +46,7 @@ function Login() {
       body: JSON.stringify(userData),
     })
       .then((response) => {
-        // if (response.ok) {
-        //   var data = response.json();
-        //   console.log("tokennnn: ", data);
-        //   localStorage.setItem("authToken", data.token);
-        //   //window.location.href = "/toread";
-        // }
-        return response.json(); // Return the parsed JSON data
+        return response.json();
       })
       .then((data) => {
         if (data.token) {
@@ -67,9 +56,10 @@ function Login() {
           alert(data.message);
         }
         console.log("data received: ", data.message);
-        //window.location.href = "/toread";
       })
-      .catch((error) => {});
+      .catch((error) => {
+        setError(error.message);
+      });
   };
 
   return (
@@ -80,7 +70,7 @@ function Login() {
       <div className="loginComponent">
         <div
           className="pageTitle"
-          style={{ marginTop: "50px", color: "white" }}
+          style={{ marginTop: "10px", color: "white" }}
         >
           <span>Login</span>
         </div>
