@@ -8,6 +8,10 @@ import HighlightComponent from "../components/HighlightComponent";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LoadingComponent from "../components/LoadingComponent";
+import $ from "jquery";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
 
 const ReadBook = () => {
   const location = useLocation();
@@ -29,6 +33,12 @@ const ReadBook = () => {
   const [genre, setGenre] = useState(null);
   const [description, setDescription] = useState(null);
   const [colors, setColors] = useState([]);
+
+  const editIcon =
+    '<svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="EditOutlinedIcon"><path d="m14.06 9.02.92.92L5.92 19H5v-.92zM17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29m-3.6 3.19L3 17.25V21h3.75L17.81 9.94z"></path></svg>';
+
+  const deleteIcon =
+    '<svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DeleteOutlineOutlinedIcon"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM8 9h8v10H8zm7.5-5-1-1h-5l-1 1H5v2h14V4z"></path></svg>';
 
   const showToastMessage = () => {
     console.log("entered toast");
@@ -264,6 +274,15 @@ const ReadBook = () => {
   };
 
   useEffect(() => {
+    var element1 = $(
+      `<div class='commentStyle'><div><span class='userComment'>SilvanaP:</span><span>la multi ani stefy <3 </span></div><div><button class='editButton'>${editIcon}</button><button class='editButton'>${deleteIcon}</button></div></div>`
+    );
+    var element2 = $(
+      `<div class='commentStyle'><div><span class='userComment'>PatryM:</span><span>la multi ani stefanuca <3 </span></div><div><button class='editButton'>${editIcon}</button><button class='editButton'>${deleteIcon}</button></div></div>`
+    );
+    $("#commentSection").append(element1);
+    $("#commentSection").append(element2);
+
     console.log("prev page: ", localStorage.getItem("prevPage"));
     localStorage.setItem("prevPage", location.pathname);
 
@@ -280,19 +299,33 @@ const ReadBook = () => {
     };
   }, []);
 
-  const handleClickOutside = () => {
-    // Handle click outside by triggering blur event
-    //console.log("entered here: ", $("#pageInput").val());
-    console.log("page pageNumber: ", pageNumber);
-    if (!pageNumber) {
-      console.log("entered if");
-      setPageNumber(1);
-    }
+  // const handleClickOutside = () => {
+  //   // Handle click outside by triggering blur event
+  //   //console.log("entered here: ", $("#pageInput").val());
+  //   console.log("page pageNumber: ", pageNumber);
+  //   if (!pageNumber) {
+  //     console.log("entered if");
+  //     setPageNumber(1);
+  //   }
 
-    const input = document.getElementById("pageInput");
-    if (!input) {
-      input.blur();
-    }
+  //   const input = document.getElementById("pageInput");
+  //   if (!input) {
+  //     input.blur();
+  //   }
+  // };
+
+  const submitComment = () => {
+    console.log("entered submit");
+    var comment = document.getElementById("comment").value;
+
+    var element = $(
+      `<div class='commentStyle'><div><span class='userComment'>${localStorage.getItem(
+        "userName"
+      )}:</span><span>${comment}</span></div><div><button class='editButton'>${editIcon}
+</button><button class='editButton'>${deleteIcon}</button></div></div>`
+    );
+    $("#commentSection").append(element);
+    document.getElementById("comment").value = "";
   };
 
   // Render the book details
@@ -301,7 +334,7 @@ const ReadBook = () => {
       <Sidebar></Sidebar>
       <ToastContainer />
       {book ? (
-        <div onClick={handleClickOutside}>
+        <div>
           <div className="readBookContent">
             <div className="iframeDisplay bookBox">
               {console.log("pdf:", pdf)}
@@ -373,6 +406,44 @@ const ReadBook = () => {
 
                 <div className="horizontalLine">
                   <hr></hr>
+                </div>
+
+                <div>
+                  <div>
+                    <div className="commentSection">Comment section</div>
+                    <div className="row" style={{ width: "98%" }}>
+                      <div
+                        style={{
+                          display: "inline-flex",
+                          marginLeft: "3%",
+                          height: "38px",
+                        }}
+                      >
+                        <textarea
+                          id="comment"
+                          placeholder="Leave a comment here..."
+                          style={{ width: "90%" }}
+                        ></textarea>
+                        <button className="editButton" onClick={submitComment}>
+                          <SendOutlinedIcon></SendOutlinedIcon>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    {/* <button>
+                      <EditOutlinedIcon></EditOutlinedIcon>
+                    </button>
+
+                    <button>
+                      <DeleteOutlineOutlinedIcon></DeleteOutlineOutlinedIcon>
+                    </button> */}
+                  </div>
+                  <div
+                    id="commentSection"
+                    className="row"
+                    style={{ width: "95%" }}
+                  ></div>
                 </div>
               </div>
 

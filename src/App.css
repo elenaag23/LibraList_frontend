@@ -985,4 +985,32 @@ color:white;
   margin-left: 35px;
 }
 
+.commentStyle{
+  display: inline-flex;
+  justify-content: space-between;
+  margin-left:3%;
+  margin-right:3%;
+}
+
+.userComment{
+  font-size: large;
+  font-weight: 500;
+  color:#5569c3;
+  padding-right: 3px;
+}
+
+.editButton{
+  border: none;
+  background-color: inherit;
+  color:#5569c3;
+}
+
+.commentSection{
+  display: flex;
+  justify-content: center;
+  font-size: large;
+  font-weight: 600;
+  margin: 2%;
+}
+
 
