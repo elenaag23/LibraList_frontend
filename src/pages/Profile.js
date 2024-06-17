@@ -4,13 +4,17 @@ import Sidebar from "../components/Sidebar";
 import $ from "jquery";
 import UserProfile from "../UserProfile";
 import Cookies from "js-cookie";
+import BookGrid from "../components/BookGrid";
+import BookRecommendations from "../components/BookRecommandations";
+import UpdateOutlinedIcon from "@mui/icons-material/UpdateOutlined";
+import UpdateOutlined from "@mui/icons-material/UpdateOutlined";
 
 const Profile = () => {
   const token = localStorage.getItem("authToken");
   const [user, setUser] = useState(null);
   const [option, setOption] = useState("1");
   const [titles, setTitles] = useState([]);
-  const [book, setBooks] = useState([]);
+  const [books, setBooks] = useState([]);
   const [colors, setColors] = useState(null);
   const cheerio = require("cheerio");
   const [bookData, setBookData] = useState([]);
@@ -108,6 +112,8 @@ const Profile = () => {
   useEffect(() => {
     async function fetchData() {
       const response = await findBook();
+      console.log("RESPONSE AFTER FIND BOOK: ", response);
+      console.log("RESPONSE AFTER FIND BOOK books: ", books);
     }
     fetchData();
   }, [titles]);
@@ -115,16 +121,22 @@ const Profile = () => {
   const findBook = async () => {
     var results = [];
     var resBooks = [];
+    var i = 0;
     for (var title of titles) {
+      //if (i == 9) break;
       const res = await searchBook(title);
       console.log("RES RECEIVED: ", res);
       if (Array.isArray(res)) results.push(res);
+      i += 1;
     }
 
     for (var result of results) {
       const book = await processData(result);
-      if (book != 0) resBooks.push(book);
+      console.log("RES PROCESS DATA: ", book);
+      if (book != 0 && "jpg" in book) resBooks.push(book);
+      if (resBooks.length == 10) break;
     }
+    console.log("book results: ", resBooks);
 
     setBooks(resBooks);
   };
@@ -144,6 +156,7 @@ const Profile = () => {
 
       const data = await response.json();
       setTitles(data["titles"]);
+      console.log("TITLES: ", titles);
       //setUser(data["user"]);
     } catch (error) {}
   };
@@ -369,6 +382,10 @@ const Profile = () => {
     }
   };
 
+  const generateRecommandations = () => {
+    getRecommandations();
+  };
+
   return (
     <div>
       <Sidebar></Sidebar>
@@ -377,8 +394,8 @@ const Profile = () => {
       </div>
 
       <div className="row" style={{ marginTop: "30px", width: "99%" }}>
-        <div className="col-4">
-          <div className="recommendationsTitle" style={{ marginLeft: "90px" }}>
+        <div className="col-3 highlights">
+          <div className="titles">
             <span>Profile settings</span>
           </div>
 
@@ -427,6 +444,23 @@ const Profile = () => {
                     />
                   </label>
                 </div>
+
+                <div
+                  style={{
+                    display: "inline-flex",
+                    marginLeft: "3%",
+                    height: "35px",
+                    width: "100%",
+                  }}
+                >
+                  <label className="userDetailsLabel">Bio:</label>
+                  <textarea
+                    id="comment"
+                    placeholder="Leave a comment here..."
+                    style={{ width: "80%" }}
+                    className="userInputDetails"
+                  ></textarea>
+                </div>
                 <button
                   type="submit"
                   className="savePlaylistButton"
@@ -439,15 +473,18 @@ const Profile = () => {
           )}
         </div>
 
-        <div className="col-4">
-          <div className="recommendationsTitle" style={{ marginLeft: "90px" }}>
+        <div className="col-3 highlights">
+          <div className="titles">
             <span>Colour tags</span>
           </div>
 
           {colors && (
-            <div className="userForm">
+            <div style={{ marginTop: "25px" }}>
               <form onSubmit={handleColors} className="user-form">
-                <div className="form-group" style={{ marginBottom: "10px" }}>
+                <div
+                  className="form-group"
+                  style={{ marginBottom: "10px", marginRight: "60%" }}
+                >
                   <label
                     class="btn btn-secondary"
                     style={{
@@ -464,7 +501,10 @@ const Profile = () => {
                     />
                   </label>
                 </div>
-                <div className="form-group" style={{ marginBottom: "10px" }}>
+                <div
+                  className="form-group"
+                  style={{ marginBottom: "10px", marginRight: "60%" }}
+                >
                   <label
                     class="btn btn-secondary"
                     style={{
@@ -481,7 +521,10 @@ const Profile = () => {
                     />
                   </label>
                 </div>
-                <div className="form-group" style={{ marginBottom: "15px" }}>
+                <div
+                  className="form-group"
+                  style={{ marginBottom: "10px", marginRight: "60%" }}
+                >
                   <label
                     class="btn btn-secondary"
                     style={{
@@ -498,7 +541,10 @@ const Profile = () => {
                     />
                   </label>
                 </div>
-                <div className="form-group" style={{ marginBottom: "15px" }}>
+                <div
+                  className="form-group"
+                  style={{ marginBottom: "10px", marginRight: "60%" }}
+                >
                   <label
                     class="btn btn-secondary"
                     style={{
@@ -528,8 +574,8 @@ const Profile = () => {
             </div>
           )}
         </div>
-        <div className="col-4">
-          <div className="recommendationsTitle" style={{ marginLeft: "90px" }}>
+        <div className="col-3 highlights">
+          <div className="titles">
             <span>Favorite books</span>
           </div>
 
@@ -540,7 +586,15 @@ const Profile = () => {
         </div>
       </div>
 
-      <div className="row" style={{ marginTop: "30px", width: "99%" }}>
+      <div
+        className="row"
+        style={{
+          marginTop: "30px",
+          width: "99%",
+          display: "flex",
+          justifyContent: "space-around",
+        }}
+      >
         <div>
           <div className="recommendationsTitle" style={{ marginLeft: "90px" }}>
             <span>Liked quotes</span>
@@ -562,6 +616,35 @@ const Profile = () => {
                       <span>{value}</span>
                     </li>
                   ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="row" style={{ marginTop: "30px", width: "99%" }}>
+        <div>
+          <div className="recommendationsTitle" style={{ marginLeft: "90px" }}>
+            <span>Book recommandations</span>
+          </div>
+
+          <div>
+            <div className="highlights">
+              <div className="contentHighlight refreshRecomm">
+                <button
+                  onClick={generateRecommandations}
+                  className="refreshRecommButton"
+                >
+                  <UpdateOutlined></UpdateOutlined>
+                </button>
+              </div>
+              <div>
+                {books && (
+                  <BookRecommendations
+                    books={books}
+                    max={10}
+                  ></BookRecommendations>
+                )}
               </div>
             </div>
           </div>

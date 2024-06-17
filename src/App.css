@@ -557,7 +557,7 @@ background-color: #a1acde;
 }
 
 .contentHighlight{
-  height:350px;
+  max-height:350px;
   overflow-y: auto;
 }
 
@@ -1011,6 +1011,29 @@ color:white;
   font-size: large;
   font-weight: 600;
   margin: 2%;
+}
+
+.refreshRecomm{
+  display: flex;
+  justify-content: end;
+  margin-right: 20px;
+  margin-top: 10px;
+}
+
+.refreshRecommButton {
+  background-color: inherit;
+  color: #5569c3;
+  border: 2px solid #5569c3;
+  border-radius: 5px;
+}
+
+.titles{
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  font-size: large;
+  font-weight: 700;
+  color: #6d7fcc;
 }
 
 

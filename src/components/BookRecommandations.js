@@ -45,17 +45,17 @@ const BookRow = ({ books }) => (
   </div>
 );
 
-const BookRecommendations = ({ books }) => {
+const BookRecommendations = ({ books, max }) => {
   const rows = [];
   console.log("books: ", books);
-  for (let i = 0; i < 5; i += 5) {
+  for (let i = 0; i < max; i += 5) {
     rows.push(books.slice(i, i + 5));
   }
 
   return (
     <div style={{ margin: "16px" }}>
       {rows.map((row, index) => (
-        <BookRow key={index} books={row} />
+        <BookRow key={index} books={row} max={max} />
       ))}
     </div>
   );

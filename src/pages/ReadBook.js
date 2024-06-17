@@ -275,10 +275,10 @@ const ReadBook = () => {
 
   useEffect(() => {
     var element1 = $(
-      `<div class='commentStyle'><div><span class='userComment'>SilvanaP:</span><span>la multi ani stefy <3 </span></div><div><button class='editButton'>${editIcon}</button><button class='editButton'>${deleteIcon}</button></div></div>`
+      `<div class='commentStyle'><div><span class='userComment'>SilvanaP:</span><span>Adventure book fans... this is a must</span></div></div>`
     );
     var element2 = $(
-      `<div class='commentStyle'><div><span class='userComment'>PatryM:</span><span>la multi ani stefanuca <3 </span></div><div><button class='editButton'>${editIcon}</button><button class='editButton'>${deleteIcon}</button></div></div>`
+      `<div class='commentStyle'><div><span class='userComment'>PatryM:</span><span>This story engaged my lust for travel</span></div></div>`
     );
     $("#commentSection").append(element1);
     $("#commentSection").append(element2);
