@@ -314,9 +314,34 @@ const ReadBook = () => {
   //   }
   // };
 
+  const addComment = (comment) => {
+    fetch("http://localhost:8000/addComment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+        "X-XSRF-TOKEN": localStorage.getItem("xsrf"),
+      },
+      credentials: "include",
+      body: JSON.stringify({ book: book.identifier, comment: comment }),
+    })
+      .then((response) => {
+        console.log("response to comment: ", response.json());
+        if (response.ok) {
+          //setAdded(true);
+          //showToastMessage();
+        }
+      })
+      .catch((error) => {
+        // Handle any errors
+      });
+  };
+
   const submitComment = () => {
     console.log("entered submit");
     var comment = document.getElementById("comment").value;
+    addComment(comment);
 
     var element = $(
       `<div class='commentStyle'><div><span class='userComment'>${localStorage.getItem(
