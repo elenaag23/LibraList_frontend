@@ -36,6 +36,9 @@ const ReadBook = () => {
   const [retrievedComments, setRetrievedComments] = useState([]);
   const [map, setMap] = useState([]);
   const [users, setUsers] = useState([]);
+  const [inEdit, setInEdit] = useState(false);
+  const [commentId, setCommentId] = useState(null);
+  const [commentIndex, setCommentIndex] = useState(null);
 
   const editIcon =
     '<svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="EditOutlinedIcon"><path d="m14.06 9.02.92.92L5.92 19H5v-.92zM17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29m-3.6 3.19L3 17.25V21h3.75L17.81 9.94z"></path></svg>';
@@ -369,20 +372,61 @@ const ReadBook = () => {
         // Handle any errors
       });
   };
+  const editComment = (commentText) => {
+    console.log("entered edit comment");
+    fetch(process.env.REACT_APP_BACKEND_URL + "/editComment", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+        "X-XSRF-TOKEN": localStorage.getItem("xsrf"),
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        book: book.identifier,
+        comment: commentId,
+        commentText: commentText,
+      }),
+    })
+      .then((response) => {
+        console.log("response to comment: ", response.json());
+        if (response.ok) {
+          //setAdded(true);
+          //showToastMessage();
+        }
+      })
+      .catch((error) => {
+        // Handle any errors
+      });
+  };
 
   const submitComment = () => {
     console.log("entered submit");
     var comment = document.getElementById("comment").value;
-    addComment(comment);
-
-    var element = $(
-      `<div class='commentStyle'><div><span class='userComment'>${localStorage.getItem(
-        "userName"
-      )}:</span><span>${comment}</span></div><div><button class='editButton'>${editIcon}
+    if (inEdit === false) {
+      addComment(comment);
+      var element = $(
+        `<div class='commentStyle'><div><span class='userComment'>${localStorage.getItem(
+          "userName"
+        )}:</span><span>${comment}</span></div><div><button class='editButton'>${editIcon}
 </button><button class='editButton'>${deleteIcon}</button></div></div>`
-    );
-    $("#myCommentSection").append(element);
+      );
+      $("#myCommentSection").append(element);
+    } else {
+      editComment(comment);
+      $("#" + commentIndex).text(comment);
+      setInEdit(false);
+    }
     document.getElementById("comment").value = "";
+  };
+
+  const handleCommentEdit = (commentId, index, commentText) => {
+    console.log("entered handle edit");
+    setInEdit(true);
+    setCommentId(commentId);
+    setCommentIndex(index);
+    document.getElementById("comment").value = commentText;
   };
 
   return (
@@ -512,13 +556,22 @@ const ReadBook = () => {
                             <span class="userComment">
                               {users[map[elem["commentId"]]]}
                             </span>
-                            <span>{elem["commentText"]}</span>
+                            <span id={index}>{elem["commentText"]}</span>
                           </div>
 
                           {localStorage.getItem("userName") ===
                             users[map[elem["commentId"]]] && (
                             <div>
-                              <button class="editButton">
+                              <button
+                                class="editButton"
+                                onClick={() =>
+                                  handleCommentEdit(
+                                    elem["commentId"],
+                                    index,
+                                    elem["commentText"]
+                                  )
+                                }
+                              >
                                 <EditOutlinedIcon />
                               </button>
                               <button class="editButton">
