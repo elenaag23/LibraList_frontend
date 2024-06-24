@@ -345,7 +345,10 @@ function ToRead() {
           <div className="recommendationsTitle">
             <span>Recommended for you</span>
           </div>
-          <BookRecommendations books={recommendations}></BookRecommendations>
+          <BookRecommendations
+            books={recommendations}
+            max={5}
+          ></BookRecommendations>
         </div>
       )}
 

@@ -557,7 +557,7 @@ background-color: #a1acde;
 }
 
 .contentHighlight{
-  height:350px;
+  max-height:350px;
   overflow-y: auto;
 }
 
@@ -983,6 +983,57 @@ color:white;
   display: flex;
   margin-top: 25px;
   margin-left: 35px;
+}
+
+.commentStyle{
+  display: inline-flex;
+  justify-content: space-between;
+  margin-left:3%;
+  margin-right:3%;
+}
+
+.userComment{
+  font-size: large;
+  font-weight: 500;
+  color:#5569c3;
+  padding-right: 3px;
+}
+
+.editButton{
+  border: none;
+  background-color: inherit;
+  color:#5569c3;
+}
+
+.commentSection{
+  display: flex;
+  justify-content: center;
+  font-size: large;
+  font-weight: 600;
+  margin: 2%;
+}
+
+.refreshRecomm{
+  display: flex;
+  justify-content: end;
+  margin-right: 20px;
+  margin-top: 10px;
+}
+
+.refreshRecommButton {
+  background-color: inherit;
+  color: #5569c3;
+  border: 2px solid #5569c3;
+  border-radius: 5px;
+}
+
+.titles{
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  font-size: large;
+  font-weight: 700;
+  color: #6d7fcc;
 }
 
 
