@@ -323,8 +323,16 @@ const OtherProfile = () => {
         <span>Profile page</span>
       </div>
 
-      <div className="row" style={{ marginTop: "30px", width: "99%" }}>
-        <div className="col-3 highlights">
+      <div
+        className="row"
+        style={{
+          marginTop: "30px",
+          width: "99%",
+          display: "flex",
+          justifyContent: "space-around",
+        }}
+      >
+        <div className="col-3 highlights" style={{ paddingBottom: "16px" }}>
           <div className="titles">
             <span>Profile settings</span>
           </div>
@@ -385,7 +393,7 @@ const OtherProfile = () => {
           )}
         </div>
 
-        <div className="col-3 highlights">
+        <div className="col-3 highlights" style={{ paddingBottom: "16px" }}>
           <div className="titles">
             <span>Colour tags</span>
           </div>
@@ -395,7 +403,11 @@ const OtherProfile = () => {
               <form className="user-form">
                 <div
                   className="form-group"
-                  style={{ marginBottom: "10px", marginRight: "60%" }}
+                  style={{
+                    marginBottom: "10px",
+                    marginRight: "60%",
+                    paddingBottom: "16px",
+                  }}
                 >
                   <label
                     class="btn btn-secondary"
@@ -477,7 +489,7 @@ const OtherProfile = () => {
             </div>
           )}
         </div>
-        <div className="col-3 highlights">
+        <div className="col-3 highlights" style={{ paddingBottom: "16px" }}>
           <div className="titles">
             <span>Favorite books</span>
           </div>
