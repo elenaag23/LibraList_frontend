@@ -312,6 +312,41 @@ const OtherProfile = () => {
     return 0;
   };
 
+  useEffect(() => {
+    if (user) {
+      const fetchData = async () => {
+        const search = await searchInCache(user["id"]);
+      };
+      fetchData();
+    }
+    //if(user["recommDate"]) getRecommandations();
+  }, [user]);
+
+  const searchInCache = async (userId) => {
+    console.log("entered search in cache");
+    return new Promise((resolve, reject) => {
+      if ("caches" in window) {
+        caches.open("recommandations").then((cache) => {
+          console.log("first cache: ", cache);
+          cache.match("/" + userId).then((cachedResponse) => {
+            if (cachedResponse) {
+              cachedResponse.json().then(async (books) => {
+                console.log("chacked response: ", books);
+                setBooks(books);
+                // setSearching(false);
+                resolve(cachedResponse);
+              });
+            } else {
+              resolve(false);
+            }
+          });
+        });
+      } else {
+        resolve(false);
+      }
+    });
+  };
+
   const generateRecommandations = () => {
     getRecommandations();
   };

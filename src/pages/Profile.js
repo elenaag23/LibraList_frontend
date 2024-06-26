@@ -137,6 +137,7 @@ const Profile = () => {
       }
 
       const data = await response.json();
+      console.log("response to get likes: ", data);
       setMap(data["map"]);
       setQuotes(data["highlights"]);
       setBookData(data["books"]);
@@ -457,7 +458,15 @@ const Profile = () => {
         <span>Profile page</span>
       </div>
 
-      <div className="row" style={{ marginTop: "30px", width: "99%" }}>
+      <div
+        className="row"
+        style={{
+          marginTop: "30px",
+          width: "99%",
+          display: "flex",
+          justifyContent: "space-around",
+        }}
+      >
         <div className="col-3 highlights">
           <div className="titles">
             <span>Profile settings</span>
@@ -644,8 +653,16 @@ const Profile = () => {
           </div>
 
           <div>
-            {favBooks &&
-              favBooks.map((elem, index) => <li key={index}>{elem}</li>)}
+            {favBooks && favBooks.length > 0 ? (
+              favBooks.map((elem, index) => <li key={index}>{elem}</li>)
+            ) : (
+              <div
+                className="titles"
+                style={{ marginTop: "25%", backgroundColor: "inherit" }}
+              >
+                <span>No favorite books to show</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -659,31 +676,37 @@ const Profile = () => {
           justifyContent: "space-around",
         }}
       >
-        <div>
-          <div className="recommendationsTitle" style={{ marginLeft: "90px" }}>
-            <span>Liked quotes</span>
-          </div>
-
+        {console.log("QUOTES: ", quotes)}
+        {quotes && (
           <div>
-            <div className="highlights">
-              <div className="contentHighlight">
-                {console.log("QUOTES: ", quotes)}
-                {/* {quotes &&
+            <div
+              className="recommendationsTitle"
+              style={{ marginLeft: "90px" }}
+            >
+              <span>Liked quotes</span>
+            </div>
+
+            <div>
+              <div className="highlights">
+                <div className="contentHighlight">
+                  {console.log("QUOTES: ", quotes)}
+                  {/* {quotes &&
                   quotes.map((elem, index) => <li key={index}>{elem}</li>)} */}
 
-                {quotes &&
-                  Object.entries(quotes).map(([key, value]) => (
-                    <li key={key}>
-                      <span style={{ color: "#6d7fcc", fontWeight: "600" }}>
-                        {bookData[map[key]]}:
-                      </span>{" "}
-                      <span>{value}</span>
-                    </li>
-                  ))}
+                  {quotes &&
+                    Object.entries(quotes).map(([key, value]) => (
+                      <li key={key}>
+                        <span style={{ color: "#6d7fcc", fontWeight: "600" }}>
+                          {bookData[map[key]]}:
+                        </span>{" "}
+                        <span>{value}</span>
+                      </li>
+                    ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="row" style={{ marginTop: "30px", width: "99%" }}>
