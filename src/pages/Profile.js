@@ -29,8 +29,63 @@ const Profile = () => {
     getColorTags();
     getLikes();
     getFavBooks();
-    //getRecommandations();
+    //if(user["recommDate"]) getRecommandations();
   }, []);
+
+  function isSevenDaysApart(givenDateString) {
+    const givenDate = new Date(givenDateString);
+    const currentDate = new Date();
+    givenDate.setHours(0, 0, 0, 0);
+    currentDate.setHours(0, 0, 0, 0);
+    const differenceInMilliseconds = Math.abs(currentDate - givenDate);
+    const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+    return differenceInDays >= 7;
+  }
+
+  useEffect(() => {
+    if (user) {
+      const fetchData = async () => {
+        console.log("user recom: ", user["recomDate"]);
+        console.log(
+          "is seven days apart: ",
+          isSevenDaysApart(user["recomDate"])
+        );
+        const search = await searchInCache(user["id"]);
+        console.log("search in cache res: ", search);
+
+        if (!search || isSevenDaysApart(user["recomDate"])) {
+          console.log("entered get recommandations");
+          getRecommandations();
+        }
+      };
+      fetchData();
+    }
+    //if(user["recommDate"]) getRecommandations();
+  }, [user]);
+
+  const searchInCache = async (userId) => {
+    return new Promise((resolve, reject) => {
+      if ("caches" in window) {
+        caches.open("recommandations").then((cache) => {
+          console.log("first cache: ", cache);
+          cache.match("/" + userId).then((cachedResponse) => {
+            if (cachedResponse) {
+              cachedResponse.json().then(async (books) => {
+                console.log("chacked response: ", books);
+                setBooks(books);
+                // setSearching(false);
+                resolve(cachedResponse);
+              });
+            } else {
+              resolve(false);
+            }
+          });
+        });
+      } else {
+        resolve(false);
+      }
+    });
+  };
 
   const getUserData = async () => {
     try {
@@ -110,12 +165,14 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    async function fetchData() {
-      const response = await findBook();
-      console.log("RESPONSE AFTER FIND BOOK: ", response);
-      console.log("RESPONSE AFTER FIND BOOK books: ", books);
+    if (user && titles) {
+      async function fetchData() {
+        const response = await findBook();
+        console.log("RESPONSE AFTER FIND BOOK: ", response);
+        console.log("RESPONSE AFTER FIND BOOK books: ", books);
+      }
+      fetchData();
     }
-    fetchData();
   }, [titles]);
 
   const findBook = async () => {
@@ -137,8 +194,17 @@ const Profile = () => {
       if (resBooks.length == 10) break;
     }
     console.log("book results: ", resBooks);
-
+    addDataIntoCache("recommandations", resBooks, user["id"]);
     setBooks(resBooks);
+  };
+
+  const addDataIntoCache = (cacheName, values, url) => {
+    if ("caches" in window) {
+      caches.open(cacheName).then((cache) => {
+        const response = new Response(JSON.stringify(values));
+        cache.put(url, response);
+      });
+    }
   };
 
   const getRecommandations = async () => {
@@ -294,7 +360,6 @@ const Profile = () => {
       }
     }
 
-    // addDataIntoCache("search", availableBooks, url);
     // console.log("text books: ", arrBooks);
     // console.log("book results: ", availableBooks);
     // setBookData(availableBooks);
@@ -302,7 +367,6 @@ const Profile = () => {
     // localStorage.setItem("search", [searchTerm, url]);
     // console.log("get item after set: ", localStorage.getItem("search"));
     // setProcessing(false);
-
     return 0;
   };
 
