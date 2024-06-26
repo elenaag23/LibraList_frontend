@@ -13,6 +13,7 @@ import Playlist from "./pages/Playlist";
 import PlaylistUser from "./pages/PlaylistUser";
 import Highlights from "./pages/HighlightsPage";
 import Profile from "./pages/Profile";
+import OtherProfile from "./components/OtherProfile";
 
 function App() {
   let local = "http://127.0.0.1:8000";
@@ -64,6 +65,7 @@ function App() {
           <Route path="/playlistUser" element={<PlaylistUser />} />
           <Route path="/highlights" element={<Highlights />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:userId" element={<OtherProfile />} />
         </Routes>
       </BrowserRouter>
     </div>

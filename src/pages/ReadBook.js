@@ -12,6 +12,7 @@ import $ from "jquery";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
+import { Link } from "react-router-dom";
 
 const ReadBook = () => {
   const location = useLocation();
@@ -595,9 +596,23 @@ const ReadBook = () => {
                       retrievedComments.map((elem, index) => (
                         <div className="commentStyle" id={`comment${index}`}>
                           <div>
-                            <span class="userComment">
-                              {users[map[elem["commentId"]]]}
-                            </span>
+                            {localStorage.getItem("userName") !==
+                            users[map[elem["commentId"]]] ? (
+                              <div style={{ display: "inline-flex" }}>
+                                <Link to={`/profile/${map[elem["commentId"]]}`}>
+                                  <span className="userComment">
+                                    {users[map[elem["commentId"]]]}
+                                  </span>
+                                </Link>
+                              </div>
+                            ) : (
+                              <div style={{ display: "inline-flex" }}>
+                                <span className="userComment">
+                                  {users[map[elem["commentId"]]]}
+                                </span>
+                              </div>
+                            )}
+
                             <span id={index}>{elem["commentText"]}</span>
                           </div>
 
