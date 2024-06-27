@@ -8,6 +8,8 @@ import BookGrid from "../components/BookGrid";
 import BookRecommendations from "../components/BookRecommandations";
 import UpdateOutlinedIcon from "@mui/icons-material/UpdateOutlined";
 import UpdateOutlined from "@mui/icons-material/UpdateOutlined";
+import { ToastContainer, toast } from "react-toastify";
+import LoadingComponent from "../components/LoadingComponent";
 
 const Profile = () => {
   const token = localStorage.getItem("authToken");
@@ -21,6 +23,21 @@ const Profile = () => {
   const [quotes, setQuotes] = useState([]);
   const [map, setMap] = useState([]);
   const [favBooks, setFavBooks] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const showToastMessage = () => {
+    console.log("entered toast");
+    toast.info("Data modified succesfully!", {
+      position: "top-center",
+    });
+  };
+
+  const showToastMessageColors = () => {
+    console.log("entered toast");
+    toast.info("Color tags modified succesfully!", {
+      position: "top-center",
+    });
+  };
 
   useEffect(() => {
     $("#profileButton").addClass("selected");
@@ -55,6 +72,7 @@ const Profile = () => {
 
         if (!search || isSevenDaysApart(user["recomDate"])) {
           console.log("entered get recommandations");
+          setLoading(true);
           getRecommandations();
         }
       };
@@ -166,7 +184,7 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    if (user && titles) {
+    if (user && titles && titles.length > 0) {
       async function fetchData() {
         const response = await findBook();
         console.log("RESPONSE AFTER FIND BOOK: ", response);
@@ -197,10 +215,11 @@ const Profile = () => {
     console.log("book results: ", resBooks);
     addDataIntoCache("recommandations", resBooks, user["id"]);
     setBooks(resBooks);
+    setLoading(false);
   };
 
   const addDataIntoCache = (cacheName, values, url) => {
-    if ("caches" in window) {
+    if ("caches" in window && values != null && values.length > 0) {
       caches.open(cacheName).then((cache) => {
         const response = new Response(JSON.stringify(values));
         cache.put(url, response);
@@ -209,6 +228,7 @@ const Profile = () => {
   };
 
   const getRecommandations = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`http://127.0.0.1:8000/getRecommendations`, {
         method: "GET",
@@ -418,6 +438,11 @@ const Profile = () => {
       }
 
       const data = await response.json();
+      if (user["name"] != localStorage.getItem("authName")) {
+        $("#sidebarUser").text(user["name"]);
+        localStorage.setItem("authName", user["name"]);
+      }
+      showToastMessage();
       //setUser(data["user"]);
     } catch (error) {}
   };
@@ -442,6 +467,7 @@ const Profile = () => {
         throw new Error("Failed to fetch data");
       }
       const data = await response.json();
+      showToastMessageColors();
     } catch (error) {
       console.error("Failed editing user tags: ", error);
     }
@@ -454,6 +480,7 @@ const Profile = () => {
   return (
     <div>
       <Sidebar></Sidebar>
+      <ToastContainer />
       <div className="pageTitle">
         <span>Profile page</span>
       </div>
@@ -733,6 +760,18 @@ const Profile = () => {
                   ></BookRecommendations>
                 )}
               </div>
+              {console.log("LOADING: ", loading)}
+              {loading && (
+                <div
+                  style={{
+                    marginLeft: "10%",
+                    marginTop: "3%",
+                    marginBottom: "3%",
+                  }}
+                >
+                  <LoadingComponent current={"recommandations"} />
+                </div>
+              )}
             </div>
           </div>
         </div>

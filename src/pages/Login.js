@@ -49,6 +49,7 @@ function Login() {
         return response.json();
       })
       .then((data) => {
+        if (data.user) localStorage.setItem("userName", data.user["name"]);
         if (data.token) {
           localStorage.setItem("authToken", data.token);
           window.location.href = "/toread";
