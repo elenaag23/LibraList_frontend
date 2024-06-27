@@ -45,7 +45,7 @@ function Library() {
       }
       const data = response.json();
       //style("display", "none");
-      $("#" + book).css({ display: "none" });
+      //$("#" + book).css({ display: "none" });
       for (var i = 0; i < userBooks.length; i++) {
         //console.log("current identifier: ");
         if (userBooks[i]["identifier"] == book) {
@@ -57,6 +57,7 @@ function Library() {
       console.log("new user books array: ", userBooks);
       const newBooksArray = [...userBooks];
       setUserBooks(newBooksArray);
+      $(".deleteConfirmation").css({ display: "none" });
       showToastMessage();
     } catch (error) {
       console.error("Error fetching user data:", error);

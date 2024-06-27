@@ -10,10 +10,11 @@ const BookItem = ({ book, number, onDelete, origin }) => {
 
   const handleDelete = () => {
     onDelete(book.identifier);
+    //$("#" + book.identifier).css({ display: "none" });
   };
 
-  const confirmation = () => {
-    $(".deleteConfirmation").css({ display: "block" });
+  const confirmation = (idElement) => {
+    $("#" + idElement + " .deleteConfirmation").css({ display: "block" });
   };
 
   const disableScreen = () => {
@@ -59,7 +60,10 @@ const BookItem = ({ book, number, onDelete, origin }) => {
           className="deleteButton2"
           style={{ display: "flex", justifyContent: "end" }}
         >
-          <button onClick={confirmation} className="deleteButton">
+          <button
+            onClick={() => confirmation(book.identifier)}
+            className="deleteButton"
+          >
             <DeleteIcon></DeleteIcon>
           </button>
         </div>
