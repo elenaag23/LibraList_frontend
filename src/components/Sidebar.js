@@ -136,7 +136,7 @@ function Sidebar() {
               </div>
               <div className="displayName">
                 {/* <span>Hello ,</span> */}
-                {user != null ? <span> {user}!</span> : null}
+                {user != null ? <span id="sidebarUser"> {user}!</span> : null}
                 {/* <span>!</span> */}
               </div>
 

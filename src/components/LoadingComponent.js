@@ -14,6 +14,8 @@ function LoadingComponent({ current }) {
       setMessage("Generating your playlist...");
     } else if (current == "library") {
       setMessage("Getting your books...");
+    } else if (current == "recommandations") {
+      setMessage("Getting your book recommandations...");
     } else {
       setMessage("Loading...");
     }
