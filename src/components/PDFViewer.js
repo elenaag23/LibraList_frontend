@@ -65,6 +65,7 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
   };
 
   useEffect(() => {
+    console.log("PAGES: ", numPages);
     const setPageNumberAsync = async () => {
       await setReadingPage(pageNumber);
     };
@@ -366,7 +367,6 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
   };
 
   const handleClickOutside = () => {
-    // Handle click outside by triggering blur event
     console.log("entered here: ", $("#pageInput").val());
     console.log("page pageNumber: ", pageNumber);
     if (!pageNumber) {
