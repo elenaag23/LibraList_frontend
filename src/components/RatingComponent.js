@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 
-const RatingComponent = ({ book }) => {
-  const [currentRating, setCurrentRating] = useState(0);
+const RatingComponent = ({ book, rating }) => {
+  const [currentRating, setCurrentRating] = useState(rating);
   const totalStars = 5;
-  const stars = Array(totalStars).fill(0);
+  const stars = Array(totalStars).fill(rating);
   const token = localStorage.getItem("authToken");
 
   const handleChange = (rating) => {
@@ -37,6 +37,7 @@ const RatingComponent = ({ book }) => {
 
   return (
     <div className="rating-container">
+      {console.log("curr rating: ", rating)}
       {stars.map((_, index) => (
         <span
           key={index}

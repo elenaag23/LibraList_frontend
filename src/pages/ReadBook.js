@@ -41,6 +41,7 @@ const ReadBook = () => {
   const [commentId, setCommentId] = useState(null);
   const [commentIndex, setCommentIndex] = useState(null);
   const [commentsNumber, setCommentsNumber] = useState(0);
+  const [rating, setRating] = useState(0);
 
   const editIcon =
     '<svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="EditOutlinedIcon"><path d="m14.06 9.02.92.92L5.92 19H5v-.92zM17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29m-3.6 3.19L3 17.25V21h3.75L17.81 9.94z"></path></svg>';
@@ -126,6 +127,7 @@ const ReadBook = () => {
         if (data.has == true) {
           setAdded(true);
           setPageNumber(data.pageNumber);
+          setRating(data.rating);
         } else setAdded(false);
         setLoading(false);
       })
@@ -484,6 +486,7 @@ const ReadBook = () => {
               {console.log("book:", book)}
               {console.log("highlights:", highlights)}
               {console.log("highlightedColors:", highlightedColors)}
+              {console.log("rating: ", rating)}
               {!(
                 pdf &&
                 book &&
@@ -501,6 +504,7 @@ const ReadBook = () => {
                   highlighted={highlightedColors}
                   currentPageNumber={pageNumber}
                   ownStatus={added}
+                  myRating={rating}
                 ></PDFViewer>
               )}
             </div>
@@ -536,7 +540,7 @@ const ReadBook = () => {
                 </div>
                 {genre && description && (
                   <div>
-                    <li className="noListType">
+                    <li className="noListType" style={{ overflowY: "auto" }}>
                       <span style={{ fontWeight: "600" }}>{description}</span>
                     </li>
 

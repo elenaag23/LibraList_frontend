@@ -242,11 +242,24 @@ const Profile = () => {
       }
 
       const data = await response.json();
-      setTitles(data["titles"]);
-      console.log("TITLES: ", titles);
+      const shuffled = shuffleArray(data["titles"]);
+      setTitles(shuffled);
+      console.log("shuffled: ", shuffled);
       //setUser(data["user"]);
     } catch (error) {}
   };
+
+  function shuffleArray(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+
+      var aux = array[i];
+      array[i] = array[j];
+      array[j] = aux;
+    }
+
+    return array;
+  }
 
   const selectOption = (event) => {
     setOption(event.target.value);

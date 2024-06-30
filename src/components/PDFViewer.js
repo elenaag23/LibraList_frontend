@@ -10,7 +10,14 @@ import RatingComponent from "./RatingComponent";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
+const PDFViewer = ({
+  pdfUrl,
+  book,
+  highs,
+  highlighted,
+  currentPageNumber,
+  myRating,
+}) => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(currentPageNumber);
   const [selectedText, setSelectedText] = useState("");
@@ -21,7 +28,7 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
   const [scale, setScale] = useState(1);
   const [noColors, setNoColors] = useState(0);
   const [value, setValue] = useState(pageNumber);
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState(myRating);
   const token = localStorage.getItem("authToken");
 
   const setReadingPage = async (pageNumber) => {
@@ -532,7 +539,8 @@ const PDFViewer = ({ pdfUrl, book, highs, highlighted, currentPageNumber }) => {
             <span>Your review</span>
           </div>
           <div className="playlistButton">
-            <RatingComponent book={book}></RatingComponent>
+            {console.log("rating in pdf: ", rating)}
+            <RatingComponent book={book} rating={rating}></RatingComponent>
           </div>
         </div>
 
