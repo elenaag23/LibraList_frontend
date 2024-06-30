@@ -1038,4 +1038,15 @@ color:white;
   color: #6d7fcc;
 }
 
+.responsive{
+  background-color: #6d7fcc;
+  color:white;
+  display: flex;
+  justify-content: center;
+  font-size:xx-large;
+  font-weight: 700;
+  padding-top: 45vh;
+
+}
+
 
