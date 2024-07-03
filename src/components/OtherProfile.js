@@ -149,13 +149,16 @@ const OtherProfile = () => {
 
   const getRecommandations = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/getRecommendations`, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          // Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `http://127.0.0.1:8000/getRecommendations?userId=${userId}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            // Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }

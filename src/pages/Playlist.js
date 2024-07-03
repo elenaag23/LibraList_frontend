@@ -60,10 +60,10 @@ const Playlist = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.REACT_APP_API_KEY}`, // Replace with your OpenAI API key
+          Authorization: `Bearer ${process.env.REACT_APP_API_KEY}`,
         },
         body: JSON.stringify({
-          model: "gpt-3.5-turbo-0125", // Specify the ChatGPT model you want to use
+          model: "gpt-3.5-turbo-0125",
           messages: [{ role: "user", content: inputText }],
           response_format: { type: "json_object" },
         }),

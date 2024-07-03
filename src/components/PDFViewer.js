@@ -414,7 +414,7 @@ const PDFViewer = ({
         </Document>
       </div>
 
-      <div className="col-5">
+      <div className="col-5" style={{ paddingLeft: "120px" }}>
         <div className="pagesDiv">
           <div className="row" style={{ paddingTop: "15px", height: "50%" }}>
             <div>

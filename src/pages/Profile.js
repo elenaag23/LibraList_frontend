@@ -74,6 +74,7 @@ const Profile = () => {
           console.log("entered get recommandations");
           setLoading(true);
           getRecommandations();
+          modifyDate();
         }
       };
       fetchData();
@@ -120,6 +121,10 @@ const Profile = () => {
 
       const data = await response.json();
       setUser(data["user"]);
+      $(document).ready(() => {
+        if (data["user"]["bio"] != null) $("#bio").text(data["user"]["bio"]);
+      });
+      //if (data["user"]["bio"] != null) $("#bio").text(data["user"]["bio"]);
     } catch (error) {}
   };
 
@@ -230,13 +235,16 @@ const Profile = () => {
   const getRecommandations = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`http://127.0.0.1:8000/getRecommendations`, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `http://127.0.0.1:8000/getRecommendations?userId=${user["id"]}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
@@ -393,14 +401,6 @@ const Profile = () => {
         }
       }
     }
-
-    // console.log("text books: ", arrBooks);
-    // console.log("book results: ", availableBooks);
-    // setBookData(availableBooks);
-    // console.log("search term: ", searchTerm);
-    // localStorage.setItem("search", [searchTerm, url]);
-    // console.log("get item after set: ", localStorage.getItem("search"));
-    // setProcessing(false);
     return 0;
   };
 
@@ -434,6 +434,9 @@ const Profile = () => {
 
   const editUser = async () => {
     console.log("user in edit user: ", user);
+    const bio = document.getElementById("bio").value;
+    user["bio"] = bio;
+    console.log("user in edit user 2: ", user);
     try {
       const response = await fetch("http://localhost:8000/editUser", {
         method: "PUT",
@@ -445,6 +448,46 @@ const Profile = () => {
         },
         credentials: "include",
         body: JSON.stringify(user),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+      if (user["name"] != localStorage.getItem("authName")) {
+        $("#sidebarUser").text(user["name"]);
+        localStorage.setItem("authName", user["name"]);
+      }
+      showToastMessage();
+      //setUser(data["user"]);
+    } catch (error) {}
+  };
+
+  const modifyDate = async () => {
+    var currentdate = new Date();
+    var datetime =
+      currentdate.getFullYear() +
+      "-" +
+      (currentdate.getMonth() + 1) +
+      "-" +
+      currentdate.getDate() +
+      " " +
+      currentdate.getHours() +
+      ":" +
+      currentdate.getMinutes() +
+      ":" +
+      currentdate.getSeconds();
+    try {
+      const response = await fetch("http://localhost:8000/modifyDate", {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "X-XSRF-TOKEN": localStorage.getItem("xsrf"),
+        },
+        credentials: "include",
+        body: JSON.stringify({ date: datetime }),
       });
       if (!response.ok) {
         throw new Error("Failed to fetch data");
@@ -568,10 +611,13 @@ const Profile = () => {
                 >
                   <label className="userDetailsLabel">Bio:</label>
                   <textarea
-                    id="comment"
-                    placeholder="Leave a comment here..."
+                    id="bio"
+                    placeholder="Something about you"
                     style={{ width: "80%" }}
-                    className="userInputDetails"
+                    className="userDetailsInput"
+                    text={user.bio != null ? user.bio : ""}
+                    // value={user.bio != null ? user.bio : ""}
+                    // onChange={handleInputChange}
                   ></textarea>
                 </div>
                 <button
